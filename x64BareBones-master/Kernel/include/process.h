@@ -11,7 +11,7 @@
 #define RUNNING 3 //?
 
 typedef struct PCB{
-    int64_t pid, ppid;
+    //int64_t pid, ppid;
     uint64_t rsp;
     uint8_t status;
 }PCB;

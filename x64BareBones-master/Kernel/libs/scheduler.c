@@ -1,5 +1,4 @@
-#include <process.h>
-#include <listADT.h>
+#include <scheduler.h>
 
 uint8_t initialized = 0;
 
@@ -8,11 +7,7 @@ static listADT blocked_list;
 static PCB * running = NULL;
 
 int compareElements(elemTypePtr e1, elemTypePtr e2){
-    return e1->pid - e2->pid;
-}
-
-void contextSwitch(PCB old_process, PCB new_process){
-    return;
+    return e1 - e2;
 }
 
 uint8_t findFirstReady(PCB **next_process) {
@@ -29,6 +24,18 @@ uint8_t findFirstReady(PCB **next_process) {
     return 0;
 }
 
+void ready(PCB * process){
+    process->status = READY;
+    addList(ready_list, process);
+    deleteList(blocked_list, process);
+}
+
+void block(PCB * process){
+    process->status = BLOCKED;
+    deleteList(ready_list, process);
+    addList(blocked_list, process);
+}
+
 void initializeScheduler(){
     tCompare cmp = compareElements;
     ready_list = newList(cmp);
@@ -37,7 +44,18 @@ void initializeScheduler(){
     return;
 }
 
-void scheduler(){
+uint64_t scheduler(uint64_t current_rsp){
+
+    uint64_t new_rsp;
+    if(running != NULL){
+        running->rsp = current_rsp;
+    }
+    new_rsp = next(ready_list)->rsp;
+     return new_rsp;
+}
+
+//revisar
+/*
     if(!initialized){
         initializeScheduler();
     }
@@ -69,3 +87,4 @@ void scheduler(){
         running =  next_process;
     }
 }
+    */
