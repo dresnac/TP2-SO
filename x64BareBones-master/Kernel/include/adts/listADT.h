@@ -7,7 +7,7 @@
 #include <memoryManager.h>
 
 typedef struct listCDT * listADT;
-typedef int * elemTypePtr;
+typedef int * PCB;
 
 /*
     <0 -> e1 antes que e2 
