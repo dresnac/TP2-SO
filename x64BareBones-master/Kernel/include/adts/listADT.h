@@ -4,10 +4,12 @@
 #include <stdio.h>
 #include <stddef.h>
 #include <assert.h>
+#include <process.h>
 #include <memoryManager.h>
 
 typedef struct listCDT * listADT;
-typedef int * PCB;
+typedef PCB * elemTypePtr;
+//typedef int * PCB;
 
 /*
     <0 -> e1 antes que e2 
