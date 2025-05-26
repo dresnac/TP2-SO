@@ -1,4 +1,4 @@
-#include "../include/libs/memoryManager.h"
+#include "../include/memoryManager.h"
 
 typedef struct MemoryManagerCDT {
 	char *nextAddress;

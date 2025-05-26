@@ -2,7 +2,7 @@
 
 uint64_t loadStack(uint64_t rip, uint64_t rsp){
     stack * my_stack = (stack*)(rsp-sizeof(stack));
-    for(int=0; i < GPR_QTY; i++){
+    for(int i=0; i < GPR_QTY; i++){
         my_stack->gpr[i] = 0;
     }
     my_stack->rip = rip;
