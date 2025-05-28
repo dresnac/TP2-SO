@@ -2,6 +2,7 @@
 #define SYSCALLDISPATCHER_H
 
 #include <stddef.h>
+#include <stack_registers.h>
 
 typedef struct {
     uint64_t rax;

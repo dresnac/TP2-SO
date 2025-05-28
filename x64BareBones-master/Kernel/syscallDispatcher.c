@@ -39,7 +39,7 @@ static void (*syscall_manager[])() = {
     
 };
 
-void syscallDispatcher(pushed_registers * regs){ //en realidad serían args variables
+void syscallDispatcher(stack_registers * regs){//(pushed_registers * regs){ //en realidad serían args variables
 
     syscall_manager[regs->rax](regs);
 

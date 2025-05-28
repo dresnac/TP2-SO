@@ -4,9 +4,11 @@
 #include <stdlib.h>
 
 typedef struct PCB {
-    int64_t pid, ppid;
+    uint64_t pid, ppid;
     uint64_t rsp;
     uint8_t status;
+    char ** args;
+    uint64_t cant;
 }PCB;
 
 #endif

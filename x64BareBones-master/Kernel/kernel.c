@@ -49,6 +49,11 @@ void * initializeKernelBinary()
 	return getStackBase();
 }
 
+void writeArg(char ** my_argv, uint64_t my_argc){
+	if(my_argc != 1) return;
+	//inc
+}
+
 void idleProcess(){
 	while(1){
 		_hlt();
@@ -60,9 +65,10 @@ int main()
 {	
 	load_idt();
 	createMemoryManager( heap, HEAP_SIZE);
-	initializeScheduler(newProcess((uint64_t) idleProcess, LOW));
+	initializeScheduler(newProcess((main_function) idleProcess, LOW, NULL, 0));
 
-	newProcess((uint64_t) sampleCodeModuleAddress, HIGH);
+	newProcess((main_function) sampleCodeModuleAddress, HIGH, NULL, 0);
+	//int64_t pid = newProcess((uint64_t) rec, HIGH); /hacer la func rec
 	__asm__("int $0x20");
 	return 0;
 }

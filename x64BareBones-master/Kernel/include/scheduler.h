@@ -7,5 +7,6 @@
 void initializeScheduler(int64_t idle_process_pid);
 void ready(PCB *process);
 uint64_t scheduler(uint64_t current_rsp);
+void unschedule(PCB * process);
 
 #endif
