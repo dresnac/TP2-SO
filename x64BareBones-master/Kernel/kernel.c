@@ -1,7 +1,5 @@
-#include <stdint.h>
-#include <string.h>
-#include <moduleLoader.h>
-#include <idtLoader.h>
+
+#include <kernel.h>
 
 
 extern uint8_t text;
@@ -16,6 +14,8 @@ static const uint64_t PageSize = 0x1000;
 
 static void * const sampleCodeModuleAddress = (void*)0x400000;
 static void * const sampleDataModuleAddress = (void*)0x500000;
+
+static void * const heap = ( void * ) 0x600000;
 
 typedef int (*EntryPoint)();
 
@@ -49,10 +49,22 @@ void * initializeKernelBinary()
 	return getStackBase();
 }
 
+void idleProcess(){
+	while(1){
+		_hlt();
+	}
+}
+
 
 int main()
 {	
 	load_idt();
-	((EntryPoint)sampleCodeModuleAddress)();
+	createMemoryManager( heap, HEAP_SIZE);
+	initializeScheduler(newProcess((uint64_t) idleProcess, LOW));
+
+	newProcess((uint64_t) sampleCodeModuleAddress, HIGH);
+	__asm__("int $0x20");
 	return 0;
 }
+
+//ayuda dios porfa

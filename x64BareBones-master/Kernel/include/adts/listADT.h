@@ -6,6 +6,7 @@
 #include <assert.h>
 #include <process.h>
 #include <memoryManager.h>
+#include <PCB.h>
 
 typedef struct listCDT * listADT;
 typedef PCB * elemTypePtr;

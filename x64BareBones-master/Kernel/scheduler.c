@@ -1,10 +1,12 @@
 #include <scheduler.h>
 
-uint8_t initialized = 0;
+static int initialized = 0;
 
 static listADT ready_list;
 static listADT blocked_list;
 static PCB * running = NULL;
+static PCB * idle_pcb;
+
 
 int compareElements(elemTypePtr e1, elemTypePtr e2){
     return e1 - e2;
@@ -36,22 +38,39 @@ void block(PCB * process){
     addList(blocked_list, process);
 }
 
-void initializeScheduler(){
+void initializeScheduler(int64_t idle_process_pid){
     tCompare cmp = compareElements;
     ready_list = newList(cmp);
     blocked_list = newList(cmp);
+    idle_pcb = getPcb(idle_process_pid);
+    deleteList(ready_list, idle_pcb);
     initialized = 1;
     return;
 }
 
 uint64_t scheduler(uint64_t current_rsp){
 
-    uint64_t new_rsp;
+    if(!initialized){
+        return current_rsp;
+    }
     if(running != NULL){
         running->rsp = current_rsp;
     }
-    new_rsp = next(ready_list)->rsp;
-     return new_rsp;
+    if(isEmptyList(ready_list)){
+        running = idle_pcb;
+        return idle_pcb->rsp;
+    }
+    PCB * next_pcb = next(ready_list);
+    running = next_pcb;
+     return next_pcb->rsp;
+}
+
+void unschedule(PCB * process){
+    if(process->status == READY){
+        deleteList(ready_list, process);
+    }else if(process->status == BLOCKED){
+        deleteList(blocked_list, process);
+    }
 }
 
 //revisar
