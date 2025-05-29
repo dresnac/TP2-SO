@@ -42,7 +42,6 @@ static void (*syscall_manager[])() = {
 void syscallDispatcher(stack_registers * regs){//(pushed_registers * regs){ //en realidad serían args variables
 
     syscall_manager[regs->rax](regs);
-
 }
 
 void write(pushed_registers * regs){
@@ -154,4 +153,66 @@ void get_ticks(pushed_registers * regs){
 
 void do_beep(pushed_registers * regs){
     beep(regs->rbx, regs->rcx);
+}
+
+//FALTA AGREGAR A LA LISTA DE SYSCALLS
+int64_t my_getpid()
+{
+	return getPid();
+}
+
+//FALTA AGREGAR A LA LISTA DE SYSCALLS
+int64_t my_create_process (main_function rip, tPriority priority, char ** my_argv, uint64_t my_argc)
+{
+	return (int64_t) newProcess ( rip, priority, my_argv, my_argc );
+}
+
+int64_t my_nice ( uint64_t pid, uint64_t new_prio )
+{
+	return 0;
+}
+
+int64_t my_kill ( uint64_t pid )
+{
+	return 0;
+}
+
+int64_t my_block ( uint64_t pid )
+{
+	return 0;
+}
+
+int64_t my_unblock ( uint64_t pid )
+{
+	return 0;
+}
+
+int64_t my_sem_open ( char *sem_id, uint64_t initial_value )
+{
+	return 0;
+}
+
+int64_t my_sem_wait ( char *sem_id )
+{
+	return 0;
+}
+
+int64_t my_sem_post ( char *sem_id )
+{
+	return 0;
+}
+
+int64_t my_sem_close ( char *sem_id )
+{
+	return 0;
+}
+
+int64_t my_yield()
+{
+	return 0;
+}
+
+int64_t my_wait ( int64_t pid )
+{
+	return 0;
 }

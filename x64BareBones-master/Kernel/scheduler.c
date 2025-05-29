@@ -6,6 +6,7 @@ static listADT ready_list;
 static listADT blocked_list;
 static PCB * running = NULL;
 static PCB * idle_pcb;
+static uint64_t ran_counter = 0;
 
 
 int compareElements(elemTypePtr e1, elemTypePtr e2){
@@ -60,9 +61,13 @@ uint64_t scheduler(uint64_t current_rsp){
         running = idle_pcb;
         return idle_pcb->rsp;
     }
-    PCB * next_pcb = next(ready_list);
-    running = next_pcb;
-     return next_pcb->rsp;
+    if(ran_counter >= running->priority){
+        PCB * next_pcb = next(ready_list);
+        running = next_pcb;
+        return next_pcb->rsp;
+    }
+    ran_counter++;
+    return current_rsp
 }
 
 void unschedule(PCB * process){
@@ -71,6 +76,26 @@ void unschedule(PCB * process){
     }else if(process->status == BLOCKED){
         deleteList(blocked_list, process);
     }
+}
+
+void yield(PCB * process){
+    PCB * next_pcb = next(ready_list);
+    ran_counter = 0;
+    running = next_pcb;
+}
+
+uint64_t getPid(){
+    return running->pid;
+}
+
+void blockArbitrary(uint64_t pid){
+    PCB * process = getPcb(pid);
+    block(process);
+}
+
+void unblockArbitrary(uint64_t pid){
+    PCB * process = getPcb(pid);
+    ready(process);
 }
 
 //revisar

@@ -4,6 +4,7 @@ GLOBAL rtc
 GLOBAL hlt
 GLOBAL inb
 GLOBAL outb
+GLOBAL timer_tick
 
 GLOBAL Hours
 GLOBAL Mins
@@ -83,6 +84,10 @@ getKey:
     in al, 60h
 
     ret
+
+timer_tick:
+	int 0x20
+	ret
 
 section .rodata
 

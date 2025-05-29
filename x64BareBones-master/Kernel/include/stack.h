@@ -21,6 +21,6 @@ typedef struct stack{
     uint64_t ss;  //0x0
 }stack;
 
-uint64_t loadStack(uint64_t rip, uint64_t rsp, char ** my_argv, uint64_t my_argc);
+uint64_t loadStack(uint64_t rip, uint64_t rsp, char ** my_argv, uint64_t my_argc, uint64_t pid);
 
 #endif

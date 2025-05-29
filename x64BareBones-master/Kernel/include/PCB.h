@@ -3,12 +3,16 @@
 
 #include <stdlib.h>
 
+typedef enum {LOW=1, MEDIUM, HIGH} tPriority;
+
 typedef struct PCB {
     uint64_t pid, ppid;
     uint64_t rsp;
     uint8_t status;
     char ** args;
     uint64_t cant;
+    int64_t ret;
+    tPriority priority;
 }PCB;
 
 #endif

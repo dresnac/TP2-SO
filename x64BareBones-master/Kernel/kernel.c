@@ -48,11 +48,11 @@ void * initializeKernelBinary()
 
 	return getStackBase();
 }
-
+/*
 void writeArg(char ** my_argv, uint64_t my_argc){
 	if(my_argc != 1) return;
 	//inc
-}
+}*/
 
 void idleProcess(){
 	while(1){

@@ -19,10 +19,12 @@ typedef struct PCB{
     uint8_t status;
 }PCB; */
 
-typedef enum { LOW = 0, MEDIUM, HIGH } tPriority;
+//typedef enum { LOW = 0, MEDIUM, HIGH } tPriority;
 typedef int(*main_function)(char ** my_argv, uint64_t my_argc);
 
 int64_t newProcess(main_function rip, tPriority priority, char ** my_argv, uint64_t my_argc); 
 PCB * getPcb(int64_t pid);
+
+//void listProcesses();
 
 #endif

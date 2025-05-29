@@ -58,6 +58,11 @@ static char ** copyArgv(uint64_t pid, char ** my_argv, uint64_t my_argc){
 
 int64_t newProcess(main_function rip, tPriority priority, char ** my_argv, uint64_t my_argc){
 
+    //feo cambiar
+    if(!((priority != LOW) || (priority != MEDIUM) || (priority != HIGH))){
+        return;
+    }
+
     int64_t pid = findFreePcb();
 
     if (pid == -1){
@@ -81,7 +86,7 @@ int64_t newProcess(main_function rip, tPriority priority, char ** my_argv, uint6
         pcb_array[pid].status = FREE;
         return -1;
     }
-    rsp = loadStack(rip, rsp, args_cpy, my_argc);
+    rsp = loadStack(rip, rsp, args_cpy, my_argc, pid);
 
     
 
@@ -91,6 +96,7 @@ int64_t newProcess(main_function rip, tPriority priority, char ** my_argv, uint6
     pcb_array[pid].status = READY;
     pcb_array[pid].args = args_cpy;
     pcb_array[pid].cant = my_argc;
+    pcb_array[pid].priority = priority;
 
     ready(&pcb_array[pid]);
     return pid;
