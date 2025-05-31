@@ -78,12 +78,14 @@ void unschedule(PCB * process){
     }
 }
 
-void yield(PCB * process){
+uint64_t yield(){
     PCB * next_pcb = next(ready_list);
     ran_counter = 0;
     if(next_pcb != NULL){
         running = next_pcb;
+        return 0;
     }
+    return 1;
 }
 
 uint64_t getPid(){

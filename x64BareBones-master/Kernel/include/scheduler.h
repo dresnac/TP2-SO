@@ -9,7 +9,7 @@ void ready(PCB *process);
 uint64_t scheduler(uint64_t current_rsp);
 void unschedule(PCB * process);
 
-void yield(PCB * process);
+uint64_t yield();
 uint64_t getPid();
 uint64_t blockArbitrary(uint64_t pid);
 uint64_t unblockArbitrary(uint64_t pid);

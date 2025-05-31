@@ -21,7 +21,7 @@ int64_t my_block(uint64_t pid) {
 }
 
 int64_t my_unblock(uint64_t pid) {
-  return 0;
+  return unblockArbitrary(pid);
 }
 
 int64_t my_sem_open(char *sem_id, uint64_t initialValue) {
@@ -41,7 +41,7 @@ int64_t my_sem_close(char *sem_id) {
 }
 
 int64_t my_yield() {
-  return 0;
+  return yield();
 }
 
 int64_t my_wait(int64_t pid) {

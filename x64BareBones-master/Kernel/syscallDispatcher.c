@@ -36,6 +36,11 @@ static void (*syscall_manager[])() = {
     test_mm,
     empty,
     do_beep,
+    empty,
+    empty,
+    my_block,
+    my_unblock,
+    yield,
     //completar
     
 };
