@@ -81,21 +81,31 @@ void unschedule(PCB * process){
 void yield(PCB * process){
     PCB * next_pcb = next(ready_list);
     ran_counter = 0;
-    running = next_pcb;
+    if(next_pcb != NULL){
+        running = next_pcb;
+    }
 }
 
 uint64_t getPid(){
     return running->pid;
 }
 
-void blockArbitrary(uint64_t pid){
+uint64_t blockArbitrary(uint64_t pid){
     PCB * process = getPcb(pid);
+    if(process == NULL){
+        return -1;
+    }
     block(process);
+    return 0;
 }
 
-void unblockArbitrary(uint64_t pid){
+uint64_t unblockArbitrary(uint64_t pid){
     PCB * process = getPcb(pid);
+    if(process == NULL){
+        return -1;
+    }
     ready(process);
+    return 0;
 }
 
 //revisar

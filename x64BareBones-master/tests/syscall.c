@@ -17,7 +17,7 @@ int64_t my_kill(uint64_t pid) {
 }
 
 int64_t my_block(uint64_t pid) {
-  return 0;
+  return blockArbitrary(pid);
 }
 
 int64_t my_unblock(uint64_t pid) {

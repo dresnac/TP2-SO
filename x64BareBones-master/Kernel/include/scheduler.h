@@ -11,8 +11,8 @@ void unschedule(PCB * process);
 
 void yield(PCB * process);
 uint64_t getPid();
-void blockArbitrary(uint64_t pid);
-void unblockArbitrary(uint64_t pid);
+uint64_t blockArbitrary(uint64_t pid);
+uint64_t unblockArbitrary(uint64_t pid);
 
 
 
