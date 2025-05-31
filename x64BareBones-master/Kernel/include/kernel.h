@@ -15,4 +15,6 @@
 
 //hace falta?
 
+MemoryManagerADT getKernelMem();
+
 #endif

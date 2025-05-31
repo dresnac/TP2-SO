@@ -1,4 +1,5 @@
 #include <process.h>
+#include <kernel.h>
 
 #define STACK_SIZE 256
 
@@ -33,7 +34,7 @@ static char ** copyArgv(uint64_t pid, char ** my_argv, uint64_t my_argc){
         return NULL;
     }
 
-    char ** resp = allocMemory(sizeof(char*) * (my_argc+1));
+    char ** resp = allocMemory(getKernelMem() ,sizeof(char*) * (my_argc+1));
 
     if(resp == NULL){
         return NULL;
@@ -41,12 +42,12 @@ static char ** copyArgv(uint64_t pid, char ** my_argv, uint64_t my_argc){
 
     for(uint64_t i=0; i < my_argc; i++){
         uint64_t len = newStrlen(my_argv[i])+1;
-        char * p = allocMemory(len);
+        char * p = allocMemory(getKernelMem(),len);
         if(p == NULL){
             for(uint64_t j=0; j<i; j++){
-                freeMemory(resp[j]);
+                freeMemory(getKernelMem(),resp[j]);
             }
-            freeMemory(resp);
+            freeMemory(getKernelMem(),resp);
             return NULL;
         }
         memcpy(p, my_argv[i], len);
@@ -69,7 +70,7 @@ int64_t newProcess(main_function rip, tPriority priority, char ** my_argv, uint6
         return -1;
     }
 
-    uint64_t rsp_malloc = (uint64_t) allocMemory(STACK_SIZE*4); //falta pasarle el mm
+    uint64_t rsp_malloc = (uint64_t) allocMemory(getKernelMem(),STACK_SIZE*4); //falta pasarle el mm
     uint64_t rsp = rsp_malloc + STACK_SIZE*4;
 
     if(rsp_malloc == NULL){
@@ -82,7 +83,7 @@ int64_t newProcess(main_function rip, tPriority priority, char ** my_argv, uint6
 
     char ** args_cpy = copyArgv(pid, my_argv, my_argc);
     if(my_argc>0 &&args_cpy == NULL){
-        freeMemory((void*)rsp_malloc);
+        freeMemory(getKernelMem(),(void*)rsp_malloc);
         pcb_array[pid].status = FREE;
         return -1;
     }

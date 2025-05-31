@@ -17,7 +17,11 @@ static void * const sampleDataModuleAddress = (void*)0x500000;
 
 static void * const heap = ( void * ) 0x600000;
 
+static MemoryManagerADT kernel_mem;
+
 typedef int (*EntryPoint)();
+
+
 
 
 void clearBSS(void * bssAddress, uint64_t bssSize)
@@ -60,11 +64,16 @@ void idleProcess(){
 	}
 }
 
+MemoryManagerADT getKernelMem()
+{
+	return kernel_mem;
+}
 
 int main()
 {	
+	MemoryManagerADT kernel_mem = createMemoryManager( heap, HEAP_SIZE);
 	load_idt();
-	createMemoryManager( heap, HEAP_SIZE);
+	
 	initializeScheduler(newProcess((main_function) idleProcess, LOW, NULL, 0));
 
 	newProcess((main_function) sampleCodeModuleAddress, HIGH, NULL, 0);

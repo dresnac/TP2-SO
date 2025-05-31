@@ -7,7 +7,7 @@
 #include <time.h>
 #include <rtc.h>
 #include <irqDispatcher.h>
-#include <test_mm.h>
+#include "../tests/test_mm.h"
 
 static int shiftFlag = 0;
 

@@ -67,7 +67,7 @@ uint64_t scheduler(uint64_t current_rsp){
         return next_pcb->rsp;
     }
     ran_counter++;
-    return current_rsp
+    return current_rsp;
 }
 
 void unschedule(PCB * process){
