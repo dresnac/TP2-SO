@@ -258,3 +258,7 @@ unsigned long getTicks(){
     sys_get_ticks(&ticks);
     return ticks;
 }
+
+void test_mm(){
+    sys_test_mm();
+}

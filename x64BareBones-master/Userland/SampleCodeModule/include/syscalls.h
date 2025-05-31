@@ -20,6 +20,8 @@ uint64_t sys_get_ticks(unsigned long * ticksBuff);
 
 uint64_t sys_beep(uint64_t frequency, uint64_t duration);
 
+uint64_t sys_test_mm(void);
+
 typedef struct {
     uint64_t rax;
     uint64_t rbx;

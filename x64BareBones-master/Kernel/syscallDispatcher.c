@@ -7,6 +7,7 @@
 #include <time.h>
 #include <rtc.h>
 #include <irqDispatcher.h>
+#include <test_mm.h>
 
 static int shiftFlag = 0;
 
@@ -32,7 +33,7 @@ static void (*syscall_manager[])() = {
     regs,
     put_rectangle,
     get_ticks,
-    empty,
+    test_mm,
     empty,
     do_beep,
     //completar
@@ -154,6 +155,7 @@ void get_ticks(pushed_registers * regs){
 void do_beep(pushed_registers * regs){
     beep(regs->rbx, regs->rcx);
 }
+
 
 //FALTA AGREGAR A LA LISTA DE SYSCALLS
 int64_t my_getpid()

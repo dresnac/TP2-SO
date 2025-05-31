@@ -10,6 +10,7 @@ GLOBAL sys_get_ticks
 GLOBAL sys_input
 GLOBAL sys_read_input
 GLOBAL sys_beep
+GLOBAL sys_test_mm
 
 section .text
 
@@ -87,5 +88,10 @@ sys_get_ticks:
 
 sys_beep:
     mov rax, 14
+    call syscall
+    ret
+
+sys_test_mm:
+    mov rax, 12
     call syscall
     ret

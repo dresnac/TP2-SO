@@ -20,6 +20,7 @@ static void zoomOut();
 static void getRegs();
 static void clear();
 static void snake();
+static void testmm();
 
 static module modules[] = {
     {"help", help},
@@ -30,7 +31,8 @@ static module modules[] = {
     {"dividebyzero", div0},
     {"opcode", opCode},
     {"clear", clear},
-    {"snake", snake}
+    {"snake", snake},
+    {"testmm", testmm}
 };
 
 
@@ -100,6 +102,7 @@ static void help(){
     printf("\topcode\n");
     printf("\tclear\n");
     printf("\tsnake\n");
+    printf("\ttestmm\n");
 }
 
 //muestra la hora actual
@@ -152,4 +155,8 @@ static void snake(){
         end = playSnake((gameMode - '0'), (level - '0'));
     }
     clear_screen();
+}
+
+static void testmm(){
+    test_mm();
 }

@@ -51,6 +51,7 @@ void change_font_size(pushed_registers * regs);
 void put_rectangle(pushed_registers * regs);
 void get_ticks(pushed_registers * regs);
 void do_beep(pushed_registers * regs);
+//void test_mm(pushed_registers * regs);
 
 void syscallDispatcher(pushed_registers * regs);
 

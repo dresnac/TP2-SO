@@ -35,5 +35,6 @@ void adjustTime(LocalTime * time);
 int64_t draw_rectangle(uint64_t x, uint64_t y, uint64_t width, uint64_t height, uint64_t color);
 unsigned long getTicks();
 char readInput();
+void test_mm();
 
 #endif
