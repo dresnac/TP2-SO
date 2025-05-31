@@ -53,7 +53,7 @@ void get_ticks(pushed_registers * regs);
 void do_beep(pushed_registers * regs);
 //void test_mm(pushed_registers * regs);
 
-void syscallDispatcher(pushed_registers * regs);
+void syscallDispatcher(stack_registers * regs);
 
 int64_t my_getpid();
 int64_t my_create_process ( main_function rip, tPriority priority, char ** my_argv, uint64_t my_argc );

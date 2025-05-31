@@ -2,6 +2,7 @@
 #include <kernel.h>
 
 
+
 extern uint8_t text;
 extern uint8_t rodata;
 extern uint8_t data;
@@ -12,8 +13,11 @@ extern uint8_t endOfKernel;
 
 static const uint64_t PageSize = 0x1000;
 
-static void * const sampleCodeModuleAddress = (void*)0x400000;
-static void * const sampleDataModuleAddress = (void*)0x500000;
+const uint64_t sampleCodeModuleAddress = 0x400000;
+const void * const sampleDataModuleAddress = (void*)0x500000;
+
+static void * const shell_code_module_address = (void *) * ( &sampleCodeModuleAddress );
+
 
 static void * const heap = ( void * ) 0x600000;
 
@@ -71,10 +75,13 @@ MemoryManagerADT getKernelMem()
 
 int main()
 {	
-	MemoryManagerADT kernel_mem = createMemoryManager( heap, HEAP_SIZE);
 	load_idt();
-	
-	initializeScheduler(newProcess((main_function) idleProcess, LOW, NULL, 0));
+	MemoryManagerADT kernel_mem = createMemoryManager( heap, HEAP_SIZE);
+	char * argv_idle[] = {"idle"};
+	char * argv_shell[] = {"sh"};
+	int64_t idle_fds[3] = {-1,-1,-1};
+	int64_t shell_fds[3] = {0, 1, 2};
+	initializeScheduler ( newProcess ( ( main_function ) shell_code_module_address, HIGH, 0, argv_shell, 1, shell_fds ), new_process ( ( main_function ) idleProcess, LOW, 0, argv_idle, 1, idle_fds ) );
 
 	newProcess((main_function) sampleCodeModuleAddress, HIGH, NULL, 0);
 	//int64_t pid = newProcess((uint64_t) rec, HIGH); /hacer la func rec

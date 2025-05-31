@@ -13,6 +13,7 @@ typedef struct PCB {
     uint64_t cant;
     int64_t ret;
     tPriority priority;
+    struct PCB * waiting_me;
 }PCB;
 
 #endif
