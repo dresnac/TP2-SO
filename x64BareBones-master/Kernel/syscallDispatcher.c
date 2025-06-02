@@ -33,7 +33,7 @@ static void (*syscall_manager[])() = {
     regs,
     put_rectangle,
     get_ticks,
-    test_mm,
+    my_test_mm,
     empty,
     do_beep,
     empty,
@@ -222,4 +222,8 @@ int64_t my_yield()
 int64_t my_wait ( int64_t pid )
 {
 	return 0;
+}
+
+void my_test_mm (stack_registers * regs){
+    test_mm(regs->rsi, regs->rdx);
 }

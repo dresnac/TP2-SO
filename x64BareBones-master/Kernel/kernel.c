@@ -16,7 +16,7 @@ static const uint64_t PageSize = 0x1000;
 const uint64_t sampleCodeModuleAddress = 0x400000;
 const void * const sampleDataModuleAddress = (void*)0x500000;
 
-static void * const shell_code_module_address = (void *) * ( &sampleCodeModuleAddress );
+static void * const shell_code_module_address = (void *) ( &sampleCodeModuleAddress );
 
 
 static void * const heap = ( void * ) 0x600000;
