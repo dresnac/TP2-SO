@@ -40,7 +40,7 @@ static void (*syscall_manager[])() = {
     empty,
     my_block,
     my_unblock,
-    yield,
+    my_yield,
     //completar
     
 };
@@ -169,9 +169,9 @@ int64_t my_getpid()
 }
 
 //FALTA AGREGAR A LA LISTA DE SYSCALLS
-int64_t my_create_process (main_function rip, tPriority priority, char ** my_argv, uint64_t my_argc)
+int64_t my_create_process (main_function rip, tPriority priority, char ** my_argv, uint64_t my_argc, int64_t fds[])
 {
-	return (int64_t) newProcess ( rip, priority, my_argv, my_argc );
+	return (int64_t) newProcess ( rip, priority, 1, my_argv, my_argc, fds);
 }
 
 int64_t my_nice ( uint64_t pid, uint64_t new_prio )

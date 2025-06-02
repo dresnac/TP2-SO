@@ -22,7 +22,7 @@ typedef struct PCB{
 //typedef enum { LOW = 0, MEDIUM, HIGH } tPriority;
 typedef int(*main_function)(char ** my_argv, uint64_t my_argc);
 
-int64_t newProcess(main_function rip, tPriority priority, char ** my_argv, uint64_t my_argc); 
+int64_t newProcess(main_function rip, tPriority priority,uint8_t killable,char ** my_argv, uint64_t my_argc, int64_t fds[]); 
 PCB * getPcb(int64_t pid);
 
 //void listProcesses();

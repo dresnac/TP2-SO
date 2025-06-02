@@ -1,4 +1,5 @@
 #include <listADT.h>
+#include <kernel.h>
 
 typedef struct node {
     elemTypePtr head;
@@ -17,7 +18,7 @@ struct listCDT{
 };
 
 listADT newList(tCompare cmp){
-    listADT aux = allocMemory(sizeof(*aux));
+    listADT aux = allocMemory(getKernelMem(),sizeof(*aux));
     if(aux == NULL){
         return NULL;
     }
@@ -45,9 +46,9 @@ void freeList(listADT list){
     for(int i=0; i<list->size; i++){
         tList aux = list->pre_next;
         list->pre_next = list->pre_next->tail;
-        freeMemory(aux);
+        freeMemory(getKernelMem(),aux);
     }
-    freeMemory(list);
+    freeMemory(getKernelMem(),list);
 }
 
 int isEmptyList(const listADT list){
@@ -66,7 +67,7 @@ int addList(listADT list, elemTypePtr elem){
         return -1;
     }
     
-    tList newNode = allocMemory(sizeof(*newNode));
+    tList newNode = allocMemory(getKernelMem(),sizeof(*newNode));
     if (newNode == NULL){
         return -1;
     }
@@ -176,7 +177,7 @@ int deleteList(listADT list, elemTypePtr elem){
         if (list->cmp(elem, list->pre_next->head) != 0){
             return -1;
         }
-        freeMemory(list->pre_next);
+        freeMemory(getKernelMem(),list->pre_next);
         list->pre_next = NULL;
         list->size = 0;
         return 0;
@@ -190,7 +191,7 @@ int deleteList(listADT list, elemTypePtr elem){
             if(list->pre_next == current){
                 list->pre_next = pre;
             }
-            freeMemory(current);
+            freeMemory(getKernelMem(),current);
             list->size--;
             return 0;
         }

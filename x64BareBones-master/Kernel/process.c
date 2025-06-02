@@ -57,7 +57,7 @@ static char ** copyArgv(uint64_t pid, char ** my_argv, uint64_t my_argc){
 }
 
 
-int64_t newProcess(main_function rip, tPriority priority, char ** my_argv, uint64_t my_argc){
+int64_t newProcess(main_function rip, tPriority priority,uint8_t killable, char ** my_argv, uint64_t my_argc, int64_t fds[]){
 
     //feo cambiar
     if(!((priority != LOW) || (priority != MEDIUM) || (priority != HIGH))){
@@ -98,6 +98,13 @@ int64_t newProcess(main_function rip, tPriority priority, char ** my_argv, uint6
     pcb_array[pid].args = args_cpy;
     pcb_array[pid].cant = my_argc;
     pcb_array[pid].priority = priority;
+    //pcb_array[pid].killable = killable;
+    pcb_array[pid].waiting_me = NULL;
+    /*
+    for(int i=0;i<3; i++){
+        pcb_array[pid].fds[i] = fds ? fds[i] : -1;
+    } */   
+    
 
     ready(&pcb_array[pid]);
     return pid;
