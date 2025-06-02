@@ -236,5 +236,5 @@ int64_t my_wait ( int64_t pid )
 }
 
 void my_test_mm (pushed_registers * regs){
-    test_mm((char**)regs->rdx, regs->rcx);
+    test_mm((char**)regs->rbx, regs->rcx);
 }
