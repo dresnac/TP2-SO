@@ -45,6 +45,8 @@ static void (*syscall_manager[])() = {
     
 };
 
+
+
 void syscallDispatcher(pushed_registers * regs){//(pushed_registers * regs){ //en realidad serían args variables
 
     syscall_manager[regs->rax](regs);
@@ -174,13 +176,13 @@ int64_t my_getpid()
 //int64_t my_create_process (main_function rip, tPriority priority, char ** my_argv, uint64_t my_argc, int64_t fds[])
 int64_t my_create_process(pushed_registers * regs)
 {
-    // main_function rip = (main_function) regs->????; 
-    // tPriority priority = (tPriority) regs->????
-    // char * argv[] = regs->???? 
-    // uint64_t argc = regs->????
-    // int64_t fds[] = regs->????
+    main_function rip = (main_function) regs->rdi; 
+    tPriority priority = (tPriority) regs->rsi;
+    //char * argv[] = (char**)regs->rdx;
+    uint64_t argc = (uint64_t)regs->rcx;
+    //int64_t fds[] = (char**)regs->r8;
 
-	return (int64_t) newProcess ( rip, priority, 1, argv, argc, fds);
+	return (int64_t) newProcess ( rip, priority, 1,(char**) regs->rdx, argc, (char**)regs->r8);
 }
 
 int64_t my_nice ( uint64_t pid, uint64_t new_prio )
@@ -234,5 +236,5 @@ int64_t my_wait ( int64_t pid )
 }
 
 void my_test_mm (pushed_registers * regs){
-    test_mm(regs->rsi, regs->rdx);
+    test_mm((char**)regs->rdx, regs->rcx);
 }

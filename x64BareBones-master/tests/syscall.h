@@ -2,7 +2,8 @@
 #include <PCB.h>
 
 int64_t my_getpid();
-int64_t my_create_process (main_function rip, tPriority priority, char ** my_argv, uint64_t my_argc, int64_t fds[]);
+//int64_t my_create_process (main_function rip, tPriority priority, char ** my_argv, uint64_t my_argc, int64_t fds[]);
+int64_t my_create_process(pushed_registers * regs);
 int64_t my_nice(uint64_t pid, uint64_t newPrio);
 int64_t my_kill(uint64_t pid);
 int64_t my_block(uint64_t pid);
