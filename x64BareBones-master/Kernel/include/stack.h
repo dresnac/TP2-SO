@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 #include <process.h>
-#include <stack_registers.h>
+#include <syscallDispatcher.h>
 
 #define GPR_QTY 15
 

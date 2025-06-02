@@ -45,7 +45,7 @@ static void (*syscall_manager[])() = {
     
 };
 
-void syscallDispatcher(stack_registers * regs){//(pushed_registers * regs){ //en realidad serían args variables
+void syscallDispatcher(pushed_registers * regs){//(pushed_registers * regs){ //en realidad serían args variables
 
     syscall_manager[regs->rax](regs);
 }
@@ -169,9 +169,18 @@ int64_t my_getpid()
 }
 
 //FALTA AGREGAR A LA LISTA DE SYSCALLS
-int64_t my_create_process (main_function rip, tPriority priority, char ** my_argv, uint64_t my_argc, int64_t fds[])
+
+
+//int64_t my_create_process (main_function rip, tPriority priority, char ** my_argv, uint64_t my_argc, int64_t fds[])
+int64_t my_create_process(pushed_registers * regs)
 {
-	return (int64_t) newProcess ( rip, priority, 1, my_argv, my_argc, fds);
+    // main_function rip = (main_function) regs->????; 
+    // tPriority priority = (tPriority) regs->????
+    // char * argv[] = regs->???? 
+    // uint64_t argc = regs->????
+    // int64_t fds[] = regs->????
+
+	return (int64_t) newProcess ( rip, priority, 1, argv, argc, fds);
 }
 
 int64_t my_nice ( uint64_t pid, uint64_t new_prio )
@@ -224,6 +233,6 @@ int64_t my_wait ( int64_t pid )
 	return 0;
 }
 
-void my_test_mm (stack_registers * regs){
+void my_test_mm (pushed_registers * regs){
     test_mm(regs->rsi, regs->rdx);
 }

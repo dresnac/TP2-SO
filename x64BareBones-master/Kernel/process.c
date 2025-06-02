@@ -70,16 +70,12 @@ int64_t newProcess(main_function rip, tPriority priority,uint8_t killable, char 
         return -1;
     }
 
-    uint64_t rsp_malloc = (uint64_t) allocMemory(getKernelMem(),STACK_SIZE*4); //falta pasarle el mm
+    uint64_t rsp_malloc = (uint64_t) allocMemory(getKernelMem(),STACK_SIZE*4);
     uint64_t rsp = rsp_malloc + STACK_SIZE*4;
 
     if(rsp_malloc == NULL){
         return -1;
     }
-    /*
-    if(rsp == STACK_SIZE*4){
-        return -1;
-    }*/
 
     char ** args_cpy = copyArgv(pid, my_argv, my_argc);
     if(my_argc>0 &&args_cpy == NULL){
