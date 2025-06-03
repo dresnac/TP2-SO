@@ -1,5 +1,5 @@
 #include <process.h>
-//#include <kernel.h>
+#include <kernel.h>
 
 PCB pcb_array[PCB_AMOUNT] = {0};
 uint64_t cant_proc = 0;
@@ -152,7 +152,7 @@ PCB * getPcb(int64_t pid){
 static int64_t setFreePid ( tPid pid )
 {
 	PCB * process = getPcb ( pid );
-	return setFreePcb ( process );
+	return 0;//setFreePcb ( process );
 }
 
 //int64_t killProcessPcb(PCB * pcb) que killProcess llame a esta

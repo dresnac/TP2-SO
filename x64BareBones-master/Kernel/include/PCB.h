@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <shared_defs.h>
+#include <drivers_info.h>
 
 
 typedef struct PCB {

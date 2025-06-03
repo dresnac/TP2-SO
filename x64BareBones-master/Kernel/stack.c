@@ -1,7 +1,7 @@
 #include <stack.h>
 
 
-void processWrapper(main_function rip, char ** my_argv, uint64_t my_argc, uint64_t pid){
+void processWrapper(main_function rip, char ** my_argv, uint64_t my_argc, tPid pid){
     int ret = rip(my_argv, my_argc);
     PCB * pcb = getPcb(pid);
     if(pcb == NULL){
@@ -13,7 +13,7 @@ void processWrapper(main_function rip, char ** my_argv, uint64_t my_argc, uint64
 }
 
 
-uint64_t loadStack(uint64_t rip, uint64_t rsp, char ** my_argv, uint64_t my_argc, uint64_t pid){
+uint64_t loadStack(uint64_t rip, uint64_t rsp, char ** my_argv, uint64_t my_argc, tPid pid){
     stack * my_stack = (stack*)(rsp-sizeof(stack));
     
     my_stack->regs.rdi = rip;

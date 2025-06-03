@@ -1,5 +1,5 @@
 #include <syscalls_kernel.h>
-#include "x64BareBones-master/Shared/include/syscalls.h"
+#include <syscalls.h>
 //resolver esto porque no anda 
 
 static int64_t sys_free_ps_wrapper (process_info_list * ps);
@@ -37,7 +37,7 @@ static sys_function syscall_table[NUM_SYSCALLS] = {
     (sys_function) sys_mem_info
 };
 
-int64_t sys_call_handler (stack_registers * regs){
+int64_t syscallDispatcher (stack_registers * regs){
     if(regs->rax >= NUM_SYSCALLS){
         return NOT_VALID_SYS_ID;
     }
@@ -89,7 +89,12 @@ int64_t sys_put_rectangle ( uint64_t x, uint64_t y, uint64_t width, uint64_t hei
     return 0; //cambiar
 }
 
-int64_t sys_get_register_snapshot(snapshot * snapshot){
+int64_t sys_ticks_sleep(uint64_t ns){
+    nano_sleep(ns);
+    return 0;
+}
+
+int64_t sys_get_register_snapshot(Snapshot * snapshot){
     //despues agregar esta logica
     /*
     if(!regs_shot_available) {
@@ -162,33 +167,58 @@ int64_t sys_block(tPid pid){
     return blockArbitrary(pid);
 }
 
+int64_t sys_unblock(tPid pid){
+    return unblockArbitrary(pid);
+}
+
 int64_t sys_yield(){
     schedulerYield();
     return 0;
 }
 
-int64_t sys_wait ( pid_t pid, int64_t * ret )
+int64_t sys_wait ( tPid pid, int64_t * ret )
 {
 	return wait ( pid, ret );
 }
 
 process_info_list * sys_ps ()
 {
-	return ps();
+	return 0; //ps();
 }
 
 static int64_t sys_free_ps_wrapper ( process_info_list * ps )
 {
-	freePs ( ps );
+	//freePs ( ps );
 	return 0;
 }
 
-int8_t sys_get_status ( pid_t pid )
+int8_t sys_get_status ( tPid pid )
 {
 	return getStatus ( pid );
 }
 
-int64_t sys_mem_info ( memory_info info[2] )
+int64_t sys_mem_info ( memoryInfo info[2] )
 {
 	return memInfo ( &info[0], getUserlandMem() ) + memInfo ( &info[1], getKernelMem() ) ;
+}
+
+static char * numToString(uint64_t num, uint64_t base) {  //creo que se puede borrar
+    static char buffer[64];
+    char * ptr = &buffer[63];
+    *ptr = '\0';
+    do {
+        *--ptr = "0123456789abcdef"[num % base];
+        num /= base;
+    } while(num != 0);
+    return ptr;
+}
+
+uint64_t read_with_params(uint64_t fd, uint16_t * buffer, uint64_t amount){
+    uint64_t i = 0;
+
+    while(i < amount && bufferHasNext()){
+        buffer[i] = getCurrent();
+        i++;
+    }
+    return i;
 }

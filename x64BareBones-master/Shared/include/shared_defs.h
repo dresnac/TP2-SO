@@ -22,11 +22,11 @@ typedef struct {
 
 typedef int64_t tPid;
 
-typedef enum { LOW = 0, MEDIUM, HIGH } priority_t;
+typedef enum { LOW = 0, MEDIUM, HIGH } tPriority;
 
 typedef struct process_info {
-	pid_t pid;
-	priority_t priority;
+	tPid pid;
+	tPriority priority;
 	uint64_t lowest_stack_address;
 	uint64_t stack_pointer;
 	uint8_t status;
@@ -39,6 +39,7 @@ typedef struct process_info_list {
 	uint64_t amount_of_processes;
 	process_info * processes;
 } process_info_list;
+
 
 typedef struct {
 	uint64_t rax;
@@ -58,7 +59,7 @@ typedef struct {
 	uint64_t r14;
 	uint64_t r15;
 	uint64_t rip;
-} snapshot;
+} Snapshot;
 
 typedef struct {
     int segundos;
@@ -73,3 +74,6 @@ typedef struct memory_info {
 	uint64_t total_size;
 	uint64_t free;
 } memoryInfo;
+
+
+#endif

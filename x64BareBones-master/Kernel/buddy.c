@@ -111,3 +111,7 @@ continue_merge:;
     newBlock->next = mm->freeLists[level];
     mm->freeLists[level] = newBlock;
 }
+
+int64_t memInfo(memoryInfo * info, MemoryManagerADT adt){
+    return 0;
+}

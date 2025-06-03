@@ -21,9 +21,6 @@ static void * const shell_code_module_address = (void *) ( &shell_code_module_ad
 static void * const shell_data_module_address = (void *) ( &shell_data_module_addr_int );
 static void * const heap = (void *) ( &heap_addr_int );
 
-
-static void * const heap = ( void * ) 0x600000;
-
 static MemoryManagerADT kernel_mem;
 static MemoryManagerADT userland_mem;
 
