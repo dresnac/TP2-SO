@@ -12,9 +12,12 @@
 #include <memoryManager.h>
 #include <scheduler.h>
 #include <process.h>
+#include <drivers_info.h>
 
 //hace falta?
 
 MemoryManagerADT getKernelMem();
+MemoryManagerADT getUserlandMem();
+int main();
 
 #endif

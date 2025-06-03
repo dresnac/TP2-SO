@@ -1,18 +1,47 @@
 #include <process.h>
 #include <kernel.h>
 
-#define STACK_SIZE 256
-
-#define PCB_AMOUNT 100
-
 PCB pcb_array[PCB_AMOUNT] = {0};
-
-PCB * running;
+uint64_t cant_proc = 0;
 
 static int64_t findFreePcb();
+static int64_t setFreePid ( tPid pid );
+//static int64_t setFreePcb ( PCB * process );
 
-static char ** copyArgv(uint64_t pid, char**argv, uint64_t argc);
+int8_t getStatus(tPid pid){
+    PCB * process = getPcb(pid);
+    if(process==NULL){
+        return -1;
+    }
+    return process->status;
+}
 
+tPid wait(tPid pid, int64_t * ret){
+    PCB * pcb_to_wait = getPcb(pid);
+    if((pcb_to_wait == NULL) || (pcb_to_wait->status == FREE) || ( pcb_to_wait->waiting_me != NULL ) || ( pid == getPid() ) ) {
+        return -1;
+    }
+    if(!(pcb_to_wait->status == ZOMBIE)){
+        PCB * running = getRunning();
+        pcb_to_wait->waiting_me = running;
+        running->waiting_for = pcb_to_wait;
+        blockCurrent();
+        running->waiting_for = NULL;
+    }
+    if(pcb_to_wait->status == ZOMBIE){
+        return -1;
+    }
+    if(ret != NULL){
+        *ret = pcb_to_wait->ret;
+    }
+    if(setFreePid(pid)!= -1){
+        cant_proc--;
+    }
+    return pid;
+}
+
+//static char ** copyArgv(uint64_t pid, char**argv, uint64_t argc);
+/* ya no va aca esta logica
 static uint64_t newStrlen( const char *str){
     const char *s = str;
     while(*s){
@@ -55,54 +84,53 @@ static char ** copyArgv(uint64_t pid, char ** my_argv, uint64_t my_argc){
     }
     return resp;
 }
-
+*/
 
 int64_t newProcess(main_function rip, tPriority priority,uint8_t killable, char ** my_argv, uint64_t my_argc, int64_t fds[]){
 
-    //feo cambiar
-    if(!((priority != LOW) || (priority != MEDIUM) || (priority != HIGH))){
-        return;
+    if(((priority != LOW) && (priority != MEDIUM) && (priority != HIGH))){
+        return -1;
     }
 
-    int64_t pid = findFreePcb();
-
+    tPid pid = findFreePcb();
     if (pid == -1){
         return -1;
     }
 
-    uint64_t rsp_malloc = (uint64_t) allocMemory(getKernelMem(),STACK_SIZE*4);
-    uint64_t rsp = rsp_malloc + STACK_SIZE*4;
+    uint64_t rsp_malloc = (uint64_t) allocMemory(getKernelMem(),STACK_SIZE);
+    uint64_t rsp = rsp_malloc + STACK_SIZE;
 
-    if(rsp_malloc == NULL){
+    if((void*)rsp_malloc == NULL){
         return -1;
     }
 
-    char ** args_cpy = copyArgv(pid, my_argv, my_argc);
+    char ** args_cpy = cpyArgv(pid, my_argv, my_argc);
     if(my_argc>0 &&args_cpy == NULL){
         freeMemory(getKernelMem(),(void*)rsp_malloc);
         pcb_array[pid].status = FREE;
         return -1;
     }
-    rsp = loadStack(rip, rsp, args_cpy, my_argc, pid);
+    rsp = loadStack((uint64_t)rip, rsp, args_cpy, my_argc, pid);
 
     
 
     pcb_array[pid].pid = pid;
-    pcb_array[pid].ppid = running->pid;
     pcb_array[pid].rsp = rsp;
     pcb_array[pid].status = READY;
     pcb_array[pid].args = args_cpy;
     pcb_array[pid].cant = my_argc;
     pcb_array[pid].priority = priority;
-    //pcb_array[pid].killable = killable;
+    pcb_array[pid].killable = killable;
     pcb_array[pid].waiting_me = NULL;
-    /*
+    pcb_array[pid].lowest_stack_address = rsp_malloc;
+    
     for(int i=0;i<3; i++){
         pcb_array[pid].fds[i] = fds ? fds[i] : -1;
-    } */   
+    }
     
 
     ready(&pcb_array[pid]);
+    cant_proc++;
     return pid;
 }
 
@@ -121,7 +149,16 @@ PCB * getPcb(int64_t pid){
     return &pcb_array[pid];
 }
 
-int64_t killProcess(int64_t pid){
+static int64_t setFreePid ( tPid pid )
+{
+	PCB * process = getPcb ( pid );
+	return 0;//setFreePcb ( process );
+}
+
+//int64_t killProcessPcb(PCB * pcb) que killProcess llame a esta
+
+//actualizar
+int64_t killProcess(tPid pid){
     if(pid >= PCB_AMOUNT || pid<0 || pcb_array[pid].status == FREE){
         return -1;
     }

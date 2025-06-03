@@ -13,7 +13,7 @@ int compareElements(elemTypePtr e1, elemTypePtr e2){
     return e1 - e2;
 }
 
-void initializeScheduler(pid_t shell_process_pid, pid_t idle_process_pid){
+void initializeScheduler(tPid shell_process_pid, tPid idle_process_pid){
     tCompare cmp = compareElements;
     ready_list = newList(cmp);
     blocked_list = newList(cmp);
@@ -82,7 +82,7 @@ void unblockWaitingMe(){
     ready(pcb->waiting_me);
 }
 
-void unblockWaitingPid ( pid_t pid )
+void unblockWaitingPid ( tPid pid )
 {
 	PCB * pcb = getPcb ( pid );
 	unblockWaitingPcb ( pcb );
@@ -166,7 +166,7 @@ uint64_t scheduler(uint64_t current_rsp){
     return current_rsp;
 }
 
-int64_t nice ( pid_t pid, uint64_t new_prio )
+int64_t nice ( tPid pid, uint64_t new_prio )
 {
 	PCB * process = getPcb ( pid );
 	if ( process == NULL || process->status == FREE ) {
