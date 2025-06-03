@@ -6,25 +6,23 @@
 #include <stdint.h>
 #include <scheduler.h>
 #include <PCB.h>
+#include <shared_libc.h>
+#include <shared_defs.h>
+#include <kernel_libc.h>
+#include <keyboardDriver.h>
+#include <kernel.h>
 
-#define FREE 0
-#define READY 1
-#define BLOCKED 2
-#define ZOMBIE 3 
+#define PCB_AMOUNT 100
 
-/*
-typedef struct PCB{
-    int64_t pid, ppid;
-    uint64_t rsp;
-    uint8_t status;
-}PCB; */
 
-//typedef enum { LOW = 0, MEDIUM, HIGH } tPriority;
-typedef int(*main_function)(char ** my_argv, uint64_t my_argc);
+typedef int(*main_function)(char ** my_argv, uint64_t my_argc); //creo que se puede sacar
 
 int64_t newProcess(main_function rip, tPriority priority,uint8_t killable,char ** my_argv, uint64_t my_argc, int64_t fds[]); 
-PCB * getPcb(int64_t pid);
+PCB * getPcb(tPid pid);
+void listProcesses();
+int64_t killProcess(tPid pid);
+tPid wait (tPid pid, int64_t * ret);
+int8_t getStatus(tPid pid);
 
-//void listProcesses();
 
 #endif

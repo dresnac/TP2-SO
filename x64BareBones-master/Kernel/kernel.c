@@ -13,15 +13,19 @@ extern uint8_t endOfKernel;
 
 static const uint64_t PageSize = 0x1000;
 
-const uint64_t sampleCodeModuleAddress = 0x400000;
-const void * const sampleDataModuleAddress = (void*)0x500000;
+const uint64_t shell_code_module_addr_int = 0x400000;
+const uint64_t shell_data_module_addr_int = 0x500000;
+const uint64_t heap_addr_int = 0x600000;
 
-static void * const shell_code_module_address = (void *) ( &sampleCodeModuleAddress );
+static void * const shell_code_module_address = (void *) ( &shell_code_module_addr_int );
+static void * const shell_data_module_address = (void *) ( &shell_data_module_addr_int );
+static void * const heap = (void *) ( &heap_addr_int );
 
 
 static void * const heap = ( void * ) 0x600000;
 
 static MemoryManagerADT kernel_mem;
+static MemoryManagerADT userland_mem;
 
 typedef int (*EntryPoint)();
 
@@ -46,8 +50,8 @@ void * initializeKernelBinary()
 {
 	char buffer[10];
 	void * moduleAddresses[] = {
-		sampleCodeModuleAddress,
-		sampleDataModuleAddress
+		shell_code_module_address,
+		shell_data_module_address
 	};
 
 	loadModules(&endOfKernelBinary, moduleAddresses);
@@ -56,11 +60,7 @@ void * initializeKernelBinary()
 
 	return getStackBase();
 }
-/*
-void writeArg(char ** my_argv, uint64_t my_argc){
-	if(my_argc != 1) return;
-	//inc
-}*/
+
 
 void idleProcess(){
 	while(1){
@@ -72,20 +72,28 @@ MemoryManagerADT getKernelMem()
 {
 	return kernel_mem;
 }
+MemoryManagerADT getUserlandMem()
+{
+	return userland_mem;
+}
 
 int main()
 {	
 	load_idt();
-	MemoryManagerADT kernel_mem = createMemoryManager( heap, HEAP_SIZE);
+	kernel_mem = createMemoryManager( heap, HEAP_SIZE);
+	userland_mem = createMemoryManager (heap, heap + HEAP_SIZE); //chequear
+{
+	return kernel_mem;
+}
 	char * argv_idle[] = {"idle"};
 	char * argv_shell[] = {"sh"};
 	int64_t idle_fds[3] = {-1,-1,-1};
-	int64_t shell_fds[3] = {0, 1, 2};
+	int64_t shell_fds[3] = {STDOUT, STDERR, STDIN};
 	initializeScheduler ( newProcess ( ( main_function ) shell_code_module_address, HIGH, 0, argv_shell, 1, shell_fds ), newProcess ( ( main_function ) idleProcess, LOW, 0, argv_idle, 1, idle_fds ) );
 
-	newProcess((main_function) sampleCodeModuleAddress,0, HIGH, NULL, 0, NULL);
+	//newProcess((main_function) sampleCodeModuleAddress,0, HIGH, NULL, 0, NULL);
 	//int64_t pid = newProcess((uint64_t) rec, HIGH); /hacer la func rec
-	__asm__("int $0x20");
+	//__asm__("int $0x20"); 
 	return 0;
 }
 

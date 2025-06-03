@@ -16,5 +16,7 @@
 //hace falta?
 
 MemoryManagerADT getKernelMem();
+MemoryManagerADT getUserlandMem();
+int main();
 
 #endif
