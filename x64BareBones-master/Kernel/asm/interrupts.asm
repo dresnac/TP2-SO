@@ -67,6 +67,33 @@ SECTION .text
 	pop rax
 %endmacro
 
+%macro pushStateMinusRax 0
+    pop r15
+    pop r14
+    pop r13
+    pop r12
+    pop r11
+    pop r10
+    pop r9
+    pop r8
+    pop rdi
+    pop rsi
+
+%endmacro
+
+%macro popStateMinusRax 0
+    pop r15
+    pop r14
+    pop r13
+    pop r12
+    pop r11
+    pop r10
+    pop r9
+    pop r8
+    pop rdi
+    pop rsi
+%endmacro
+
 %macro irqHandlerMaster 1
 	pushState
 
@@ -213,11 +240,18 @@ _irq05Handler:
 _irq80Handler:
 	
 	pushState
-	mov rdi, rsp	; params
+	mov rdi, rsp ; Pasaje de Registros
 	call syscallDispatcher
-	;add rsp, 8
-	popState
-	iretq
+	popStateMinusRax
+	add rsp, 8 ; Restore the stack pointer
+	iretq		
+
+	;;Versión vieja de _irq80Handler			
+	; pushState
+	; mov rdi, rsp	; params
+	; call syscallDispatcher
+	; popState
+	; iretq
 
 
 %macro exceptionHandler 1
