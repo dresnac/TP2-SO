@@ -14,84 +14,157 @@ GLOBAL sys_test_mm
 
 section .text
 
-;Mi problema ahora es que si llamo a sys_write con 3 argumentos en vez de 4, me quedan los registros de pasaje de args corridos
-;Por eso modifique el syscall
-;Ahora rax se asigna en las syscalls específicas, y al llamar a la syscall general me quedan:
-;rdi en realidad contiene lo que va en rbx, rsi lo de rcx y rdx lo de rdx (por eso no le asigno nada) 
-syscall:
-
+%macro pushState 0
+    push rax
     push rbx
-    mov rbx, rdi
-    mov rcx, rsi
-    int 80h
+    push rcx
+    push rdx
+    push rsi
+    push rdi
+    push r8
+    push r9
+    push r10
+    push r11
+    push r12
+    push r13
+    push r14
+    push r15
+%endmacro
+
+%macro popState 0
+    pop r15
+    pop r14
+    pop r13
+    pop r12
+    pop r11
+    pop r10
+    pop r9
+    pop r8
+    pop rdi
+    pop rsi
+    pop rdx
+    pop rcx
     pop rbx
+    pop rax
+%endmacro
+
+%macro pushStateMinusRax 0
+    pop r15
+    pop r14
+    pop r13
+    pop r12
+    pop r11
+    pop r10
+    pop r9
+    pop r8
+    pop rdi
+    pop rsi
+
+%endmacro
+
+%macro popStateMinusRax 0
+    pop r15
+    pop r14
+    pop r13
+    pop r12
+    pop r11
+    pop r10
+    pop r9
+    pop r8
+    pop rdi
+    pop rsi
+%endmacro
+
+%macro sys_interrupt 1
+        mov rax, %1
+        int 80h
+%endmacro
+
+;syscall:
+
+;    push rbx
+;    mov rbx, rdi
+;    mov rcx, rsi
+;    int 80h
+;    pop rbx
+;    ret
+
+%macro syscall 1
+    push rbp
+    mov rbp, rsp
+    mov rax, %1
+    int 80h
+    mov rsp, rbp
+    pop rbp
     ret
+%endmacro
 
 
 sys_read:
-    mov rax, 3
-    mov r10, rcx
-    call syscall
+    syscall 0
+    ;mov rax, 3
+    ;mov r10, rcx
+    ;call syscall
 
-    ret
+    ;ret
 
 sys_write:
+    syscall 1
+    ;mov rax, 4
+    ;call syscall
     
-    mov rax, 4
-    call syscall
-    
-    ret
+    ;ret
 
 
 sys_clear_screen:
-
-    mov rax, 5
-    call syscall
+    syscall 2
+    ;mov rax, 5
+    ;call syscall
   
     ret
 
 sys_zoom:
-    mov rax, 7
-    call syscall
+    ;mov rax, 7
+    ;call syscall
     
     ret
 
 sys_time:
 
-    mov rax, 8
-    call syscall
+    ;mov rax, 8
+    ;call syscall
   
-    ret
+    ;ret
 
 sys_get_regs:
 
-    mov rax, 9
-    call syscall
+    ;mov rax, 9
+    ;call syscall
 
     ret
 
 sys_put_rectangle:
 
-    push r10
-    mov rax, 10
-    mov r10, rcx
-    call syscall
-    pop r10
+    ;push r10
+    ;mov rax, 10
+    ;mov r10, rcx
+    ;call syscall
+    ;pop r10
 
     ret
 
 sys_get_ticks:
 
-    mov rax, 11
-    call syscall
+    ;mov rax, 11
+    ;call syscall
     ret
 
 sys_beep:
-    mov rax, 14
-    call syscall
+    ;mov rax, 14
+    ;call syscall
     ret
 
 sys_test_mm:
-    mov rax, 12
-    call syscall
+    ;mov rax, 12
+    ;call syscall
     ret

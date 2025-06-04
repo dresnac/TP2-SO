@@ -13,10 +13,10 @@ typedef uint64_t (*sys_function) (uint64_t, uint64_t, uint64_t, uint64_t, uint64
 static sys_function syscall_table[NUM_SYSCALLS] = {
     (sys_function) sys_read,
     (sys_function) sys_write,
+    (sys_function) sys_clear_screen,
     (sys_function) sys_get_register_snapshot,
     (sys_function) sys_beep,
     (sys_function) sys_set_font_size,
-    (sys_function) sys_clear_screen,
     (sys_function) sys_put_rectangle,
     (sys_function) sys_ticks_sleep,
     (sys_function) sys_get_time,
@@ -69,6 +69,7 @@ int64_t sys_read (uint8_t * buffer, uint64_t amount){
 int64_t sys_write(uint64_t fd, uint8_t * buffer, uint64_t amount){
     uint32_t colorByFD[] = { 0, 0x00FFFFFF, 0x00FF0000, 0x0000FF00 };
     vdPrint(buffer, amount, colorByFD[fd]);
+    return 0;
 }
 
 int64_t sys_set_font_size ( uint64_t size )

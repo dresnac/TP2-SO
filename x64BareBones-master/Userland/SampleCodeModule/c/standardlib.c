@@ -5,14 +5,16 @@ char getChar(){
     char c;
     int flag = 0;
     while(flag == 0 || c > 255){
-        sys_read(STDIN, &c, 1, &flag);
+        //sys_read(STDIN, &c, 1, &flag);
+        sys_read(&c,1);
     }
     return c;
 }
 
 char readInput(int * flag){
     char c;
-    sys_read(STDIN, &c, 1, flag);
+    //sys_read(STDIN, &c, 1, flag);
+    sys_read(&c,1);
     return c;
 }
 

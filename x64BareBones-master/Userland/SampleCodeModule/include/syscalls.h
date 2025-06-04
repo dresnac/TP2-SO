@@ -4,7 +4,9 @@
 #include <stdint.h>
 #include <localtime.h>
 
-uint64_t sys_read(uint64_t fd, char * buffer, uint64_t count, int * flag);
+//uint64_t sys_read(uint64_t fd, char * buffer, uint64_t count, int * flag);
+
+uint64_t sys_read(uint64_t * buffer, uint64_t amount);
 
 uint64_t sys_write(uint64_t fd, const char * buffer, uint64_t count);
 

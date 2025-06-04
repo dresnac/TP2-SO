@@ -37,7 +37,7 @@ static module modules[] = {
 
 
 void startShell(){
-
+    puts("LO VIEJO NO FUNCIONA NAUJ\n");
     char commandBuff[MAX_CHARS] = {0};
     int i=0;
     int newPrompt;
