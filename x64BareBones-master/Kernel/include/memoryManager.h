@@ -18,7 +18,7 @@ void *allocMemory(uint64_t size,  MemoryManagerADT mem );
 //libera bloque de mem. Se le pasa admin de mem y bloque a liberar
 void freeMemory(void * p, MemoryManagerADT mem);
 
-int64_t memInfo(memoryInfo * info, MemoryManagerADT adt);
+int64_t memInfo(memoryInfo * info, MemoryManagerADT mem);
 
 #define BLOCK_SIZE 0x1000                       // 4k
 #define HEAP_SIZE 0x1000000                     // 16MB

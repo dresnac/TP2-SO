@@ -1,4 +1,4 @@
-//#ifdef BUDDY
+#ifdef BUDDY
 #include <memoryManager.h>
 
 #define GET_SIBLING(i) (((i) % 2) ? ((i) + 1) : ((i) - 1))
@@ -169,4 +169,4 @@ static int getBlock ( int index ){
 }
 
 
-//#endif
+#endif
