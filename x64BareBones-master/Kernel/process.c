@@ -124,7 +124,7 @@ int64_t newProcess(main_function rip, tPriority priority,uint8_t killable, char 
     pcb_array[pid].killable = killable;
     pcb_array[pid].waiting_me = NULL;
     pcb_array[pid].lowest_stack_address = rsp_malloc;
-    //aca falta algo
+    //aca s
     
     for(int i=0;i<3; i++){
         pcb_array[pid].fds[i] = fds ? fds[i] : -1;
@@ -133,7 +133,7 @@ int64_t newProcess(main_function rip, tPriority priority,uint8_t killable, char 
     if (setupPipe(pid, fds) == -1){
         freeMemory(getKernelMem(), (void*) rsp_malloc);
         for(uint64_t i=0; i<pcb_array[pid].cant; i++){
-            freeMemory(getKernelMem(), (void*) pcb_array[pid].args);
+            freeMemory(getKernelMem(), (void*) pcb_array[pid].args[i]);
         }
         freeMemory(getKernelMem(), (void*) pcb_array[pid].args);
         pcb_array[pid].status = FREE;
@@ -153,6 +153,25 @@ static int64_t findFreePcb(){
     return to_return;
 }
 
+static int64_t setupPipe(tPid pid, int64_t fds[]){
+    if(!fds){
+        return 0;
+    }
+    for (int i=0; i<CANT_FDS; i++){
+        if( fds[i]<= MAX_COMMON_FD){
+            continue;
+        }
+        tPideMode mode = i == STDIN ? READER : WRITER;
+        if (pipeOpenPid(fds[i]-3, mode, pid) == -1){
+            for(int j=0; j < i; j++){
+                pipeClose(fds[i]-3,pid);
+            }
+            return -1;
+        }
+    }
+    return 0;
+}
+
 PCB * getPcb(int64_t pid){
     if(pid >= PCB_AMOUNT || pid < 0){
         return NULL;
@@ -160,19 +179,158 @@ PCB * getPcb(int64_t pid){
     return &pcb_array[pid];
 }
 
+static int64_t setFreePcb (PCB * process){
+    if(process == NULL || process->status == FREE){
+        return -1;
+    }
+    closeFds(process);
+    freeMemory(getKernelMem(), (void*)process->lowest_stack_address);
+    if(process->args == NULL){
+        process->status = FREE;
+        return 0;
+    }
+    for(uint64_t i=0; i<process->cant; i++){
+        freeMemory(getKernelMem(),(void *) process->args[i]);
+    }
+    freeMemory(getKernelMem(),(void *) process->args);
+    process->status = FREE;
+    return 0;
+}
+
 static int64_t setFreePid ( tPid pid )
 {
 	PCB * process = getPcb ( pid );
-	return 0;//setFreePcb ( process );
+	return setFreePcb ( process );
 }
 
-//int64_t killProcessPcb(PCB * pcb) que killProcess llame a esta
-
-//actualizar
-int64_t killProcess(tPid pid){
-    if(pid >= PCB_AMOUNT || pid<0 || pcb_array[pid].status == FREE){
+int64_t killProcessPcb(PCB * pcb){
+    if((pcb == NULL) || (pcb->status == FREE) || (!pcb->killable)){
         return -1;
     }
-    unschedule(&pcb_array[pid]);
-    pcb_array[pid].status = ZOMBIE;
+    unschedule(pcb);
+    unblockWaitingPcb(pcb);
+    if(pcb->waiting_for && pcb->waiting_for->waiting_me){ //feo
+        pcb->waiting_for->waiting_me = NULL;
+    }
+    if(getKeyboardBlocked() == pcb){
+        setKeyboardBlockedNull();
+    }
+    if(pcb->time != 0 || pcb->start != 0){
+        unsleepKill(pcb);
+    }
+    
+    //aca s
+    if(pcb == getRunning()){
+        setRunningNull();
+        timer_tick();   //chequear
+    }
+    return 0;
 }
+
+
+int64_t killProcess(tPid pid){
+    PCB * pcb = getPcb(pid);
+    return killProcessPcb(pcb);
+}
+
+static int64_t isForeground(PCB * pcb){
+    if(pcb == NULL){
+        return 0;
+    }
+    PCB * shell_pcb = getShellPcb();
+    if(shell_pcb == NULL){
+        return 0;
+    }
+    PCB * fore1 = shell_pcb->waiting_for;
+    if(fore1 == NULL){ //se pueden juntar??
+        if(pcb == shell_pcb){
+            return 1;
+        }
+        return 0;
+    }
+    if(fore1 == pcb){
+        return 1;
+    }
+
+    PCB * fore2 = NULL;
+    if (fore1->fds[STDIN] > MAX_COMMON_FD){
+        fore2 = getPcb(pipeGetPid(fore1->fds[STDIN-3],WRITER));
+    }
+    if(fore2 != NULL && fore2 == pcb){
+        return 1;
+    }
+    return 0;
+}
+
+void getProcessInfo(PCB * pcb, process_info * process){
+    process->name = newStrCpy(pcb->args != NULL ? pcb->args[0] : NULL);
+    process->pid = pcb->pid;
+    process->stack_pointer = pcb->rsp;
+    process->lowest_stack_address = pcb->lowest_stack_address;
+    process->status = pcb->status;
+    process->is_background = !isForeground(pcb);
+    for(int i=0;i<3, i++){
+        process->fds[i] = pcb->fds[i] ? pcb->fds[i] : -1;
+    }
+}
+
+process_info_list * ps(){
+    process_info_list * process_list = allocMemory(getKernelMem(),sizeof(process_info_list));
+    if(process_list == NULL){
+        return NULL;
+    }
+    process_list->amount_of_processes = cant_proc;
+    process_info * processes = allocMemory(getKernelMem(),cant_proc*sizeof(process_info));
+    if(processes == NULL){
+        freeMemory(getKernelMem(),(void*)process_list);
+        return NULL;
+    }
+
+    for(int i=0, found=0; i<PCB_AMOUNT && found <cant_proc; i++){
+        if(pcb_array[i].status != FREE){
+            getProcessInfo(&pcb_array[i], &processes[found]);
+            found++;
+        }
+    }
+    process_list->processes = processes;
+    return process_list;
+}
+
+void freePs(process_info_list * ps){
+    if(ps == NULL || ps->processes == NULL){
+        return;
+    }
+    for( int i=0; i< ps->amount_of_processes; i++){
+        if(ps->processes[i].name){
+            freeMemory(getKernelMem(),ps->processes[i].name);
+        }
+    }
+    freeMemory(getKernelMem(), ps->processes);
+    freeMemory(getKernelMem(),ps);
+}
+
+void closeFds(PCB * pcb){
+    if (pcb == NULL){
+        return;
+    }
+    for ( int i = 0; i < CANT_FDS ; i++ ) {
+		if ( pcb->fds[i] > MAX_COMMON_FD ) {
+			pipeClose ( pcb->fds[i] - CANT_FDS, pcb->pid );
+		}
+	}
+}
+
+int64_t makeMeZombie (int64_t ret){
+    PCB * pcb = getRunning();
+    if((pcb==NULL) || (pcb->status == FREE)){
+        return -1;
+    }
+    pcb->ret = ret;
+    unschedule(pcb);
+    pcb->status = ZOMBIE;
+    unblockWaitingMe();
+    closeFds(pcb);
+    return 0;
+}
+
+//aca
