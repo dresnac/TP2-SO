@@ -1,12 +1,13 @@
 #include <process.h>
-#include <kernel.h>
+
 
 PCB pcb_array[PCB_AMOUNT] = {0};
 uint64_t cant_proc = 0;
 
 static int64_t findFreePcb();
 static int64_t setFreePid ( tPid pid );
-//static int64_t setFreePcb ( PCB * process );
+static int64_t setFreePcb ( PCB * process );
+static int64_t setupPipe (tPid pid, int64_t  fds[]);
 
 int8_t getStatus(tPid pid){
     PCB * process = getPcb(pid);
@@ -123,11 +124,21 @@ int64_t newProcess(main_function rip, tPriority priority,uint8_t killable, char 
     pcb_array[pid].killable = killable;
     pcb_array[pid].waiting_me = NULL;
     pcb_array[pid].lowest_stack_address = rsp_malloc;
+    //aca falta algo
     
     for(int i=0;i<3; i++){
         pcb_array[pid].fds[i] = fds ? fds[i] : -1;
     }
     
+    if (setupPipe(pid, fds) == -1){
+        freeMemory(getKernelMem(), (void*) rsp_malloc);
+        for(uint64_t i=0; i<pcb_array[pid].cant; i++){
+            freeMemory(getKernelMem(), (void*) pcb_array[pid].args);
+        }
+        freeMemory(getKernelMem(), (void*) pcb_array[pid].args);
+        pcb_array[pid].status = FREE;
+        return -1;
+    }
 
     ready(&pcb_array[pid]);
     cant_proc++;
