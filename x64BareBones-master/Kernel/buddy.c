@@ -1,6 +1,29 @@
-#include "../include/memoryManager.h"
-#include <stdint.h>
-#include <string.h>
+//#ifdef BUDDY
+#include <memoryManager.h>
+
+#define GET_SIBLING(i) (((i) % 2) ? ((i) + 1) : ((i) - 1))
+#define GET_PARENT(i) (((i) - 1) / 2)
+
+#define MAX_MEM_SIZE HEAP_SIZE
+#define MIN_BLOCK_SIZE BLOCK_SIZE
+
+
+#define TREE_BIT_MAP_SIZE (((MAX_MEM_SIZE / MIN_BLOCK_SIZE)) * 2)
+
+
+static int next_power_of_2 ( int n );
+static int get_index_level ( int index );
+static int get_size_level ( int size );
+static int get_block_from_index ( int index );
+static void my_free_idx ( int index, int * flag, int n, MemoryManagerADT mem );
+static void *my_alloc ( int index, int level, MemoryManagerADT mem );
+
+
+typedef struct {
+	void *start;
+	char tree_bitmap[TREE_BIT_MAP_SIZE];
+	uint64_t free_mem;
+} MemoryManagerCDT;
 
 #define LEVELS 13  // log2(HEAP_SIZE / BLOCK_SIZE) + 1
 
@@ -8,10 +31,6 @@ typedef struct Block {
     struct Block *next;
 } Block;
 
-typedef struct MemoryManagerCDT {
-    uint8_t *base;
-    Block *freeLists[LEVELS]; // Array de listas libres por nivel
-} MemoryManagerCDT;
 
 static int getLevel(size_t size) {
     size_t s = BLOCK_SIZE;
@@ -27,91 +46,80 @@ static size_t levelSize(int level) {
     return BLOCK_SIZE << level;
 }
 
-MemoryManagerADT createMemoryManager(void *const restrict metadata, void *const restrict heapBase) {
-    MemoryManagerADT mm = (MemoryManagerADT)metadata;
-    mm->base = (uint8_t *)heapBase;
+MemoryManagerADT createMemoryManager(void * p) {
 
-    for (int i = 0; i < LEVELS; i++)
-        mm->freeLists[i] = NULL;
+    MemoryManagerCDT * aux = ( MemoryManagerCDT * ) p;
 
-    //inicia en el nivel mas alto
-    mm->freeLists[LEVELS - 1] = (Block *)mm->base;
-    mm->freeLists[LEVELS - 1]->next = NULL;
+	aux->start = ( void * ) ( ( char * ) p );
 
-    return mm;
+	for ( int i = 0; i < TREE_BIT_MAP_SIZE; i++ ) {
+		aux->tree_bitmap[i] = 0;
+	}
+	aux->free_mem = MAX_MEM_SIZE;
+	MemoryManagerADT ans = allocMemory ( sizeof ( *aux ), ( MemoryManagerADT ) aux );
+	return ans;
+
 }
 
-void *allocMemory(MemoryManagerADT const restrict mm, const size_t size) {
-    int level = getLevel(size);
+void * allocMemory( uint64_t size,  MemoryManagerADT mem ) {
+    MemoryManagerCDT * aux = ( MemoryManagerCDT * ) mem;
+	if( aux == NULL ){
+		return NULL;
+	}
+	int npo2 = next_power_of_2 ( size );
+	int real_size = npo2 >= MIN_BLOCK_SIZE ? npo2 : MIN_BLOCK_SIZE;
+	int level = get_size_level ( real_size );
 
-    int i = level;
-    while (i < LEVELS && mm->freeLists[i] == NULL)
-        i++;
+	void * ptr = allocMemory ( 0, level, mem );  //
+	if ( ptr != NULL ) {
+		aux->free_mem -= real_size;
+	}
 
-    if (i == LEVELS)
-        return NULL;
-
-    while (i > level) {
-        Block *block = mm->freeLists[i];
-        mm->freeLists[i] = block->next;
-
-        size_t halfSize = levelSize(i - 1);
-        Block *buddy = (Block *)((uint8_t *)block + halfSize);
-        buddy->next = NULL;
-
-        mm->freeLists[i - 1] = block;
-        block->next = buddy;
-        i--;
-    }
-
-    Block *result = mm->freeLists[level];
-    mm->freeLists[level] = result->next;
-    return (void *)result;
+	return ptr;
 }
 
 static int getBuddyIndex(uint8_t *base, void *addr, size_t size) {
     return ((uintptr_t)addr - (uintptr_t)base) / size;
 }
 
-void freeMemory(MemoryManagerADT const restrict mm, void *const restrict ptr) {
-    uint8_t *addr = (uint8_t *)ptr;
-    int level = 0;
-    size_t size = BLOCK_SIZE;
+void freeMemory( void * p, MemoryManagerADT mem ) {
+    MemoryManagerCDT * aux = ( MemoryManagerCDT * ) mem;
+	if( aux == NULL ){
+		return;
+	}
+	if ( ( p - aux->start ) % MIN_BLOCK_SIZE != 0 ) {
+		return;
+	}
 
-    while (level < LEVELS) {
-        size_t offset = (uintptr_t)addr - (uintptr_t)mm->base;
-        if (offset % (size << 1) != 0)
-            break;
-        level++;
-        size <<= 1;
-    }
-
-    while (level < LEVELS - 1) {
-        size_t buddyOffset = ((uintptr_t)addr - (uintptr_t)mm->base) ^ size;
-        uint8_t *buddy = mm->base + buddyOffset;
-
-        Block **prev = &mm->freeLists[level];
-        Block *curr = mm->freeLists[level];
-        while (curr != NULL) {
-            if ((uint8_t *)curr == buddy) {
-                *prev = curr->next;
-                if (addr > buddy) addr = buddy;
-                level++;
-                size <<= 1;
-                goto continue_merge;
-            }
-            prev = &curr->next;
-            curr = curr->next;
-        }
-        break;
-continue_merge:;
-    }
-
-    Block *newBlock = (Block *)addr;
-    newBlock->next = mm->freeLists[level];
-    mm->freeLists[level] = newBlock;
+	int index = ( ( p - aux->start ) / MIN_BLOCK_SIZE ) + MAX_MEM_SIZE / MIN_BLOCK_SIZE - 1; // we aux->start with the block of maximum granularity
+	int flag = 0;
+	int n = 1;
+	freeIndex ( index, &flag, n, mem ); //
 }
+
 
 int64_t memInfo(memoryInfo * info, MemoryManagerADT adt){
-    return 0;
+    MemoryManagerCDT * aux = ( MemoryManagerCDT * ) mem;
+	if ( info == NULL || aux == NULL ) {
+		return -1;
+	}
+	info->total_size = MAX_MEM_SIZE;
+	info->free = aux->free_mem;
+	return 0;
 }
+
+
+static int next_power_of_2 ( int n )
+{
+	int count = 0;
+	if ( n && ! ( n & ( n - 1 ) ) )
+		return n;
+	while ( n != 0 ) {
+		n >>= 1;
+		count += 1;
+	}
+	return 1 << count;
+}
+
+
+//#endif
