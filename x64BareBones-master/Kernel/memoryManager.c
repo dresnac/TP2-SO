@@ -1,20 +1,37 @@
-// #include "../include/memoryManager.h"
+//#ifdef MEM_MANAGER
+#include <memoryManager.h>
 
-// typedef struct MemoryManagerCDT {
-// 	char *nextAddress;
-// } MemoryManagerCDT;
+#define BLOCK_COUNT ((HEAP_SIZE) / BLOCK_SIZE)
 
-// MemoryManagerADT createMemoryManager(void *const restrict memoryForMemoryManager, void *const restrict managedMemory) {
-// 	MemoryManagerADT memoryManager = (MemoryManagerADT) memoryForMemoryManager;
-// 	memoryManager->nextAddress = managedMemory;
+typedef struct {
+	void *start;
+	int64_t current;
+	void *free_ptrs[BLOCK_COUNT];
+} MemoryManagerCDT;
 
-// 	return memoryManager;
-// }
+MemoryManagerADT createMemoryManager(void * p) {
+	MemoryManagerCDT * aux = ( MemoryManagerCDT * ) p;
 
-// void *allocMemory(MemoryManagerADT const restrict memoryManager, const size_t memoryToAllocate) {
-// 	char *allocation = memoryManager->nextAddress;
+	for ( int i = 0; i < BLOCK_COUNT; i++ ) {
+		aux->free_ptrs[i] = ( void * ) ( ( char * ) p + i * BLOCK_SIZE );
+	}
 
-// 	memoryManager->nextAddress += memoryToAllocate;
+	aux->start = ( void * ) ( ( char * ) p );
+	aux->current = 0;
+	for ( int i = 0; i <= ( sizeof ( MemoryManagerCDT ) / BLOCK_SIZE ); i++ ) {
+		allocMemory ( 1, ( MemoryManagerADT ) aux );														//reserves the space for the CDT
+	}
 
-// 	return (void *) allocation;
-// }
+	return ( MemoryManagerADT ) aux;
+}
+
+void *allocMemory(uint64_t size,  MemoryManagerADT mem ) {
+    MemoryManagerCDT * aux = mem;
+	char *allocation = aux->current;
+
+	aux->current += size;
+
+	return (void *) allocation;
+}
+
+//#endif
