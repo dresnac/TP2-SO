@@ -77,11 +77,9 @@ MemoryManagerADT getUserlandMem()
 int main()
 {	
 	load_idt();
-	kernel_mem = createMemoryManager( heap, HEAP_SIZE);
-	userland_mem = createMemoryManager (heap, heap + HEAP_SIZE); //chequear
-{
-	return kernel_mem;
-}
+	kernel_mem = createMemoryManager( heap);
+	userland_mem = createMemoryManager (heap + HEAP_SIZE);
+	// vdPrint("hola", 4, 0x00000000);
 	char * argv_idle[] = {"idle"};
 	char * argv_shell[] = {"sh"};
 	int64_t idle_fds[3] = {-1,-1,-1};

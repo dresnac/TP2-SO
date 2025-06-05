@@ -13,6 +13,7 @@
 #include <scheduler.h>
 #include <process.h>
 #include <drivers_info.h>
+#include <videoDriver.h>
 
 //hace falta?
 
