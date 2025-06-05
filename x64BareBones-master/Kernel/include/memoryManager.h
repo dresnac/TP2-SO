@@ -10,13 +10,13 @@
 typedef struct MemoryManagerCDT *MemoryManagerADT;
 
 //crea admin de mem
-MemoryManagerADT createMemoryManager(void *const restrict memoryForMemoryManager, void *const restrict managedMemory);
+MemoryManagerADT createMemoryManager(void * p);
 
 //asignar bloque de mem
-void *allocMemory(MemoryManagerADT const restrict memoryManager, const size_t memoryToAllocate);
+void *allocMemory(uint64_t size,  MemoryManagerADT mem );
 
 //libera bloque de mem. Se le pasa admin de mem y bloque a liberar
-void freeMemory(MemoryManagerADT const restrict memoryManager, void *const restrict ptr);
+void freeMemory(void * p, MemoryManagerADT mem);
 
 int64_t memInfo(memoryInfo * info, MemoryManagerADT adt);
 
