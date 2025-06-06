@@ -1,15 +1,11 @@
 GLOBAL cpuVendor
 GLOBAL getKey
 GLOBAL rtc
-GLOBAL hlt
 GLOBAL inb
 GLOBAL outb
-; GLOBAL timer_tick
 GLOBAL acquire
 GLOBAL release
 
-GLOBAL Hours
-GLOBAL Mins
 
 section .text
 
@@ -84,25 +80,18 @@ outb:
 	pop rbp
 	ret
 
-hlt:
-	sti
-	hlt
-	ret
 
 getKey:
-    mov rax, 0
-.cicle: 
-    in al, 64h
-    and al, 0x01
-    je .cicle
+    push rbp
+    mov rbp, rsp
+
     in al, 60h
 
+    leave
     ret
 
-; timer_tick:
+
+;timer_tick:
 ; 	int 0x20
 ; 	ret
 
-section .rodata
-
-buffer db "Jorge"

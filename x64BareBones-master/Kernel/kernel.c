@@ -79,7 +79,7 @@ int main()
 	load_idt();
 	kernel_mem = createMemoryManager( heap);
 	userland_mem = createMemoryManager (heap + HEAP_SIZE);
-	// vdPrint("hola", 4, 0x00000000);
+	//vdriver_text_write(STDOUT,"hola", 4);
 	char * argv_idle[] = {"idle"};
 	char * argv_shell[] = {"sh"};
 	int64_t idle_fds[3] = {-1,-1,-1};

@@ -8,7 +8,6 @@ extern uint8_t getKey();
  * Buffer --> es "circular". Si se llena, pisa lo que primero se puso.
  */
 
-
 static uint16_t buffer[BUFFER_SIZE];
 static uint64_t buffer_dim = 0;
 static uint64_t buffer_current = 0;

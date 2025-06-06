@@ -1,6 +1,6 @@
 #include <time.h>
 //#include <lib.h>
-
+extern void _hlt();
 static unsigned long ticks = 0;
 static ordered_list_adt sleeping_list;
 
@@ -21,11 +21,18 @@ int secondsElapsed() {
 	return ticks / 18;
 }
 
-void nano_sleep(int time){
-	int start = ticks;
-	while(ticks - start < time){
-		hlt();
+int64_t nano_sleep ( int time )
+{
+	PCB * pcb  = getRunning();
+	pcb->start = ticks;
+	pcb->time = time;
+	if ( addOrderedList ( sleeping_list, pcb ) != 0 ) {
+		return -1;
 	}
+	blockCurrent();
+	pcb->start = 0;
+	pcb->time = 0;
+	return 0;
 }
 
 void unsleepKill(PCB * pcb){

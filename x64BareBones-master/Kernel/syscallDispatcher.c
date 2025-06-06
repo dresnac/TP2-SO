@@ -9,7 +9,6 @@ static int64_t empty();
 extern uint64_t regs_shot[17];
 extern uint64_t regs_shot_available;
 
-static PCB * blocked; //esto tiene que ir a videoDriver
 
 typedef uint64_t (*sys_function) (uint64_t, uint64_t, uint64_t, uint64_t, uint64_t, uint64_t);
 
@@ -162,8 +161,7 @@ int64_t sys_put_rectangle ( uint64_t x, uint64_t y, uint64_t width, uint64_t hei
 }
 
 int64_t sys_ticks_sleep(uint64_t ns){
-    nano_sleep(ns);
-    return 0;
+    return nano_sleep ( ns );
 }
 
 /*  IMPLEMENTAR

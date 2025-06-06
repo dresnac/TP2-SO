@@ -7,7 +7,7 @@
 void timerHandler();
 int ticksElapsed();
 int secondsElapsed();
-void nano_sleep(int time);
+int64_t nano_sleep(int time);
 void unsleepKill(PCB * pcb);
 void initTimerHandler();
 
