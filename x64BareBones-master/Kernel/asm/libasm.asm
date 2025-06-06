@@ -5,11 +5,25 @@ GLOBAL hlt
 GLOBAL inb
 GLOBAL outb
 GLOBAL timer_tick
+GLOBAL acquire
+GLOBAL release
 
 GLOBAL Hours
 GLOBAL Mins
 
 section .text
+
+acquire:
+    mov al, 0
+.retry:
+    xchg byte [rdi], al
+    test al, al
+    jnz .retry
+    ret
+
+release:
+    mov byte [rdi], 1
+    ret
 	
 cpuVendor:
 	push rbp

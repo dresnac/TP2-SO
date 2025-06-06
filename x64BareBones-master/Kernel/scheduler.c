@@ -4,6 +4,7 @@ static int initialized = 0;
 
 static listADT ready_list;
 static listADT blocked_list;
+
 static PCB * running = NULL;
 static PCB * idle_pcb;
 static uint64_t ran_counter = 0;
@@ -44,7 +45,7 @@ PCB * getShellPcb(){
     return shell_pcb;
 }
 
-void setRunnningNull(){
+void setRunningNull(){
     running = NULL;
 }
 

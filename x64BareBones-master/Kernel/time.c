@@ -1,6 +1,8 @@
 #include <time.h>
-#include <lib.h>
+//#include <lib.h>
+
 static unsigned long ticks = 0;
+static ordered_list_adt sleeping_list;
 
 void timerHandler() {
 	ticks++;
@@ -21,9 +23,9 @@ void nano_sleep(int time){
 	}
 }
 
-void unsleepkill(PCB * pcb){
+void unsleepKill(PCB * pcb){
 	if(pcb == NULL){
 		return;
 	}
-	//deleteOrderedList()
+	deleteOrderedList ( sleeping_list, pcb );
 }

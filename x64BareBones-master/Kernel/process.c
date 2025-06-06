@@ -220,7 +220,7 @@ int64_t killProcessPcb(PCB * pcb){
     }
     
     semDeleteFromBlockedQueue ( pcb );
-	if ( set_free_pcb ( pcb ) != -1 ) {
+	if ( setFreePcb ( pcb ) != -1 ) {
 		cant_proc--;
 	}
     if(pcb == getRunning()){
