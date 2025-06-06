@@ -13,30 +13,45 @@ static PCB * blocked; //esto tiene que ir a videoDriver
 typedef uint64_t (*sys_function) (uint64_t, uint64_t, uint64_t, uint64_t, uint64_t, uint64_t);
 
 static sys_function syscall_table[NUM_SYSCALLS] = {
-    (sys_function) sys_read,
-    (sys_function) sys_write,
-    (sys_function) sys_clear_screen,
-    (sys_function) sys_get_register_snapshot,
-    (sys_function) sys_beep,
-    (sys_function) sys_set_font_size,
-    (sys_function) sys_put_rectangle,
-    (sys_function) sys_ticks_sleep,
-    (sys_function) sys_get_time,
-    (sys_function) sys_malloc,
-    (sys_function) sys_free_wrapper,
-    (sys_function) sys_get_pid,
-    (sys_function) sys_create_process,
-    (sys_function) sys_block,
-    (sys_function) sys_unblock,
-    (sys_function) sys_yield,
-    (sys_function) sys_nice,
-    (sys_function) sys_kill,
-    (sys_function) sys_wait,
-    (sys_function) sys_ps,                       
-	(sys_function) sys_free_ps_wrapper,          
-	(sys_function) sys_get_status,
-    (sys_function) sys_get_my_fds,
-    (sys_function) sys_mem_info
+    (sys_function) sys_read,    //0
+    (sys_function) sys_write,   //1
+    (sys_function) sys_get_register_snapshot,  //2
+    (sys_function) sys_beep,   //3
+    (sys_function) sys_set_font_size,   //4
+    (sys_function) sys_clear_screen,  //5
+    (sys_function) empty,   //sys_put_pixel,                // 6
+    (sys_function) sys_put_rectangle,   //7
+    (sys_function) empty,  //sys_draw_letter,              // 8
+    (sys_function) empty, //sys_set_mode,                 // 9
+	(sys_function) empty, //sys_get_screen_information,   // 10
+    (sys_function) sys_ticks_sleep,     //11
+    (sys_function) sys_get_time,       //12
+    (sys_function) sys_malloc,       //13
+    (sys_function) sys_free_wrapper,    //14
+    (sys_function) sys_get_pid,    //15
+    (sys_function) sys_create_process,    //16
+    (sys_function) sys_block,    //17
+    (sys_function) sys_unblock,    //18
+    (sys_function) sys_yield,     //19
+    (sys_function) sys_nice,     //20
+    (sys_function) sys_kill,     //21
+    (sys_function) sys_wait,     //22
+    (sys_function) sys_sem_open,                 // 23
+	(sys_function) sys_sem_wait,                 // 24
+	(sys_function) sys_sem_post,                 // 25
+	(sys_function) sys_sem_close,                // 26
+    (sys_function) sys_ps,       //27       
+	(sys_function) sys_free_ps_wrapper,   //28      
+	(sys_function) sys_get_status,    //29
+    (sys_function) sys_pipe_open,                // 30
+	(sys_function) sys_pipe_open_free,           // 31
+	(sys_function) sys_pipe_read,                // 32
+	(sys_function) sys_pipe_write,               // 33
+	(sys_function) sys_pipe_close,               // 34
+	(sys_function) sys_pipe_reserve,             // 35
+	(sys_function) sys_sem_open_get_id,          // 36
+    (sys_function) sys_get_my_fds,    //37
+    (sys_function) sys_mem_info       //38
 };
 
 int64_t syscallDispatcher (stack_registers * regs){
@@ -44,6 +59,10 @@ int64_t syscallDispatcher (stack_registers * regs){
         return NOT_VALID_SYS_ID;
     }
 	return syscall_table[regs->rax] ( ( uint64_t ) regs->rdi, ( uint64_t ) regs->rsi, ( uint64_t ) regs->rdx, ( uint64_t ) regs->rcx, ( uint64_t ) regs->r8, ( uint64_t ) regs->r9 );
+}
+
+int64_t empty(){
+    return 0;
 }
 
 int64_t sys_get_my_fds(int64_t fds[CANT_FDS]){
@@ -152,25 +171,25 @@ int64_t sys_ticks_sleep(uint64_t ns){
 int64_t sys_draw_letter ( uint64_t x, uint64_t y, char * letter, color * color, uint64_t font_size )
 {
 	return vdriver_video_draw_font ( x, y, *letter, *color, font_size );
-}
+}*/
 
-int64_t sys_put_pixel ( uint64_t x, uint64_t y, color * color )
-{
-	return vdriver_video_draw_pixel ( x, y, *color );
-}
+// int64_t sys_put_pixel ( uint64_t x, uint64_t y, color * color )
+// {
+// 	return vdriver_video_draw_pixel ( x, y, *color );
+// }
 
-int64_t sys_get_screen_information ( screen_information * screen_information )
-{
-	return vdriver_get_screen_information ( screen_information );
-}
+// int64_t sys_get_screen_information ( screen_information * screen_information )
+// {
+// 	return vdriver_get_screen_information ( screen_information );
+// }
 
-int64_t sys_set_mode ( uint64_t mode )
-{
-	return vdriver_set_mode ( mode, ( color ) {
-		0, 0, 0
-	} );
-}
-*/
+// int64_t sys_set_mode ( uint64_t mode )
+// {
+// 	return vdriver_set_mode ( mode, ( color ) {
+// 		0, 0, 0
+// 	} );
+// }
+// */
 
 int64_t sys_get_register_snapshot(Snapshot * snapshot){
     //despues agregar esta logica
