@@ -21,6 +21,7 @@ typedef struct PCB {
     uint64_t lowest_stack_address;
     uint64_t time;
     uint64_t start;
+    int64_t blocked_by_sem;
 }PCB;
 
 #endif
