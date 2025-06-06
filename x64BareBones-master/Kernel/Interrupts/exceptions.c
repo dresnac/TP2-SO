@@ -2,7 +2,6 @@
 #include <exceptions.h>
 #include <videoDriver.h>
 #include <idtLoader.h>
-#include <syscallDispatcher.h>
 
 #define STDERR 1
 

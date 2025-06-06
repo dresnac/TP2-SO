@@ -7,7 +7,6 @@
 #include <moduleLoader.h>
 #include <videoDriver.h>
 #include <idtLoader.h>
-#include <syscallDispatcher.h>
 #include <keyboardDriver.h>
 #include <memoryManager.h>
 #include <scheduler.h>
