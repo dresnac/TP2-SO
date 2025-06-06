@@ -229,7 +229,7 @@ int64_t killProcessPcb(PCB * pcb){
 	}
     if(pcb == getRunning()){
         setRunningNull();
-        timer_tick();   //chequear
+        timer_tick();   
     }
     return 0;
 }
