@@ -24,6 +24,12 @@ OBJECTS=$(SOURCES:.c=.o)
 OBJECTS_ASM=$(SOURCES_ASM:.asm=.o)
 OBJECTS_C=$(SOURCES_C:.c=.o)
 
+LOADERSRC=_loader.c
+LOADEROBJECT=$(LOADERSRC:.c=.o)
+
+INCLUDE_DIRS=$(shell find include -type d) $(shell find ../../Shared/include -type d)
+INCLUDE_FLAGS=$(addprefix -I,$(INCLUDE_DIRS))
+
 all: $(MODULE)
 
 $(MODULE): $(OBJECTS) $(OBJECTS_ASM) $(OBJECTS) $(OBJECTS_C)
@@ -35,7 +41,11 @@ $(MODULE): $(OBJECTS) $(OBJECTS_ASM) $(OBJECTS) $(OBJECTS_C)
 %.o: %.asm
 	$(ASM) $(ASMFLAGS) $< -o $@
 
+$(LOADEROBJECT):
+	$(GCC) $(GCCFLAGS) $(LOADERSRC) -c -o $(LOADEROBJECT)
+
 clean:
-	rm -rf asm/*.o c/*.o *.o
+	rm -rf */*.o *.o *.bin 
+	rm -rf *.elf
 
 .PHONY: all clean print

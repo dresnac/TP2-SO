@@ -13,6 +13,8 @@ sampleDataModule:
 clean:
 	cd SampleCodeModule; make clean
 	rm -rf *.bin
+		rm -rf *.elf
+	@if [ -e ../Shared/libs/*.o ]; then rm -rf ../Shared/libs/*.o; fi
 
 
 .PHONY: sampleCodeModule all clean
