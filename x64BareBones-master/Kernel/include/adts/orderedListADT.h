@@ -11,7 +11,7 @@ typedef int (*tCompare)(elemType e1, elemType e2);
 
 ordered_list_adt newOrderedList(tCompare cmp);
 void freeOrderedList( ordered_list_adt list);
-void addOrderedList(ordered_list_adt list, elemType elem);
+int addOrderedList(ordered_list_adt list, elemType elem);
 int deleteOrderedList(ordered_list_adt list, elemType elem);
 size_t sizeOrderedList (const ordered_list_adt list);
 int isEmptyOrderedList(const ordered_list_adt list);
