@@ -8,6 +8,8 @@ static int64_t sys_free_wrapper ( void * p);
 extern uint64_t regs_shot[17];
 extern uint64_t regs_shot_available;
 
+static PCB * blocked; //esto tiene que ir a videoDriver
+
 typedef uint64_t (*sys_function) (uint64_t, uint64_t, uint64_t, uint64_t, uint64_t, uint64_t);
 
 static sys_function syscall_table[NUM_SYSCALLS] = {
@@ -55,10 +57,63 @@ int64_t sys_get_my_fds(int64_t fds[CANT_FDS]){
     return 0;
 }
 
+int64_t sys_pipe_open ( int64_t id, tPipeMode mode )
+{
+	if ( id < 3 ) {
+		return -1;
+	}
+	return pipeOpen ( id - 3, mode );
+}
+
+int64_t sys_pipe_open_free ( tPipeMode mode )
+{
+	return pipeOpenFree ( mode ) + 3 ;
+}
+
+int64_t sys_pipe_read ( int64_t id, uint8_t * buffer, uint64_t amount )
+{
+	if ( id < 3 ) {
+		return -1;
+	}
+	return pipeRead ( id - 3, buffer, amount );
+}
+
+int64_t sys_pipe_write ( int64_t id, uint8_t * buffer, uint64_t amount )
+{
+	if ( id < 3 ) {
+		return -1;
+	}
+	return pipeWrite ( id - 3, buffer, amount, getPid() );
+}
+
+int64_t sys_pipe_close ( int64_t id )
+{
+	if ( id < 3 ) {
+		return -1;
+	}
+	return pipeClose ( id - 3, getPid() );
+}
+
+int64_t sys_pipe_reserve()
+{
+	return pipeReserve() + 3;
+}
+
 //la logica de la flag ya no seria igual.
 int64_t sys_read (uint8_t * buffer, uint64_t amount){
     uint64_t i = 0;
     //int * flag = regs->r10;
+    if(blocked != NULL){
+        return -1;
+    }
+    if ( !bufferHasNext() ) {
+		blocked = getRunning();
+		blockCurrent();
+	}
+    if ( buffer[buffer_urrent] == EOF ) {
+		getCurrent();
+	}//inc hay que mandar esto a videoDriver
+
     while(i < amount && bufferHasNext()){
         buffer[i] = getCurrent();
         i++;
