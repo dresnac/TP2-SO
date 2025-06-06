@@ -14,6 +14,8 @@
 #include <process.h>
 #include <drivers_info.h>
 #include <videoDriver.h>
+#include <pipe.h>
+#include <time.h>
 
 //hace falta?
 

@@ -85,7 +85,9 @@ int main()
 	int64_t idle_fds[3] = {-1,-1,-1};
 	int64_t shell_fds[3] = {STDOUT, STDERR, STDIN};
 	initializeScheduler ( newProcess ( ( main_function ) shell_code_module_address, HIGH, 0, argv_shell, 1, shell_fds ), newProcess ( ( main_function ) idleProcess, LOW, 0, argv_idle, 1, idle_fds ) );
-
+	pipeInit();
+	initTimerHandler();
+	timer_tick();
 	//newProcess((main_function) sampleCodeModuleAddress,0, HIGH, NULL, 0, NULL);
 	//int64_t pid = newProcess((uint64_t) rec, HIGH); /hacer la func rec
 	//__asm__("int $0x20"); 
