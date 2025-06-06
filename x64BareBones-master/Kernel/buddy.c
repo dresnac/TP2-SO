@@ -73,7 +73,7 @@ void freeMemory( MemoryManagerADT mem , void * p) {
 	freeIndex ( index, &flag, n, mem );
 }
 
-int64_t memInfo(memoryInfo * info, MemoryManagerADT mem){
+int64_t memInfo(MemoryManagerADT mem,memoryInfo * info){
     MemoryManagerCDT * aux = ( MemoryManagerCDT * ) mem;
 	if ( info == NULL || aux == NULL ) {
 		return -1;

@@ -19,11 +19,11 @@ static sys_function syscall_table[NUM_SYSCALLS] = {
     (sys_function) sys_beep,   //3
     (sys_function) sys_set_font_size,   //4
     (sys_function) sys_clear_screen,  //5
-    (sys_function) empty,   //sys_put_pixel,                // 6
+    (sys_function) sys_put_pixel,                // 6
     (sys_function) sys_put_rectangle,   //7
-    (sys_function) empty,  //sys_draw_letter,              // 8
-    (sys_function) empty, //sys_set_mode,                 // 9
-	(sys_function) empty, //sys_get_screen_information,   // 10
+    (sys_function) sys_draw_letter,              // 8
+    (sys_function) sys_set_mode,                 // 9
+	(sys_function) sys_get_screen_information,   // 10
     (sys_function) sys_ticks_sleep,     //11
     (sys_function) sys_get_time,       //12
     (sys_function) sys_malloc,       //13
@@ -164,29 +164,28 @@ int64_t sys_ticks_sleep(uint64_t ns){
     return nano_sleep ( ns );
 }
 
-/*  IMPLEMENTAR
 int64_t sys_draw_letter ( uint64_t x, uint64_t y, char * letter, color * color, uint64_t font_size )
 {
 	return vdriver_video_draw_font ( x, y, *letter, *color, font_size );
-}*/
+}
 
-// int64_t sys_put_pixel ( uint64_t x, uint64_t y, color * color )
-// {
-// 	return vdriver_video_draw_pixel ( x, y, *color );
-// }
+int64_t sys_put_pixel ( uint64_t x, uint64_t y, color * color )
+{
+	return vdriver_video_draw_pixel ( x, y, *color );
+}
 
-// int64_t sys_get_screen_information ( screen_information * screen_information )
-// {
-// 	return vdriver_get_screen_information ( screen_information );
-// }
+int64_t sys_get_screen_information ( screen_information * screen_information )
+{
+	return vdriver_get_screen_information ( screen_information );
+}
 
-// int64_t sys_set_mode ( uint64_t mode )
-// {
-// 	return vdriver_set_mode ( mode, ( color ) {
-// 		0, 0, 0
-// 	} );
-// }
-// */
+int64_t sys_set_mode ( uint64_t mode )
+{
+ 	return vdriver_set_mode ( mode, ( color ) {
+ 		0, 0, 0
+    } );
+}
+
 
 int64_t sys_get_register_snapshot(Snapshot * snapshot){
     
@@ -234,7 +233,7 @@ void * sys_malloc (uint64_t size){
 }
 
 static int64_t sys_free_wrapper(void * p){
-    freeMemory(p, getUserlandMem());
+    freeMemory(getUserlandMem(),p);
     return 0;
 }
 
@@ -316,7 +315,7 @@ int8_t sys_get_status ( tPid pid )
 
 int64_t sys_mem_info ( memoryInfo info[2] )
 {
-	return memInfo ( &info[0], getUserlandMem() ) + memInfo ( &info[1], getKernelMem() ) ;
+	return memInfo (getUserlandMem(), &info[0] ) + memInfo (getKernelMem(), &info[1] ) ;
 }
 
 static char * numToString(uint64_t num, uint64_t base) {  //creo que se puede borrar

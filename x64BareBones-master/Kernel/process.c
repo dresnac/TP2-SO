@@ -150,6 +150,10 @@ static int64_t findFreePcb(){
     while(pcb_array[to_return].status != FREE && to_return < PCB_AMOUNT){
         to_return++;
     }
+    if ( to_return == PCB_AMOUNT ) {
+		return -1;
+	}
+
     return to_return;
 }
 

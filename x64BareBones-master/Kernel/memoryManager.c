@@ -43,7 +43,7 @@ void freeMemory(MemoryManagerADT mem, void * p){
 	aux->free_ptrs[aux->current] = p;
 }
 
-int64_t memInfo(memoryInfo * info, MemoryManagerADT mem){
+int64_t memInfo(MemoryManagerADT mem,memoryInfo * info){
     MemoryManagerCDT * aux = ( MemoryManagerCDT * ) mem;
 	if ( aux == NULL || info == NULL ) {
 		return -1;
