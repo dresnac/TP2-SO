@@ -11,7 +11,7 @@
 void pipeInit();
 int64_t pipeOpen ( int64_t id, tPipeMode mode );
 int64_t pipeRead ( int64_t id, uint8_t * buffer, uint64_t amount );
-int64_t pipeWrite ( int64_t id, uint8_t * buffer, uint64_t amount, pid_t pid );
+int64_t pipeWrite ( int64_t id, uint8_t * buffer, uint64_t amount, tPid pid );
 int64_t pipeClose ( int64_t id, tPid pid );
 int64_t pipeOpenFree ( tPipeMode mode );
 tPid pipeGetPid ( int64_t id, tPipeMode mode );

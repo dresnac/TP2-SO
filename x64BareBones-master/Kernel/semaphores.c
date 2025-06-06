@@ -161,7 +161,7 @@ int64_t semDeleteFromBlockedQueue ( PCB * pcb )
 	return 0;
 }
 
-static int64_t postIfCondition ( int64_t sem_id, int ( *condition ) ( sem_structure * ), uint8_t is_kernel, uint8_t yield )
+static int64_t postIfCondition ( int64_t sem_id, int ( *condition ) ( semStructure * ), uint8_t is_kernel, uint8_t yield )
 {
 	if ( !isValidId ( sem_id, is_kernel ) ) {
 		return -1;
