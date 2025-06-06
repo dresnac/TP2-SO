@@ -2,7 +2,7 @@
 #define _PIPE_H
 
 #include <stdint.h>
-#include <semaphore.h>
+#include <semaphores.h>
 #include <shared_defs.h>
 
 #define PIPE_BUFFER_SIZE 2048

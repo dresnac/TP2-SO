@@ -9,6 +9,8 @@
 #define BLOCKED 2
 #define ZOMBIE 3
 
+#define EOF 0
+
 typedef int ( *main_function ) ( char ** argv, uint64_t argc );
 typedef enum  {READER = 0, WRITER} tPipeMode;
 
@@ -22,6 +24,7 @@ typedef struct {
 } screen_information;
 
 typedef int64_t tPid;
+typedef int64_t sem_t;
 
 typedef enum { LOW = 0, MEDIUM, HIGH } tPriority;
 
