@@ -88,6 +88,8 @@ int main()
 	pipeInit();
 	initTimerHandler();
 	timer_tick();
+
+
 	//newProcess((main_function) sampleCodeModuleAddress,0, HIGH, NULL, 0, NULL);
 	//int64_t pid = newProcess((uint64_t) rec, HIGH); /hacer la func rec
 	//__asm__("int $0x20"); 
