@@ -28,7 +28,7 @@ void int_21(){
     keyboardHandler();
 }
 
-void setInt21Flag(int flag){
-    int_21_flag = flag;
-    vdPrint("Flag actualizado\n", 17, 0x00FFFFFF);
-}
+// void setInt21Flag(int flag){
+//     int_21_flag = flag;
+//     vdPrint("Flag actualizado\n", 17, 0x00FFFFFF);
+// }

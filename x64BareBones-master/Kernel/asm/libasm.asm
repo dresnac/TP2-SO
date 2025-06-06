@@ -4,7 +4,7 @@ GLOBAL rtc
 GLOBAL hlt
 GLOBAL inb
 GLOBAL outb
-GLOBAL timer_tick
+; GLOBAL timer_tick
 GLOBAL acquire
 GLOBAL release
 
@@ -99,9 +99,9 @@ getKey:
 
     ret
 
-timer_tick:
-	int 0x20
-	ret
+; timer_tick:
+; 	int 0x20
+; 	ret
 
 section .rodata
 

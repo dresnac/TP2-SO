@@ -28,18 +28,19 @@ static uint8_t * numToString(uint64_t num, uint64_t base) {
 
 static void printRegs(uint8_t * message, uint8_t cant_chars_message){
     uint8_t * regs[] = {"RAX", "RBX", "RCX", "RDX", "RSI", "RDI", "RBP", "RSP", "R8", "R9", "R10", "R11", "R12", "R13", "R14", "R15", "RIP", "RFLAGS"};
-    vdClearScreen();
-    // vdriver_set_mode(TEXT_MODE, col);
-    // vdriver_text_set_font_size(2);
+    color col = {255, 255, 255};
+    vdriver_clear_screen ( col );
+    vdriver_set_mode(TEXT_MODE, col);
+    vdriver_text_set_font_size(2);
 
-    vdPrint(message, cant_chars_message, 0x00FF0000);
-    // uint8_t newline = '\n';
+    vdriver_text_write ( STDERR, ( char * ) message, cant_chars_message );
+    uint8_t newline = '\n';
     for(int i=0; i<CANT_REGS;i++){
-        vdPrint(regs[i], 10, 0x00FF0000);
-        vdPrint( ": 0x", 4, 0x00FF0000);
-        vdPrint( numToString(exception_regs[i],16), 10, 0x00FF0000);
-        vdPrint( "h", 1, 0x00FF0000);
-        newline();
+        vdriver_text_write ( STDERR, regs[i], 10 );
+		vdriver_text_write ( STDERR, ": 0x", 4 );
+		vdriver_text_write ( STDERR, ( char * ) numToString ( exception_regs[i], 16 ), 10 );
+		vdriver_text_write ( STDERR, "h", 1 );
+		vdriver_text_write ( STDERR, ( char * ) &newline, 1 );
     }
 }
 
@@ -60,7 +61,7 @@ void exceptionDispatcher(uint64_t exception) {
     }
 
     printRegs(message, message_cant);
-    vdPrint("\nPress any key to continue", 30, 0x00FF0000);
+    vdriver_text_write ( STDERR, "\nPress any key to continue", 30 );
     uint16_t buffer;
 
 
@@ -71,7 +72,8 @@ void exceptionDispatcher(uint64_t exception) {
     _cli();
     picMasterMask(0xFC); 
 
-	vdClearScreen();
+	color c = {0, 0, 0};
+	vdriver_clear_screen ( c );
 }
 
 

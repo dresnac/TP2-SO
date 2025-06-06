@@ -1,4 +1,4 @@
-//#ifdef MEM_MANAGER
+#ifdef FROM_SCRATCH
 #include <memoryManager.h>
 
 #define BLOCK_COUNT ((HEAP_SIZE) / BLOCK_SIZE)
@@ -53,4 +53,4 @@ int64_t memInfo(memoryInfo * info, MemoryManagerADT mem){
 	return 0;
 }
 
-//#endif
+#endif

@@ -137,8 +137,7 @@ int64_t sys_write(uint64_t fd, uint8_t * buffer, uint64_t amount){
     int64_t actual_fd = getRunning()->fds[fd];
     
     if(actual_fd == STDOUT || actual_fd == STDERR){
-        uint32_t colorByFD[] = { 0, 0x00FFFFFF, 0x00FF0000, 0x0000FF00 };
-        return vdPrint(buffer, amount, colorByFD[fd]);
+        return vdriver_text_write ( fd, ( char * ) buffer, amount );
     }
     return sys_pipe_write(actual_fd, buffer, amount);
 
@@ -148,7 +147,7 @@ int64_t sys_write(uint64_t fd, uint8_t * buffer, uint64_t amount){
 
 int64_t sys_set_font_size ( uint64_t size )
 {
-	return vdChangeFontSize(size);
+	return vdriver_text_set_font_size ( size );
 }
 
 int64_t sys_beep ( uint32_t freq, uint32_t time )
@@ -159,8 +158,7 @@ int64_t sys_beep ( uint32_t freq, uint32_t time )
 
 int64_t sys_put_rectangle ( uint64_t x, uint64_t y, uint64_t width, uint64_t height, color * color )
 {
-    vdDrawRectangle(x, y, width, height, color);
-    return 0;
+    return vdriver_video_draw_rectangle ( x, y, width, height, *color );
 }
 
 int64_t sys_ticks_sleep(uint64_t ns){
@@ -220,8 +218,7 @@ int64_t sys_get_register_snapshot(Snapshot * snapshot){
 }
 
 int64_t sys_clear_screen(){
-    vdClearScreen();
-    return 0; //hacer que vd devuelva int
+    return vdriver_clear_screen ( ( color ) {0, 0, 0} );
 }
 
 int64_t sys_get_time (LocalTime * time){
