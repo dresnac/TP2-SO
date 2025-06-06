@@ -1,6 +1,11 @@
-#include <stdint.h>
+
 #ifndef KEYBOARDDRIVER_H
 #define KEYBOARDDRIVER_H
+
+#include <stdint.h>
+#include <PCB.h>
+#include <process.h>
+#include <scheduler.h>
 
 
 #define BUFFER_SIZE 1024
@@ -58,6 +63,8 @@ void setFKeyFunction(uint64_t key_number, function_key f);
 uint64_t getCurrent();
 uint64_t bufferHasNext();
 
+PCB * getkeyboardBlocked();
+void setKeyboardBlockedNUll();
 
 #endif
 

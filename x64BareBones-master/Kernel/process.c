@@ -161,7 +161,7 @@ static int64_t setupPipe(tPid pid, int64_t fds[]){
         if( fds[i]<= MAX_COMMON_FD){
             continue;
         }
-        tPideMode mode = i == STDIN ? READER : WRITER;
+        tPipeMode mode = i == STDIN ? READER : WRITER;
         if (pipeOpenPid(fds[i]-3, mode, pid) == -1){
             for(int j=0; j < i; j++){
                 pipeClose(fds[i]-3,pid);
@@ -269,7 +269,7 @@ void getProcessInfo(PCB * pcb, process_info * process){
     process->lowest_stack_address = pcb->lowest_stack_address;
     process->status = pcb->status;
     process->is_background = !isForeground(pcb);
-    for(int i=0;i<3, i++){
+    for(int i=0;i<3; i++){
         process->fds[i] = pcb->fds[i] ? pcb->fds[i] : -1;
     }
 }

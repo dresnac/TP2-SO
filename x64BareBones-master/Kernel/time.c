@@ -20,3 +20,10 @@ void nano_sleep(int time){
 		hlt();
 	}
 }
+
+void unsleepkill(PCB * pcb){
+	if(pcb == NULL){
+		return;
+	}
+	//deleteOrderedList()
+}

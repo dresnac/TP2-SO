@@ -19,6 +19,8 @@ typedef struct PCB {
     int64_t fds[CANT_FDS];
     uint8_t killable;
     uint64_t lowest_stack_address;
+    uint64_t time;
+    uint64_t start;
 }PCB;
 
 #endif

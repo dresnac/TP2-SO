@@ -10,6 +10,7 @@
 #define ZOMBIE 3
 
 typedef int ( *main_function ) ( char ** argv, uint64_t argc );
+typedef enum  {READER = 0, WRITER} tPipeMode;
 
 typedef struct {
 	uint64_t r15, r14, r13, r12, r11, r10, r9, r8, rsi, rdi, rbp, rdx, rcx, rbx, rax;
@@ -74,6 +75,8 @@ typedef struct memory_info {
 	uint64_t total_size;
 	uint64_t free;
 } memoryInfo;
+
+
 
 
 #endif

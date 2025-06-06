@@ -13,7 +13,7 @@ static uint16_t buffer[BUFFER_SIZE];
 static uint64_t buffer_dim = 0;
 static uint64_t buffer_current = 0;
 static uint8_t reg_shot_flag = 0;
-
+static PCB * blocked;
 
 extern uint16_t pressedKeyShiftMap[][2];
 
@@ -144,3 +144,10 @@ uint8_t should_take_reg_shot() {
     return reg_shot_flag;
 }
 
+PCB * getKeyboardBlocked(){
+    return blocked;
+}
+
+void setKeyboardBlockedNull(){
+    blocked = NULL;
+}
