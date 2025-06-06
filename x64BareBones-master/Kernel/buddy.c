@@ -36,12 +36,12 @@ MemoryManagerADT createMemoryManager(void * p) {
 		aux->tree_bitmap[i] = 0;
 	}
 	aux->free_mem = MAX_MEM_SIZE;
-	MemoryManagerADT ans = allocMemory ( sizeof ( *aux ), ( MemoryManagerADT ) aux );
+	MemoryManagerADT ans = allocMemory (( MemoryManagerADT ) aux,  sizeof ( *aux ));
 	return ans;
 
 }
 
-void * allocMemory( uint64_t size,  MemoryManagerADT mem ) {
+void * allocMemory( MemoryManagerADT mem , uint64_t size) {
     MemoryManagerCDT * aux = ( MemoryManagerCDT * ) mem;
 	if( aux == NULL ){
 		return NULL;
@@ -58,7 +58,7 @@ void * allocMemory( uint64_t size,  MemoryManagerADT mem ) {
 	return ptr;
 }
 
-void freeMemory( void * p, MemoryManagerADT mem ) {
+void freeMemory( MemoryManagerADT mem , void * p) {
     MemoryManagerCDT * aux = ( MemoryManagerCDT * ) mem;
 	if( aux == NULL ){
 		return;

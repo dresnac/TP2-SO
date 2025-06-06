@@ -19,13 +19,13 @@ MemoryManagerADT createMemoryManager(void * p) {
 	aux->start = ( void * ) ( ( char * ) p );
 	aux->current = 0;
 	for ( int i = 0; i <= ( sizeof ( MemoryManagerCDT ) / BLOCK_SIZE ); i++ ) {
-		allocMemory ( 1, ( MemoryManagerADT ) aux );
+		allocMemory ( ( MemoryManagerADT ) aux , 1);
 	}
 
 	return ( MemoryManagerADT ) aux;
 }
 
-void *allocMemory(uint64_t size,  MemoryManagerADT mem ) {
+void *allocMemory(MemoryManagerADT mem , uint64_t size) {
     MemoryManagerCDT * aux = ( MemoryManagerCDT * ) mem;
 	if ( aux == NULL || size > BLOCK_SIZE || aux->current >= BLOCK_COUNT ) {
 		return NULL;
@@ -34,7 +34,7 @@ void *allocMemory(uint64_t size,  MemoryManagerADT mem ) {
 	return aux->free_ptrs[aux->current++];
 }
 
-void freeMemory(void * p, MemoryManagerADT mem){
+void freeMemory(MemoryManagerADT mem, void * p){
     MemoryManagerCDT * aux = ( MemoryManagerCDT * ) mem;
 	if ( aux == NULL ) {
 		return;
