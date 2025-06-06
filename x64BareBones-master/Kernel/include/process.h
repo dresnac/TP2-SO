@@ -30,6 +30,7 @@ process_info_list * ps();
 void freePs(process_info_list * ps);
 void closeFds(PCB * pcb);
 int64_t makeMeZombie(int64_t ret);
+void ctrlcHandler();
 
 
 #endif

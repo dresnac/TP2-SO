@@ -124,7 +124,7 @@ int64_t newProcess(main_function rip, tPriority priority,uint8_t killable, char 
     pcb_array[pid].killable = killable;
     pcb_array[pid].waiting_me = NULL;
     pcb_array[pid].lowest_stack_address = rsp_malloc;
-    //aca s
+    pcb_array[pid].blocked_by_sem = -1;
     
     for(int i=0;i<3; i++){
         pcb_array[pid].fds[i] = fds ? fds[i] : -1;
@@ -219,7 +219,10 @@ int64_t killProcessPcb(PCB * pcb){
         unsleepKill(pcb);
     }
     
-    //aca s
+    semDeleteFromBlockedQueue ( pcb );
+	if ( set_free_pcb ( pcb ) != -1 ) {
+		cant_proc--;
+	}
     if(pcb == getRunning()){
         setRunningNull();
         timer_tick();   //chequear
@@ -333,4 +336,19 @@ int64_t makeMeZombie (int64_t ret){
     return 0;
 }
 
-//aca
+void ctrlcHandler()
+{
+	PCB * shell_pcb = getShellPcb();
+	PCB * foreground_process;
+	if ( shell_pcb == NULL || ( ( foreground_process = shell_pcb->waiting_for ) == NULL ) ) {
+		return;
+	}
+	// first, we wait on the right side of the pipe.
+	PCB * other_process_in_pipe = NULL;
+	if ( foreground_process->fds[STDIN] > MAX_COMMON_FD ) {
+		other_process_in_pipe = getPcb ( pipeGetPid ( foreground_process->fds[STDIN] - 3, WRITER ) );
+	}
+	killProcessPcb ( foreground_process );
+	killProcessPcb ( other_process_in_pipe );
+	return;
+}
