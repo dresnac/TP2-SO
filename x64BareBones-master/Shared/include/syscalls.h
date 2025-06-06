@@ -37,5 +37,18 @@ int8_t sys_get_status ( tPid pid );
 void sys_free_ps ( process_info_list * ps );
 uint64_t read_with_params(uint64_t fd, uint16_t * buffer, uint64_t amount);
 
+int64_t sys_sem_open ( int64_t sem_id, int value );
+int64_t sys_sem_wait ( int64_t sem_id );
+int64_t sys_sem_post ( int64_t sem_id );
+int64_t sys_sem_open_get_id ( int value );
+int64_t sys_sem_close ( int64_t sem_id );
+
+int64_t sys_pipe_open ( int64_t id, tPipeMode mode );
+int64_t sys_pipe_open_free ( tPipeMode mode );
+int64_t sys_pipe_read ( int64_t id, uint8_t * buffer, uint64_t amount );
+int64_t sys_pipe_write ( int64_t id, uint8_t * buffer, uint64_t amount );
+int64_t sys_pipe_close ( int64_t id );
+int64_t sys_pipe_reserve();
+
 #endif
 

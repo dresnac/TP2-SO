@@ -30,11 +30,11 @@ int64_t printf(const char * fmt, ...);
 char* gets(char* buffer, int n);
 int64_t strcmp(const char *str1, const char *str2);
 void print_regs();
-void zoom(int n);
+// void zoom(int n);
 void adjustTime(LocalTime * time);
 int64_t draw_rectangle(uint64_t x, uint64_t y, uint64_t width, uint64_t height, uint64_t color);
-unsigned long getTicks();
-char readInput();
-void test_mm();
+// unsigned long getTicks();
+char readInput();  //????
+// void test_mm();
 
 #endif

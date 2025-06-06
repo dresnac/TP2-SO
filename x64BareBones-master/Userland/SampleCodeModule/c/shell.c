@@ -15,24 +15,24 @@
 static void interpret(char * buffer);
 static void help();
 static void showCurrentTime();
-static void zoomIn();
-static void zoomOut();
+// static void zoomIn();
+// static void zoomOut();
 static void getRegs();
 static void clear();
-static void snake();
-static void testmm();
+// static void snake();
+// static void testmm();
 
 static module modules[] = {
     {"help", help},
     {"time", showCurrentTime},
-    {"zoomin", zoomIn},
-    {"zoomout", zoomOut},
+    // {"zoomin", zoomIn},
+    // {"zoomout", zoomOut},
     {"getregs", getRegs},
     {"dividebyzero", div0},
     {"opcode", opCode},
     {"clear", clear},
-    {"snake", snake},
-    {"testmm", testmm}
+    // {"snake", snake},
+    // {"testmm", testmm}
 };
 
 
@@ -117,15 +117,15 @@ static void showCurrentTime(){
 }
 
 
-//agranda la pantalla
-static void zoomIn(){  //todavía no funca
-    zoom(1);
-}
+// //agranda la pantalla
+// static void zoomIn(){  //todavía no funca
+//     zoom(1);
+// }
 
-//achica la pantalla
-static void zoomOut(){
-    zoom(-1);
-}
+// //achica la pantalla
+// static void zoomOut(){
+//     zoom(-1);
+// }
 
 //muestra los registros
 static void getRegs(){
@@ -138,25 +138,25 @@ static void clear(){
 }
 
 //juego del snake
-static void snake(){
-    char gameMode;
-    char level;
-    puts("\nElegir modo de juego (1. SINGLE / 2. MULTIPLAYER)");
-    printf("Ingresar numero: ");
-    gameMode = getChar();
-    putChar(gameMode);
-    puts("\nElegir nivel de dificultad (1.EASY / 2.MEDIUM / 3.HARD)");
-    printf("Ingresar numero: "); 
-    level = getChar();
-    putChar(level);
-    int end = 0;
-    clear_screen();
-    while(!end){
-        end = playSnake((gameMode - '0'), (level - '0'));
-    }
-    clear_screen();
-}
+// static void snake(){
+//     char gameMode;
+//     char level;
+//     puts("\nElegir modo de juego (1. SINGLE / 2. MULTIPLAYER)");
+//     printf("Ingresar numero: ");
+//     gameMode = getChar();
+//     putChar(gameMode);
+//     puts("\nElegir nivel de dificultad (1.EASY / 2.MEDIUM / 3.HARD)");
+//     printf("Ingresar numero: "); 
+//     level = getChar();
+//     putChar(level);
+//     int end = 0;
+//     clear_screen();
+//     while(!end){
+//         end = playSnake((gameMode - '0'), (level - '0'));
+//     }
+//     clear_screen();
+// }
 
-static void testmm(){
-    test_mm();
-}
+// static void testmm(){
+//     test_mm();
+// }

@@ -4,6 +4,7 @@
 
 static int64_t sys_free_ps_wrapper (process_info_list * ps);
 static int64_t sys_free_wrapper ( void * p);
+static int64_t empty();
 
 extern uint64_t regs_shot[17];
 extern uint64_t regs_shot_available;
@@ -61,7 +62,7 @@ int64_t syscallDispatcher (stack_registers * regs){
 	return syscall_table[regs->rax] ( ( uint64_t ) regs->rdi, ( uint64_t ) regs->rsi, ( uint64_t ) regs->rdx, ( uint64_t ) regs->rcx, ( uint64_t ) regs->r8, ( uint64_t ) regs->r9 );
 }
 
-int64_t empty(){
+static int64_t empty(){
     return 0;
 }
 
@@ -192,12 +193,10 @@ int64_t sys_draw_letter ( uint64_t x, uint64_t y, char * letter, color * color, 
 // */
 
 int64_t sys_get_register_snapshot(Snapshot * snapshot){
-    //despues agregar esta logica
-    /*
+    
     if(!regs_shot_available) {
-        *flag = -1;
-        return;
-    }*/ 
+        return -1;
+    }
 
     snapshot->rax = regs_shot[0];
     snapshot->rbx = regs_shot[1];

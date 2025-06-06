@@ -127,121 +127,121 @@ section .text
 
 
 sys_read:
-    simple_sys_handler 0
+    syscall_handler 0
 
 sys_write:
-    simple_sys_handler 1
+    syscall_handler 1
 
 sys_get_register_snapshot:
-    simple_sys_handler 2
+    syscall_handler 2
 
 sys_beep:
-    simple_sys_handler 3
+    syscall_handler 3
 
 sys_set_font_size:
-    simple_sys_handler 4
+    syscall_handler 4
 
 sys_clear_screen:
-    simple_sys_handler 5
+    syscall_handler 5
 
 sys_put_pixel:
-    simple_sys_handler 6
+    syscall_handler 6
 
 sys_put_rectangle:
-    simple_sys_handler 7
+    syscall_handler 7
 
 sys_draw_letter:
-    simple_sys_handler 8
+    syscall_handler 8
 
 sys_set_mode:
-    simple_sys_handler 9
+    syscall_handler 9
 
 sys_get_screen_information:
-    simple_sys_handler 10
+    syscall_handler 10
 
 sys_ticks_sleep:
-    simple_sys_handler 11
+    syscall_handler 11
 
 sys_get_time:
-    simple_sys_handler 12
+    syscall_handler 12
 
 sys_malloc:
-    simple_sys_handler 13
+    syscall_handler 13
 
 sys_free:
-    simple_sys_handler 14
+    syscall_handler 14
 
 sys_get_pid:
-    simple_sys_handler 15
+    syscall_handler 15
 
 sys_create_process:
-    simple_sys_handler 16
+    syscall_handler 16
 
 sys_block:
-    simple_sys_handler 17
+    syscall_handler 17
 
 sys_unblock:
-    simple_sys_handler 18
+    syscall_handler 18
 
 sys_yield:
-    simple_sys_handler 19
+    syscall_handler 19
 
 sys_nice:
-    simple_sys_handler 20
+    syscall_handler 20
 
 sys_kill:
-    simple_sys_handler 21
+    syscall_handler 21
 
 sys_wait:
-    simple_sys_handler 22
+    syscall_handler 22
 
 sys_sem_open:
-    simple_sys_handler 23
+    syscall_handler 23
 
 sys_sem_wait:
-    simple_sys_handler 24
+    syscall_handler 24
 
 sys_sem_post:
-    simple_sys_handler 25
+    syscall_handler 25
 
 sys_sem_close:
-    simple_sys_handler 26
+    syscall_handler 26
 
 sys_ps:
-    simple_sys_handler 27
+    syscall_handler 27
 
 sys_free_ps:
-    simple_sys_handler 28
+    syscall_handler 28
 
 sys_get_status:
-    simple_sys_handler 29
+    syscall_handler 29
 
 sys_pipe_open:
-    simple_sys_handler 30
+    syscall_handler 30
 
 sys_pipe_open_free:
-    simple_sys_handler 31
+    syscall_handler 31
 
 sys_pipe_read:
-    simple_sys_handler 32
+    syscall_handler 32
 
 sys_pipe_write:
-    simple_sys_handler 33
+    syscall_handler 33
 
 sys_pipe_close:
-    simple_sys_handler 34
+    syscall_handler 34
 
 sys_pipe_reserve:
-    simple_sys_handler 35
+    syscall_handler 35
 
 sys_sem_open_get_id:
-    simple_sys_handler 36
+    syscall_handler 36
 
 sys_get_my_fds:
-    simple_sys_handler 37
+    syscall_handler 37
 
 sys_mem_info:
-    simple_sys_handler 38
+    syscall_handler 38
 
 ;----------BACKUP--------------
 

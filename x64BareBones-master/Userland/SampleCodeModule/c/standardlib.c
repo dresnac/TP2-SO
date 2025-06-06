@@ -75,7 +75,7 @@ int64_t fputc(char c, FileDescriptor fd) {
 }
 
 void time(LocalTime * time){
-    sys_time(time);
+    sys_get_time(time);
 }
 
 
@@ -189,9 +189,8 @@ int64_t draw_rectangle(uint64_t x, uint64_t y, uint64_t width, uint64_t height, 
 
 void print_regs() {
     Snapshot snap;
-    int flag = -1;
-    sys_get_regs(&snap, &flag);
-    if(flag == -1) {
+    int ans = sys_get_register_snapshot(&snap);
+    if(ans == -1) {
         fprintf(STDERR, "\nNo register snapshot available. Press F1 to take a snapshot.\n");
         return;
     }
@@ -216,17 +215,16 @@ void print_regs() {
     printf("rIP: %x\n", snap.rip);
 }
 
-void zoom(int n){
-    int change = 0;
-    sys_zoom(n, &change);
-    if(change){
-        sys_clear_screen();
-
-    }
-    else{
-        putChar('\n');
-    }
-}
+// void zoom(int n){
+//     int change = 0;
+//     sys_zoom(n, &change);
+//     if(change){
+//         sys_clear_screen();
+//     }
+//     else{
+//         putChar('\n');
+//     }
+// }
 
 void adjustTime(LocalTime * time) {
 
@@ -255,12 +253,16 @@ void adjustTime(LocalTime * time) {
         time->horas = time->horas - 3;
     }
 }
-unsigned long getTicks(){
-    unsigned long ticks;
-    sys_get_ticks(&ticks);
-    return ticks;
-}
 
-void test_mm(){
-    sys_test_mm();
-}
+//ESTO ERA DEL SNAKE
+// unsigned long getTicks(){
+//     unsigned long ticks;
+//     sys_get_ticks(&ticks);
+//     return ticks;
+// }
+
+
+//ESTA WEA
+// void test_mm(){
+//     sys_test_mm();
+// }
