@@ -101,29 +101,28 @@ int64_t sys_pipe_reserve()
 
 //la logica de la flag ya no seria igual.
 int64_t sys_read (uint8_t * buffer, uint64_t amount){
-    uint64_t i = 0;
-    //int * flag = regs->r10;
-    if(blocked != NULL){
-        return -1;
-    }
-    if ( !bufferHasNext() ) {
-		blocked = getRunning();
-		blockCurrent();
+    int64_t fd = getRunning()->fds[STDIN];
+	if ( fd == STDIN ) {
+		return stdinRead ( buffer, amount );
 	}
-    if ( buffer[buffer_urrent] == EOF ) {
-		getCurrent();
-	}//inc hay que mandar esto a videoDriver
-
-    while(i < amount && bufferHasNext()){
-        buffer[i] = getCurrent();
-        i++;
-    //    *flag = 1;
-    }
+	return sys_pipe_read ( fd, buffer, amount );
 }
 
 int64_t sys_write(uint64_t fd, uint8_t * buffer, uint64_t amount){
-    uint32_t colorByFD[] = { 0, 0x00FFFFFF, 0x00FF0000, 0x0000FF00 };
-    vdPrint(buffer, amount, colorByFD[fd]);
+
+    if(fd != STDOUT && fd != STDERR){
+        return -1;
+    }
+
+    int64_t actual_fd = getRunning()->fds[fd];
+    
+    if(actual_fd == STDOUT || actual_fd == STDERR){
+        uint32_t colorByFD[] = { 0, 0x00FFFFFF, 0x00FF0000, 0x0000FF00 };
+        return vdPrint(buffer, amount, colorByFD[fd]);
+    }
+    return sys_pipe_write(actual_fd, buffer, amount);
+
+    
     return 0;
 }
 
@@ -140,15 +139,38 @@ int64_t sys_beep ( uint32_t freq, uint32_t time )
 
 int64_t sys_put_rectangle ( uint64_t x, uint64_t y, uint64_t width, uint64_t height, color * color )
 {
-    //chequear orden de los params y hacer que devuelva int
     vdDrawRectangle(x, y, width, height, color);
-    return 0; //cambiar
+    return 0;
 }
 
 int64_t sys_ticks_sleep(uint64_t ns){
     nano_sleep(ns);
     return 0;
 }
+
+/*  IMPLEMENTAR
+int64_t sys_draw_letter ( uint64_t x, uint64_t y, char * letter, color * color, uint64_t font_size )
+{
+	return vdriver_video_draw_font ( x, y, *letter, *color, font_size );
+}
+
+int64_t sys_put_pixel ( uint64_t x, uint64_t y, color * color )
+{
+	return vdriver_video_draw_pixel ( x, y, *color );
+}
+
+int64_t sys_get_screen_information ( screen_information * screen_information )
+{
+	return vdriver_get_screen_information ( screen_information );
+}
+
+int64_t sys_set_mode ( uint64_t mode )
+{
+	return vdriver_set_mode ( mode, ( color ) {
+		0, 0, 0
+	} );
+}
+*/
 
 int64_t sys_get_register_snapshot(Snapshot * snapshot){
     //despues agregar esta logica
@@ -237,14 +259,40 @@ int64_t sys_wait ( tPid pid, int64_t * ret )
 	return wait ( pid, ret );
 }
 
+int64_t sys_sem_open ( int64_t sem_id, int value )
+{
+	return mySemOpen ( sem_id, value, 0 );
+}
+
+int64_t sys_sem_wait ( int64_t sem_id )
+{
+	return mySemWait ( sem_id, 0 );
+}
+
+int64_t sys_sem_post ( int64_t sem_id )
+{
+	return mySemPost ( sem_id, 0 );
+}
+
+int64_t sys_sem_open_get_id ( int value )
+{
+	return mySemOpenGetId ( value );
+}
+
+int64_t sys_sem_close ( int64_t sem_id )
+{
+	return mySemClose ( sem_id, 0 );
+}
+
+
 process_info_list * sys_ps ()
 {
-	return 0; //ps();
+	return ps();
 }
 
 static int64_t sys_free_ps_wrapper ( process_info_list * ps )
 {
-	//freePs ( ps );
+	freePs ( ps );
 	return 0;
 }
 

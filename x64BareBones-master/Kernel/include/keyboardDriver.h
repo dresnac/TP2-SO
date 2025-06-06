@@ -65,6 +65,7 @@ uint64_t bufferHasNext();
 
 PCB * getkeyboardBlocked();
 void setKeyboardBlockedNUll();
+int64_t stdinRead ( uint8_t * buff, uint64_t amount );
 
 #endif
 

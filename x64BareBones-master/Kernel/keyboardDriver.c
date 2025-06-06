@@ -151,3 +151,27 @@ PCB * getKeyboardBlocked(){
 void setKeyboardBlockedNull(){
     blocked = NULL;
 }
+
+int64_t stdinRead ( uint8_t * buff, uint64_t amount )
+{
+	if ( blocked != NULL ) {	// a process is already waiting to get a key...
+		return -1;
+	}
+
+	uint64_t i = 0;
+
+	if ( !bufferHasNext() ) {
+		blocked = getRunning();
+		blockCurrent();
+	}
+
+	while ( i < amount && bufferHasNext() && buffer[buffer_current] != EOF ) {
+		buff[i] = getCurrent();
+		i++;
+	}
+
+	if ( buffer[buffer_current] == EOF ) {
+		getCurrent();
+	}
+	return i;
+}

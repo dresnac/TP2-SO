@@ -83,7 +83,7 @@ void drawChar(char c, uint32_t hexColor){
 }
 
 
-void vdPrint(const char *buffer, int count, uint32_t hexColor){
+int64_t vdPrint(const char *buffer, int count, uint32_t hexColor){
 	
 	int i=0;
 	while (buffer[i] != 0 && i<count) {
@@ -106,6 +106,8 @@ void vdPrint(const char *buffer, int count, uint32_t hexColor){
         }
         i++;
     }
+
+	return i;
 
 }
 
@@ -158,6 +160,8 @@ void vdDrawRectangle(uint64_t x, uint64_t y, uint64_t width, uint64_t height, ui
 		}
 	}
 }
+
+
 
 //Habría que pensar funciones para saber dónde está el cursor y para poder moverlo a gusto
 //(Para escribir en distintas zonas de la pantalla)
