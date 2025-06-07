@@ -30,7 +30,8 @@ static uint64_t font_size = 1;
 
 static module modules[] = {
 {"help", "", "Displays all available operating system modules.", help, BUILT_IN},
-
+{"filter", "", "Filters vowels from the input.", ( void ( * ) ( char **, uint64_t ) ) filter, !BUILT_IN},
+{"cat", "", "Prints the stdin exactly as it is received.", ( void ( * ) ( char **, uint64_t ) ) cat, !BUILT_IN}
 };
 
 
