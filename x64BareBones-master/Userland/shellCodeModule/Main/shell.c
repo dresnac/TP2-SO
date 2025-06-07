@@ -21,9 +21,6 @@ static void help();
 static void show_current_time();
 static void show_current_time();
 static void get_regs();
-static void shell_wait_pid ( char ** args, uint64_t argc );
-static void shell_nice ( char **argv, uint64_t argc );
-static void shell_block ( char **argv, uint64_t argc );
 
 
 static uint64_t font_size = 1;
@@ -353,48 +350,3 @@ static void get_regs()
 }
 
 
-
-static void shell_nice ( char **argv, uint64_t argc )
-{
-	tPid pid;
-	int64_t satoi_flag;
-	if ( argc != 3 || ( ( pid = libc_satoi ( argv[1], &satoi_flag ) ) < 0 ) || !satoi_flag ) {
-		libc_fprintf ( STDERR, "Usage: nice <pid> <new_priority>\n" );
-		return;
-	}
-	tPriority prio;
-	if ( libc_strnocasecmp ( argv[2], "low" ) == 0 ) {
-		prio = LOW;
-	} else if ( libc_strnocasecmp ( argv[2], "medium" ) == 0 ) {
-		prio = MEDIUM;
-	} else if ( libc_strnocasecmp ( argv[2], "high" ) == 0 ) {
-		prio = HIGH;
-	} else {
-		libc_fprintf ( STDERR, "Invalid priority. Use 'low', 'medium', or 'high' for <newprio>.\n" );
-		return;
-	}
-	if ( libc_nice ( pid, prio ) < 0 ) {
-		libc_fprintf ( STDERR, "Error: Couldn't change priority for pid %d.\n", pid );
-	}
-}
-
-
-static void shell_block ( char **argv, uint64_t argc )
-{
-	tPid pid;
-	int64_t satoi_flag;
-	if ( argc != 2 || ( ( pid = libc_satoi ( argv[1], &satoi_flag ) ) < 0 ) || !satoi_flag ) {
-		libc_fprintf ( STDERR, "Usage: block <pid>\n" );
-		return;
-	}
-	int8_t status = libc_get_status ( pid );
-	if (	( status != BLOCKED ) && ( status != READY ) ) {
-		libc_fprintf ( STDERR, "Error: The status of pid %d neither ready or blocked \n", pid );
-		return;
-	}
-	if ( status == BLOCKED ) {
-		libc_unblock ( pid );
-	} else {
-		libc_block ( pid );
-	}
-}

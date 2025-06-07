@@ -85,8 +85,8 @@ static void display_state();
 static int8_t handle_keyboard ( char key );
 static void display_header();
 static void clean_all();
-static int64_t open_mutexes();
-static void close_mutexes();
+// static int64_t open_mutexes();
+// static void close_mutexes();
 
 static int64_t forks[MAX_PHILOS];
 static philosopher_t philos_array[MAX_PHILOS];

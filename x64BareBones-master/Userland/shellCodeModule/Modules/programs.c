@@ -19,30 +19,12 @@ int64_t loop ( char ** argv, int argc )
 		libc_sleep ( seconds );
 		ans = libc_printf ( "Hello! I'm a loop with pid: %d\n", libc_get_pid() );
 	}
-	return 0;
-}
 
-int64_t wc ( char ** argv, int argc )
-{
-	if ( argc != 1 ) {
-		libc_fprintf ( STDERR, "Usage: wc\n" );
-		return 1;
-	}
-	char c;
-	char prev = 0;
-	uint64_t lines = 1;
-	while ( ( c = libc_get_char() ) != 0 ) {
-		libc_put_char ( c );
-		if ( c == '\n' ) {
-			lines = lines + 1;
-		}
-		prev = c;
-	}
+	libc_printf ( "Total memory in userland: %x\n", info[USER_MEM_INFO].total_size );
+	libc_printf ( "Free memory in userland: %x\n", info[USER_MEM_INFO].free );
 
-	if ( prev == 0 || prev == '\n' ) {
-		lines--;
-	}
-	libc_printf ( "\nLines: %d\n", lines );
+	libc_printf ( "\nTotal memory in kernel: %x\n", info[KERNEL_MEM_INFO].total_size );
+	libc_printf ( "Free memory in kernel: %x\n", info[KERNEL_MEM_INFO].free );
 	return 0;
 }
 

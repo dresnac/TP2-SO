@@ -20,8 +20,8 @@
 #define MAX_ARGS_SIZE 20
 //Constants for the shell
 
-#define WELCOME "\nBienvenido a BarriOS!"
-#define PROMPT "BarriOS>User> "
+#define WELCOME "\nBienvenido a ColidiOS!"
+#define PROMPT "ColidiOS>User> "
 #define MAX_FONT_SIZE 3
 #define MIN_FONT_SIZE 1
 
