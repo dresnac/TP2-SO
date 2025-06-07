@@ -29,28 +29,6 @@ int64_t loop ( char ** argv, int argc )
 }
 
 
-int64_t filter()
-{
-	char ans;
-	while ( ( ans = libc_get_char() ) > 0 ) {
-		if ( ! ( ans == 'a' || ans == 'A' || ans == 'e' || ans == 'E' || ans == 'i' || ans == 'I' || ans == 'o' || ans == 'O' || ans == 'u' || ans == 'U' ) ) {
-			libc_printf ( "%c", ans );
-		}
-	}
-	return 0;
-}
-
-int64_t cat()
-{
-	char ans;
-	while ( ( ans = libc_get_char() ) > 0 ) {
-		libc_printf ( "%c", ans );
-	}
-	libc_printf ( "\n" );
-	return 0;
-}
-
-
 int64_t ps_program()
 {
 
