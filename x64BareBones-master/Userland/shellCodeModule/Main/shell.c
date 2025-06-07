@@ -10,7 +10,6 @@ typedef struct {
 
 
 static void help();
-static void kill_pid ( char ** argv, uint64_t argc );
 static void to_utc_minus_3 ( LocalTime * time );
 static void free_args ( char ** args, uint64_t argc );
 static void free_cmd_args ( Command * cmd );
@@ -34,24 +33,7 @@ static uint64_t font_size = 1;
 
 static module modules[] = {
 {"help", "", "Displays all available operating system modules.", help, BUILT_IN},
-{"time", "", "Shows the current system time.", show_current_time, BUILT_IN},
-{"getregs", "", "Displays the current state of the registers.", get_regs, BUILT_IN},
-{"clear", "", "Clears the screen.", ( void ( * ) ( char **, uint64_t ) ) libc_clear_screen, BUILT_IN},
-{"kill", " <PID>: ", "Kills a process given its PID.", kill_pid, BUILT_IN},
-{"block", " <PID>: ", "Swaps between ready and blocked state for the given PID.", shell_block, BUILT_IN},
-{"wait", " <PID>: ", "Waits for the process with the given PID.", shell_wait_pid, BUILT_IN},
-{"nice", " <PID> <new_priority>: ", "Changes the priority of a process given its PID and the new priority.", shell_nice, BUILT_IN},
-{"ps", "", "Displays process information.", ( void ( * ) ( char **, uint64_t ) ) ps_program, !BUILT_IN},
-{"phylo", "", "Hungry philosophers problem.", ( void ( * ) ( char **, uint64_t ) ) phylo, !BUILT_IN},
-{"cat", "", "Prints the stdin exactly as it is received.", ( void ( * ) ( char **, uint64_t ) ) cat, !BUILT_IN},
-{"loop", " <seconds>: ", "Greets with its PID every specified number of seconds.", ( void ( * ) ( char **, uint64_t ) ) loop, !BUILT_IN},
-{"filter", "", "Filters vowels from the input.", ( void ( * ) ( char **, uint64_t ) ) filter, !BUILT_IN},
-{"wc", "", "Counts the number of lines in the input.", ( void ( * ) ( char **, uint64_t ) ) wc, !BUILT_IN},
-{"mem", "", "Displays the memory status.", ( void ( * ) ( char **, uint64_t ) ) mem, !BUILT_IN},
-{"testproc", " <max_processes>: ", "Tests process creation.", ( void ( * ) ( char **, uint64_t ) ) test_processes, !BUILT_IN},
-{"testsync", " <n> <use_sem (0 for false, other integer for true)>: ", "Tests process synchronization.", ( void ( * ) ( char **, uint64_t ) ) test_sync, !BUILT_IN},
-{"testmm", " <max_memory>: ", "Tests the use of malloc and free.", ( void ( * ) ( char **, uint64_t ) ) test_mm, !BUILT_IN},
-{"testprio", "", "Tests the scheduler priorities.", ( void ( * ) ( char **, uint64_t ) ) test_prio, !BUILT_IN},
+
 };
 
 
@@ -304,45 +286,6 @@ static void interpret()
 
 }
 
-static void kill_pid ( char ** argv, uint64_t argc )
-{
-	tPid pid;
-	int64_t satoi_flag;
-	if ( argc != 2 || argv == NULL || ( ( pid = libc_satoi ( argv[1], &satoi_flag ) ) < 0 ) || !satoi_flag ) {
-		libc_fprintf ( STDERR, "Usage: kill <pid>\n" );
-		return;
-	}
-
-	if ( libc_kill ( pid ) < 0 ) {
-		libc_fprintf ( STDERR, "Error: Could not kill process %d\n", pid );
-		return;
-	}
-	libc_printf("Process with pid: %d killed\n", pid);
-
-}
-
-static void shell_wait_pid ( char ** args, uint64_t argc )
-{
-	if ( argc != 2 ) {
-		libc_fprintf ( STDERR, "Usage: wait <pid>\n" );
-		return;
-	}
-	tPid pid;
-	int64_t satoi_flag;
-	if ( ( pid = libc_satoi ( args[1], &satoi_flag ) ) < 0 || !satoi_flag ) {
-		libc_fprintf ( STDERR, "Error: pid must be positive\n" );
-		return;
-	}
-	int64_t ret;
-	tPid ans_pid;
-	ans_pid = libc_wait ( pid, &ret );
-	if ( ans_pid == -1 ) {
-		libc_fprintf ( STDERR, "Error: could not wait for pid %d\n", pid );
-		return;
-	}
-	libc_printf ( "Pid %d returned %d\n", ans_pid, ret );
-	return;
-}
 
 static void help()
 {
