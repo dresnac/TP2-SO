@@ -1,18 +1,15 @@
 
-// This is a personal academic project. Dear PVS-Studio, please check it.
-// pvs-studio static code analyzer for c, c++ and c#: http://www.viva64.com
+#include <test_util.h>
 
-// #include <test_util.h>
+static uint32_t m_z = 362436069;
+static uint32_t m_w = 521288629;
 
-// static uint32_t m_z = 362436069;
-// static uint32_t m_w = 521288629;
-
-// uint32_t get_u_int()
-// {
-// 	m_z = 36969 * ( m_z & 65535 ) + ( m_z >> 16 );
-// 	m_w = 18000 * ( m_w & 65535 ) + ( m_w >> 16 );
-// 	return ( m_z << 16 ) + m_w;
-// }
+uint32_t get_u_int()
+{
+	m_z = 36969 * ( m_z & 65535 ) + ( m_z >> 16 );
+	m_w = 18000 * ( m_w & 65535 ) + ( m_w >> 16 );
+	return ( m_z << 16 ) + m_w;
+}
 
 // uint32_t get_uniform ( uint32_t max )
 // {
