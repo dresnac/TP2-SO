@@ -20,11 +20,11 @@ int64_t loop ( char ** argv, int argc )
 		ans = libc_printf ( "Hello! I'm a loop with pid: %d\n", libc_get_pid() );
 	}
 
-	libc_printf ( "Total memory in userland: %x\n", info[USER_MEM_INFO].total_size );
-	libc_printf ( "Free memory in userland: %x\n", info[USER_MEM_INFO].free );
+	// libc_printf ( "Total memory in userland: %x\n", info[USER_MEM_INFO].total_size );
+	// libc_printf ( "Free memory in userland: %x\n", info[USER_MEM_INFO].free );
 
-	libc_printf ( "\nTotal memory in kernel: %x\n", info[KERNEL_MEM_INFO].total_size );
-	libc_printf ( "Free memory in kernel: %x\n", info[KERNEL_MEM_INFO].free );
+	// libc_printf ( "\nTotal memory in kernel: %x\n", info[KERNEL_MEM_INFO].total_size );
+	// libc_printf ( "Free memory in kernel: %x\n", info[KERNEL_MEM_INFO].free );
 	return 0;
 }
 
@@ -98,7 +98,10 @@ int64_t filter()
 	char ans;
 	while ( ( ans = libc_get_char() ) > 0 ) {
 		if ( ! ( ans == 'a' || ans == 'A' || ans == 'e' || ans == 'E' || ans == 'i' || ans == 'I' || ans == 'o' || ans == 'O' || ans == 'u' || ans == 'U' ) ) {
+			
+			libc_printf ( "hola");
 			libc_printf ( "%c", ans );
+			libc_printf ( "chau");
 		}
 	}
 	return 0;
@@ -110,6 +113,8 @@ int64_t cat()
 	while ( ( ans = libc_get_char() ) > 0 ) {
 		libc_printf ( "%c", ans );
 	}
+	libc_printf ( "bonjour");
 	libc_printf ( "\n" );
+	libc_printf ( "bonsoir");
 	return 0;
 }
