@@ -1,26 +1,22 @@
 #ifndef KERNEL_H
 #define KERNEL_H
 
+
 #include <stdint.h>
 #include <string.h>
-#include <lib.h>
-#include <moduleLoader.h>
-#include <videoDriver.h>
-#include <idtLoader.h>
-#include <syscallDispatcher.h>
-#include <keyboardDriver.h>
-#include <memoryManager.h>
-#include <scheduler.h>
+#include <module_loader.h>
+#include <video_driver.h>
+#include <idt_loader.h>
+#include <syscalls.h>
+#include <keyboard_driver.h>
+#include <memory_manager.h>
+#include <shared_libc.h>
 #include <process.h>
-#include <drivers_info.h>
-#include <videoDriver.h>
+#include <scheduler.h>
 #include <pipe.h>
 #include <time.h>
-
-//hace falta?
-
-MemoryManagerADT getKernelMem();
-MemoryManagerADT getUserlandMem();
+MemoryManagerADT get_userland_mem();
+MemoryManagerADT get_kernel_mem();
 int main();
 
 #endif

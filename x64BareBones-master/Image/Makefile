@@ -8,7 +8,7 @@ VMDK=$(OSIMAGENAME).vmdk
 QCOW2=$(OSIMAGENAME).qcow2
 IMG=$(OSIMAGENAME).img
 KERNEL=../Kernel/kernel.bin
-USERLAND=../Userland/0000-sampleCodeModule.bin ../Userland/0001-sampleDataModule.bin
+USERLAND=../Userland/0000-shellCodeModule.bin ../Userland/0001-shellDataModule.bin
 
 PACKEDKERNEL=packedKernel.bin
 IMGSIZE=6291456
@@ -29,6 +29,8 @@ $(VMDK): $(IMG)
 
 $(QCOW2): $(IMG)
 	qemu-img convert -f raw -O qcow2 $(IMG) $(QCOW2)
+	chmod 664 $(QCOW2)
+	chown root:adm $(QCOW2)
 
 clean:
 	rm -rf $(IMG) $(VMDK) $(QCOW2) *.bin

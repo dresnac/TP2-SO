@@ -3,10 +3,10 @@
 
 #include <shared_defs.h>
 #include <shared_libc.h>
-#include <memoryManager.h>
+#include <memory_manager.h>
 #include <kernel.h>
 
-char * newStrCpy ( char * string );
-char ** cpyArgv ( tPid pid, char ** argv, uint64_t argc );
+char * new_str_copy ( char * string );
+char ** copy_argv ( tPid pid, char ** argv, uint64_t argc );
 
 #endif
