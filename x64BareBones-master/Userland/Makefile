@@ -1,20 +1,21 @@
 include Makefile.inc
 
-SAMPLE_DATA=0001-sampleDataModule.bin
+shell_DATA=0001-shellDataModule.bin
 
-all: sampleCodeModule sampleDataModule
+all: shellCodeModule shellDataModule
 
-sampleCodeModule:
-	cd SampleCodeModule; make
+shellCodeModule:
+	cd shellCodeModule; make
 
-sampleDataModule:
-	printf "This is sample data." >> $(SAMPLE_DATA) && dd if=/dev/zero bs=1 count=1 >> $(SAMPLE_DATA)
+shellDataModule:
+	printf "This is shell data." >> $(shell_DATA) && dd if=/dev/zero bs=1 count=1 >> $(shell_DATA)
 
 clean:
-	cd SampleCodeModule; make clean
+	cd shellCodeModule; make clean
 	rm -rf *.bin
-		rm -rf *.elf
+	rm -rf *.elf
 	@if [ -e ../Shared/libs/*.o ]; then rm -rf ../Shared/libs/*.o; fi
+	
 
 
-.PHONY: sampleCodeModule all clean
+.PHONY: shellCodeModule all clean
