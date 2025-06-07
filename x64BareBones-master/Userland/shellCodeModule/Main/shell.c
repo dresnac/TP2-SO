@@ -85,6 +85,11 @@ int main()
 	for(int i=0; i<36; i++){
 		libc_puts(colidio_ascii[i]);
 	}
+	libc_sleep(3);
+	libc_clear_screen();
+	while ( 1 ) {
+		interpret();
+	}
 }
 
 static void free_args ( char ** args, uint64_t argc )
