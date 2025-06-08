@@ -1,15 +1,11 @@
-GLOBAL cpuVendor
-GLOBAL getKey
-GLOBAL rtc
-GLOBAL hlt
+GLOBAL cpu_vendor
+GLOBAL get_key
 GLOBAL inb
 GLOBAL outb
-GLOBAL timer_tick
+GLOBAL rtc
 GLOBAL acquire
 GLOBAL release
 
-GLOBAL Hours
-GLOBAL Mins
 
 section .text
 
@@ -24,8 +20,10 @@ acquire:
 release:
     mov byte [rdi], 1
     ret
-	
-cpuVendor:
+
+
+
+cpu_vendor:
 	push rbp
 	mov rbp, rsp
 
@@ -49,17 +47,29 @@ cpuVendor:
 	pop rbp
 	ret
 
+;https://wiki.osdev.org/%228042%22_PS/2_Controller
+; uint8_t get_key();
+get_key:
+    push rbp
+    mov rbp, rsp
+
+    in al, 60h
+
+    leave
+    ret
+
 rtc:
-	push rbp
-	mov rbp, rsp
+    push rbp
+    mov rbp, rsp
 
-	mov al, dil
-	out 70h, al
-	in al, 71h
+    mov al, dil
+    out 70h, al
+    in al, 71h
 
-	mov rsp, rbp
-	pop rbp
-	ret
+    mov rsp, rbp
+    pop rbp
+    ret
+
 
 inb:
 	push rbp
@@ -71,7 +81,6 @@ inb:
 	mov rsp, rbp
 	pop rbp
 	ret
-
 outb:
 	push rbp
     mov rbp, rsp
@@ -84,25 +93,4 @@ outb:
 	pop rbp
 	ret
 
-hlt:
-	sti
-	hlt
-	ret
 
-getKey:
-    mov rax, 0
-.cicle: 
-    in al, 64h
-    and al, 0x01
-    je .cicle
-    in al, 60h
-
-    ret
-
-timer_tick:
-	int 0x20
-	ret
-
-section .rodata
-
-buffer db "Jorge"
