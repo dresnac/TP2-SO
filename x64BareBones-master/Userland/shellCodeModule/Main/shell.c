@@ -72,20 +72,20 @@ static module modules[] = {
 	{"time", "", "Presenta la hora en pantalla", show_current_time, BUILT_IN},
 	{"getregs", "", "Presenta estado actual de los registros", get_regs, BUILT_IN},
 	{"clear", "", "Limpia la pantalla", ( void ( * ) ( char **, uint64_t ) ) libc_clear_screen, BUILT_IN},
-	{"kill", " <PID>: ", "Termina un proceso dado su PID ", kill_pid, BUILT_IN},
-	{"block", " <PID>: ", "Cambia el estado de un proceso de READY a BLOCKED segun su PID ", shell_block, BUILT_IN},
-	{"wait", " <PID>: ", "Espera a un proceso segun su PID", shell_wait_pid, BUILT_IN},
-	{"nice", " <PID> <nueva_prio>: ", "Cambia la prioridad de un proceso segun su PID y nueva prioridad", shell_nice, BUILT_IN},
+	{"kill", " <PID> ", "Termina un proceso dado su PID ", kill_pid, BUILT_IN},
+	{"block", " <PID> ", "Cambia el estado de un proceso de READY a BLOCKED segun su PID ", shell_block, BUILT_IN},
+	{"wait", " <PID> ", "Espera a un proceso segun su PID", shell_wait_pid, BUILT_IN},
+	{"nice", " <PID> <nueva_prio> ", "Cambia la prioridad de un proceso segun su PID y nueva prioridad", shell_nice, BUILT_IN},
 	{"ps", "", "Presenta la informacion de los procesos", ( void ( * ) ( char **, uint64_t ) ) ps_program, !BUILT_IN},
 	{"phylo", "", "Problema de los filosofos hambirentos", ( void ( * ) ( char **, uint64_t ) ) phylo, !BUILT_IN},
 	{"cat", "", "Imprime el STDIN exactamente como es recibido", ( void ( * ) ( char **, uint64_t ) ) cat, !BUILT_IN},
-	{"loop", " <segundos>: ", "Loop que saluda con su PID segun tiempo dado", ( void ( * ) ( char **, uint64_t ) ) loop, !BUILT_IN},
+	{"loop", " <segundos> ", "Loop que saluda con su PID segun tiempo dado", ( void ( * ) ( char **, uint64_t ) ) loop, !BUILT_IN},
 	{"filter", "", "Elimina vocales del texto ingresado", ( void ( * ) ( char **, uint64_t ) ) filter, !BUILT_IN},
 	{"wc", "", "Cuenta cantidad de lineas ingresadas", ( void ( * ) ( char **, uint64_t ) ) wc, !BUILT_IN},
 	{"mem", "", "Presenta el estado de memoria", ( void ( * ) ( char **, uint64_t ) ) mem, !BUILT_IN},
-	{"testproc", " <procesos_max>: ", "Test para creacion de proceso", ( void ( * ) ( char **, uint64_t ) ) test_processes, !BUILT_IN},
-	{"testsync", " <n> <uso_sem (0 false, int true)>: ", "Test para sincronizacion de procesos", ( void ( * ) ( char **, uint64_t ) ) test_sync, !BUILT_IN},
-	{"testmm", " <maxima_mem>: ", "Test para el uso de malloc y free", ( void ( * ) ( char **, uint64_t ) ) test_mm, !BUILT_IN},
+	{"testproc", " <procesos_max> ", "Test para creacion de proceso", ( void ( * ) ( char **, uint64_t ) ) test_processes, !BUILT_IN},
+	{"testsync", " <n> <uso_sem (0 false, int true)> ", "Test para sincronizacion de procesos", ( void ( * ) ( char **, uint64_t ) ) test_sync, !BUILT_IN},
+	{"testmm", " <maxima_mem> ", "Test para el uso de malloc y free", ( void ( * ) ( char **, uint64_t ) ) test_mm, !BUILT_IN},
 	{"testprio", "", "Test para las prioridades del scheduler", ( void ( * ) ( char **, uint64_t ) ) test_prio, !BUILT_IN},
 };
 
@@ -386,17 +386,10 @@ static void shell_wait_pid ( char ** args, uint64_t argc )
 
 static void help()
 {
-	libc_printf ( "\n\n-------------------------------                     Funciones Built-in                      -----------------------------------\n\n" );
-	libc_printf ("  Comando   Argumentos                              Descripcion\n\n");
+	libc_printf ( "\n\n######################################################################################################################\n\n");
+	libc_printf ("  Comando    Argumentos                             Descripcion\n");
+	libc_printf ("  -------    -------------                          -----------------------------\n");
 	for ( int i = 0; i < MAX_MODULES; i++ ) {
-		if ( i == NUM_BUILT_INS ) {
-			libc_printf ( "\n\n-------------------------------                      Procesos                                ----------------------------------\n\n" );
-			libc_printf ("  Comando   Argumentos                              Descripcion\n\n");
-		}
-		if ( i == MAX_MODULES - NUM_TESTS ) {
-			libc_printf ( "\n\n-------------------------------                      Tests de funcionalidad                      ----------------------------------\n\n" );
-			libc_printf ("  Comando   Argumentos                              Descripcion\n\n");
-		}
 		int len_name = libc_strlen(modules[i].name);
 		libc_printf("  %s", modules[i].name);
 		for (int s = len_name; s < 10; s++)
@@ -408,9 +401,8 @@ static void help()
 			libc_printf(" ");
 
 		libc_printf("%s\n", modules[i].desc);
-		//libc_printf ( "- %s%s%s%s\n", modules[i].name, libc_strcmp ( modules[i].args, "" ) == 0 ? ": " : "", modules[i].args, modules[i].desc );
 	}
-	libc_printf ( "-------------------------------                                                              -----------------------------------\n\n" );
+	libc_printf ( "\n\n######################################################################################################################\n\n");
 }
 
 
