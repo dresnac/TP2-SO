@@ -48,6 +48,7 @@ static const char *colidio_ascii[] = {
 static void help();
 static void killPid ( char ** argv, uint64_t argc );
 static void toUtcMinus3 ( LocalTime * time );
+static uint8_t diasEnMes(uint8_t mes, uint8_t anio);
 static void freeArgs ( char ** args, uint64_t argc );
 static void freeCmdArgs ( Command * cmd );
 static int64_t callFunctionProcess ( module m, char ** args, uint64_t argc, tFd fds[CANT_FDS] );
@@ -420,6 +421,26 @@ static void showCurrentTime()
 	return;
 }
 
+static uint8_t diasEnMes(uint8_t mes, uint8_t anio) {
+	if (mes == 2 && anio % 4 == 0)
+		return 29; // Febrero bisiesto
+	const int dias_mes[] = { 
+		0,  // mes 0 no existe
+		31, // enero
+		28, // febrero
+		31, // marzo
+		30, // abril
+		31, // mayo
+		30, // junio
+		31, // julio
+		31, // agosto
+		30, // septiembre
+		31, // octubre
+		30, // noviembre
+		31  // diciembre
+	};
+	return dias_mes[mes];
+}
 
 static void toUtcMinus3 ( LocalTime * time )
 {
@@ -433,16 +454,7 @@ static void toUtcMinus3 ( LocalTime * time )
 				time->month = 12;
 				time->year--;
 			}
-			if ( time->month == 2 ) {
-				time->day = 28;
-				if ( time->year % 4 == 0 ) {
-					time->day = 29;
-				}
-			} else if ( time->month == 4 || time->month == 6 || time->month == 9 || time->month == 11 ) {
-				time->day = 30;
-			} else {
-				time->day = 31;
-			}
+			time->day = diasEnMes(time->month, time->year);
 		}
 	} else {
 		time->hour = time->hour - 3;
