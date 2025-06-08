@@ -72,7 +72,7 @@ static module modules[] = {
 	{"time", "", "Presenta la hora en pantalla", show_current_time, BUILT_IN},
 	{"getregs", "", "Presenta estado actual de los registros", get_regs, BUILT_IN},
 	{"clear", "", "Limpia la pantalla", ( void ( * ) ( char **, uint64_t ) ) libc_clear_screen, BUILT_IN},
-	{"kill", " <PID>: ", "Hace \"kill\" de un proceso dado su PID ", kill_pid, BUILT_IN},
+	{"kill", " <PID>: ", "Termina un proceso dado su PID ", kill_pid, BUILT_IN},
 	{"block", " <PID>: ", "Cambia el estado de un proceso de READY a BLOCKED segun su PID ", shell_block, BUILT_IN},
 	{"wait", " <PID>: ", "Espera a un proceso segun su PID", shell_wait_pid, BUILT_IN},
 	{"nice", " <PID> <nueva_prioridad>: ", "Cambia la prioridad de un proceso segun su PID y nueva prioridad", shell_nice, BUILT_IN},
@@ -140,7 +140,7 @@ static int64_t call_function_process ( module m, char ** args, uint64_t argc, tF
 	int64_t ans = libc_create_process ( ( mainFunction ) m.function, LOW, args, argc, fds );
 
 	if ( ans < 0 ) {
-		libc_fprintf ( STDERR, "Error: Could not create process\n" );
+		libc_fprintf ( STDERR, "Error: No se pudo crear el proceso\n" );
 	}
 	free_args ( args, argc );
 	return ans;
@@ -267,18 +267,18 @@ static void interpret()
 
 	Command cmd;
 	if ( piped_command_parse ( shell_buffer, &cmd ) != 0 ) {
-		libc_fprintf ( STDERR, "Invalid Command! Try Again >:(\n" );
+		libc_fprintf ( STDERR, "Comando invalido, intente nuevamente >:(\n" );
 		return;
 	}
 	if ( cmd.argc[0] == -1 || cmd.argc[1] == -1 ) {
-		libc_fprintf ( STDERR, "Not enough memory to create process\n" );
+		libc_fprintf ( STDERR, "No hay suficiente memoria para crear proceso\n" );
 	}
 
 	int found_idx[2] = {-1, -1};
 	int has_pipe = parse_command_and_get_modules ( &cmd, found_idx );
 
 	if ( found_idx[0] == -1 ) {
-		libc_fprintf ( STDERR, "Error: Invalid Command! Try Again.\n" );
+		libc_fprintf ( STDERR, "Comando invalido, intente nuevamente >:(\n" );
 		return;
 	}
 
@@ -289,7 +289,7 @@ static void interpret()
 	if ( !has_pipe ) {
 		uint8_t is_bckg = ( libc_strcmp ( cmd.args[0][cmd.argc[0] - 1], "&" ) == 0 );
 		if ( is_bckg && modules[found_idx[0]].is_built_in ) {
-			libc_fprintf ( STDERR, "Error: Cannot use built-in in background\n" );
+			libc_fprintf ( STDERR, "Error: No se puede usar built-in en background\n" );
 			free_cmd_args ( &cmd );
 			return;
 		}
@@ -302,23 +302,23 @@ static void interpret()
 		if ( !is_bckg && pid > 0 ) {
 			libc_wait ( pid, NULL );
 		} else if ( is_bckg ) {
-			libc_printf ( "Pid: %d in background\n", pid );
+			libc_printf ( "Pid: %d en background\n", pid );
 		}
 		return;
 	}
 	if ( found_idx[1] == -1 ) {
-		libc_fprintf ( STDERR, "Error: Invalid Command! Try Again.\n" );
+		libc_fprintf ( STDERR, "Error: Comando invalido, intente nuevamente >:(\n" );
 		return;
 	}
 	if ( modules[found_idx[0]].is_built_in || modules[found_idx[1]].is_built_in ) {
-		libc_fprintf ( STDERR, "Cannot use built-in in pipe\n" );
+		libc_fprintf ( STDERR, "No se puede usar built-in en pipe\n" );
 		free_cmd_args ( &cmd );
 		return;
 	}
 	tFd fd = libc_pipe_reserve();
 
 	if ( fd < 0 ) {
-		libc_fprintf ( STDERR, "Error: Could not open pipe\n" );
+		libc_fprintf ( STDERR, "Error: No se pudo abrir pipe\n" );
 		free_cmd_args ( &cmd );
 		return;
 	}
@@ -336,7 +336,7 @@ static void interpret()
 		libc_wait ( pid2, NULL );
 		libc_wait ( pid1, NULL );
 	} else if ( is_bckg ) {
-		libc_printf ( "pid: %d and %d in background.\n", pid1, pid2 );
+		libc_printf ( "pid: %d y %d en background.\n", pid1, pid2 );
 	}
 	return;
 
@@ -349,38 +349,38 @@ static void kill_pid ( char ** argv, uint64_t argc )
 	tPid pid;
 	int64_t satoi_flag;
 	if ( argc != 2 || argv == NULL || ( ( pid = libc_satoi ( argv[1], &satoi_flag ) ) < 0 ) || !satoi_flag ) {
-		libc_fprintf ( STDERR, "Usage: kill <pid>\n" );
+		libc_fprintf ( STDERR, "Uso: kill <pid>\n" );
 		return;
 	}
 
 	if ( libc_kill ( pid ) < 0 ) {
-		libc_fprintf ( STDERR, "Error: Could not kill process %d\n", pid );
+		libc_fprintf ( STDERR, "Error: No se pudo terminar proceso %d\n", pid );
 		return;
 	}
-	libc_printf("Process with pid: %d killed\n", pid);
+	libc_printf("Proceso con pid: %d terminado\n", pid);
 
 }
 
 static void shell_wait_pid ( char ** args, uint64_t argc )
 {
 	if ( argc != 2 ) {
-		libc_fprintf ( STDERR, "Usage: wait <pid>\n" );
+		libc_fprintf ( STDERR, "Uso: wait <pid>\n" );
 		return;
 	}
 	tPid pid;
 	int64_t satoi_flag;
 	if ( ( pid = libc_satoi ( args[1], &satoi_flag ) ) < 0 || !satoi_flag ) {
-		libc_fprintf ( STDERR, "Error: pid must be positive\n" );
+		libc_fprintf ( STDERR, "Error: pid debe ser positivo\n" );
 		return;
 	}
 	int64_t ret;
 	tPid ans_pid;
 	ans_pid = libc_wait ( pid, &ret );
 	if ( ans_pid == -1 ) {
-		libc_fprintf ( STDERR, "Error: could not wait for pid %d\n", pid );
+		libc_fprintf ( STDERR, "Error: No se pudo esperar pid %d\n", pid );
 		return;
 	}
-	libc_printf ( "Pid %d returned %d\n", ans_pid, ret );
+	libc_printf ( "Pid %d devolvio %d\n", ans_pid, ret );
 	return;
 }
 
@@ -406,9 +406,9 @@ static void show_current_time()
 	LocalTime time;
 	libc_get_time ( &time );
 	to_utc_minus_3 ( &time );
-	libc_printf ( "%d/%d/%d [d/m/y]\n", time.day, time.month, time.year );
+	libc_printf ( "%d/%d/%d [d/m/a]\n", time.day, time.month, time.year );
 	int64_t h = time.hour;
-	libc_printf ( "%d:%d:%d [hour/min/sec] (Argentina)\n", h, time.minutes, time.seconds ); // la hora es -3 para que este en tiempo argentino.
+	libc_printf ( "%d:%d:%d [hora/min/seg] (Argentina)\n", h, time.minutes, time.seconds ); 
 
 	return;
 }
@@ -456,7 +456,7 @@ static void shell_nice ( char **argv, uint64_t argc )
 	tPid pid;
 	int64_t satoi_flag;
 	if ( argc != 3 || ( ( pid = libc_satoi ( argv[1], &satoi_flag ) ) < 0 ) || !satoi_flag ) {
-		libc_fprintf ( STDERR, "Usage: nice <pid> <new_priority>\n" );
+		libc_fprintf ( STDERR, "Uso: nice <pid> <nueva_prioridad>\n" );
 		return;
 	}
 	tPriority prio;
@@ -467,11 +467,11 @@ static void shell_nice ( char **argv, uint64_t argc )
 	} else if ( libc_strnocasecmp ( argv[2], "high" ) == 0 ) {
 		prio = HIGH;
 	} else {
-		libc_fprintf ( STDERR, "Invalid priority. Use 'low', 'medium', or 'high' for <newprio>.\n" );
+		libc_fprintf ( STDERR, "Prioridad invalida. Use 'low', 'medium', o 'high' para <nueva_prioridad>.\n" );
 		return;
 	}
 	if ( libc_nice ( pid, prio ) < 0 ) {
-		libc_fprintf ( STDERR, "Error: Couldn't change priority for pid %d.\n", pid );
+		libc_fprintf ( STDERR, "Error: No se pudo cambiar la prioridad de pid %d.\n", pid );
 	}
 }
 
@@ -481,12 +481,12 @@ static void shell_block ( char **argv, uint64_t argc )
 	tPid pid;
 	int64_t satoi_flag;
 	if ( argc != 2 || ( ( pid = libc_satoi ( argv[1], &satoi_flag ) ) < 0 ) || !satoi_flag ) {
-		libc_fprintf ( STDERR, "Usage: block <pid>\n" );
+		libc_fprintf ( STDERR, "Uso: block <pid>\n" );
 		return;
 	}
 	int8_t status = libc_get_status ( pid );
 	if (	( status != BLOCKED ) && ( status != READY ) ) {
-		libc_fprintf ( STDERR, "Error: The status of pid %d neither ready or blocked \n", pid );
+		libc_fprintf ( STDERR, "Error: El estado de pid %d no es READY ni BLOCKED \n", pid );
 		return;
 	}
 	if ( status == BLOCKED ) {
