@@ -8,19 +8,19 @@ extern char endOfBinary;
 
 int main();
 
-static void * loader_memset ( void * destiny, int32_t c, uint64_t length );
+static void * loaderMemset ( void * destiny, int32_t c, uint64_t length );
 
 int _start()
 {
 	//Clean BSS
-	loader_memset ( &bss, 0, &endOfBinary - &bss );
+	loaderMemset ( &bss, 0, &endOfBinary - &bss );
 
 	return main();
 
 }
 
 
-void * loader_memset ( void * destiation, int32_t c, uint64_t length )
+void * loaderMemset ( void * destiation, int32_t c, uint64_t length )
 {
 	uint8_t chr = ( uint8_t ) c;
 	char * dst = ( char * ) destiation;

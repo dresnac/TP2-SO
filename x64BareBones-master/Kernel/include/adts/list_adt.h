@@ -16,17 +16,17 @@ typedef PCB * elemTypePtr;
 
 typedef int ( *tCompare ) ( elemTypePtr e1, elemTypePtr e2 );
 
-listADT new_list ( tCompare cmp );
+listADT newList ( tCompare cmp );
 
-void free_list ( listADT list );
+void freeList ( listADT list );
 
-int add_list ( listADT list, elemTypePtr elem );
+int addList ( listADT list, elemTypePtr elem );
 
-int delete_list ( listADT list, elemTypePtr elem );
+int deleteList ( listADT list, elemTypePtr elem );
 
-int size_list ( const listADT list );
+int sizeList ( const listADT list );
 
-int is_empty_list ( const listADT list );
+int isEmptyList ( const listADT list );
 
 elemTypePtr next ( listADT list );
 

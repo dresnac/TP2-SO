@@ -21,13 +21,13 @@ int64_t test_processes ( char * argv[], uint64_t argc )
 	uint64_t action;
 	int64_t max_processes;
 	int64_t satoi_flag;
-	if ( argc != 2 || ( max_processes = libc_satoi ( argv[1], &satoi_flag ) ) < 0 || !satoi_flag ) {
-		libc_fprintf ( STDERR, "Usage: testproc <max_processes>\n" );
+	if ( argc != 2 || ( max_processes = libcSatoi ( argv[1], &satoi_flag ) ) < 0 || !satoi_flag ) {
+		libcfPrintf ( STDERR, "Usage: testproc <max_processes>\n" );
 		return -1;
 	}
 
 	if ( max_processes > 20 || max_processes == 0 ) {
-		libc_fprintf ( STDERR, "<max_processes> must be between 1 and 20\n" );
+		libcfPrintf ( STDERR, "<max_processes> must be between 1 and 20\n" );
 		return -1;
 	}
 
@@ -37,9 +37,9 @@ int64_t test_processes ( char * argv[], uint64_t argc )
 		for ( rq = 0; rq < max_processes; rq++ ) {
 			tFd fds[] = {STDOUT, STDERR, -1};
 			char * argv[] = {"test_proc_aux"};
-			p_rqs[rq].pid = libc_create_process ( ( mainFunction ) endless_loop, 0, argv, 1, fds );
+			p_rqs[rq].pid = libcCreateProcess ( ( mainFunction ) endless_loop, 0, argv, 1, fds );
 			if ( p_rqs[rq].pid < 0 ) {
-				libc_fprintf ( STDERR, "ERROR creating process\n" );
+				libcfPrintf ( STDERR, "ERROR creating process\n" );
 				return -1;
 			} else {
 				p_rqs[rq].state = STATE_RUNNING;
@@ -55,8 +55,8 @@ int64_t test_processes ( char * argv[], uint64_t argc )
 				switch ( action ) {
 				case 0:
 					if ( p_rqs[rq].state == STATE_RUNNING || p_rqs[rq].state == STATE_BLOCKED ) {
-						if ( libc_kill ( p_rqs[rq].pid ) == -1 ) {
-							libc_fprintf ( STDERR, "ERROR killing process\n" );
+						if ( libcKill ( p_rqs[rq].pid ) == -1 ) {
+							libcfPrintf ( STDERR, "ERROR killing process\n" );
 							return -1;
 						}
 						p_rqs[rq].state = STATE_KILLED;
@@ -67,8 +67,8 @@ int64_t test_processes ( char * argv[], uint64_t argc )
 
 				case 1:
 					if ( p_rqs[rq].state == STATE_RUNNING ) {
-						if ( libc_block ( p_rqs[rq].pid ) == -1 ) {
-							libc_fprintf ( STDERR, "ERROR blocking process\n" );
+						if ( libcBlock ( p_rqs[rq].pid ) == -1 ) {
+							libcfPrintf ( STDERR, "ERROR blocking process\n" );
 							return -1;
 						}
 						p_rqs[rq].state = STATE_BLOCKED;
@@ -79,8 +79,8 @@ int64_t test_processes ( char * argv[], uint64_t argc )
 
 			for ( rq = 0; rq < max_processes; rq++ )
 				if ( p_rqs[rq].state == STATE_BLOCKED && get_uniform ( 100 ) % 2 ) {
-					if ( libc_unblock ( p_rqs[rq].pid ) == -1 ) {
-						libc_fprintf ( STDERR, "ERROR unblocking process\n" );
+					if ( libcUnblock ( p_rqs[rq].pid ) == -1 ) {
+						libcfPrintf ( STDERR, "ERROR unblocking process\n" );
 						return -1;
 					}
 					p_rqs[rq].state = STATE_RUNNING;

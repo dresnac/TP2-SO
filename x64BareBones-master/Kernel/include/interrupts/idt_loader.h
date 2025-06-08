@@ -9,7 +9,7 @@
 #define DEFAULT_SLAVE_MASK 0xFF
 
 
-void load_idt();
+void loadIdt();
 
 
 #endif

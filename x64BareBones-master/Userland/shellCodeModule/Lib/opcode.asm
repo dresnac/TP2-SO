@@ -1,7 +1,7 @@
 section .text
-global op_code
+global opCode
 
-op_code:
+opCode:
     push rbp
     mov rbp, rsp
 

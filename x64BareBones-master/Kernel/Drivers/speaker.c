@@ -1,12 +1,8 @@
 
-//cortesía de https://wiki.osdev.org/pc_speaker
-//play sound using built-in speaker
-
-
 #include <speaker.h>
 
 
-static void play_sound ( uint32_t n_frequence )
+static void playSound ( uint32_t n_frequence )
 {
 	uint32_t div;
 	uint8_t tmp;
@@ -25,7 +21,7 @@ static void play_sound ( uint32_t n_frequence )
 }
 
 //make it shut up
-static void nosound()
+static void noSound()
 {
 	uint8_t tmp = inb ( 0x61 ) & 0xfc;
 
@@ -35,7 +31,7 @@ static void nosound()
 //make a beep
 void beep ( uint32_t freq, int time )
 {
-	play_sound ( freq );
-	ticks_sleep ( time );
-	nosound();
+	playSound ( freq );
+	ticksSleep ( time );
+	noSound();
 }

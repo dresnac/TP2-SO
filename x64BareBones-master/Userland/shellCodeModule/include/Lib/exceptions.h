@@ -2,6 +2,6 @@
 #define EXCEPTIONS_H
 
 void div0();
-void op_code();
+void opCode();
 
 #endif // EXCEPTIONS_H

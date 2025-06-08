@@ -17,9 +17,9 @@ struct listCDT {
 };
 
 
-orderedListADT new_ordered_list ( tCompare cmp )
+orderedListADT newOrderedList ( tCompare cmp )
 {
-	orderedListADT aux = alloc_memory ( sizeof ( *aux ), get_kernel_mem() );
+	orderedListADT aux = allocMemory ( sizeof ( *aux ), getKernelMem() );
 	if ( aux == NULL ) {
 		return NULL;
 	}
@@ -29,27 +29,27 @@ orderedListADT new_ordered_list ( tCompare cmp )
 	return aux;
 }
 
-static void free_ordered_list_rec ( tOrderedList list )
+static void freeOrderedListRec ( tOrderedList list )
 {
 	if ( list == NULL ) {
 		return;
 	}
-	free_ordered_list_rec ( list->tail );
-	free_memory ( list, get_kernel_mem() );
+	freeOrderedListRec ( list->tail );
+	freeMemory ( list, getKernelMem() );
 }
 
 void free_ordered_list ( orderedListADT list )
 {
-	free_ordered_list_rec ( list->first );
-	free_memory ( list, get_kernel_mem() );
+	freeOrderedListRec ( list->first );
+	freeMemory ( list, getKernelMem() );
 }
 
-int is_empty_ordered_list ( const orderedListADT list )
+int isEmptyOrderedList ( const orderedListADT list )
 {
 	return list->first == NULL;
 }
 
-size_t size_ordered_list ( const orderedListADT list )
+size_t sizeOrderedList ( const orderedListADT list )
 {
 	return list->size;
 }
@@ -57,11 +57,11 @@ size_t size_ordered_list ( const orderedListADT list )
 
 
 
-static tOrderedList add_ordered_list_rec ( tOrderedList list, elemType elem, tCompare cmp, int * flag )
+static tOrderedList addOrderedListRec ( tOrderedList list, elemType elem, tCompare cmp, int * flag )
 {
 	int c;
 	if ( list == NULL || ( c = cmp ( elem, list->head ) ) < 0 ) {
-		tOrderedList aux = alloc_memory ( sizeof ( *aux ), get_kernel_mem() );
+		tOrderedList aux = allocMemory ( sizeof ( *aux ), getKernelMem() );
 		if ( aux == NULL ) {
 			*flag = 0;
 			return list;
@@ -72,18 +72,18 @@ static tOrderedList add_ordered_list_rec ( tOrderedList list, elemType elem, tCo
 		return aux;
 	}
 	if ( c > 0 ) {
-		list->tail = add_ordered_list_rec ( list->tail, elem, cmp, flag );
+		list->tail = addOrderedListRec ( list->tail, elem, cmp, flag );
 	}
 	return list;
 }
 
-int add_ordered_list ( orderedListADT list, elemType elem )
+int addOrderedList ( orderedListADT list, elemType elem )
 {
 	if ( list == NULL || elem == NULL ) {
 		return -1;
 	}
 	int flag = 0;
-	list->first = add_ordered_list_rec ( list->first, elem, list->cmp, &flag );
+	list->first = addOrderedListRec ( list->first, elem, list->cmp, &flag );
 	list->size += flag;
 	if ( flag == 0 ) {
 		return -1;
@@ -91,12 +91,12 @@ int add_ordered_list ( orderedListADT list, elemType elem )
 	return 0;
 }
 
-static elemType get_rec ( tOrderedList l, size_t idx )
+static elemType getRec ( tOrderedList l, size_t idx )
 {
 	if ( idx == 0 ) {
 		return l->head;
 	}
-	return get_rec ( l->tail, idx - 1 );
+	return getRec ( l->tail, idx - 1 );
 }
 
 elemType get ( const orderedListADT list, size_t idx )
@@ -104,11 +104,11 @@ elemType get ( const orderedListADT list, size_t idx )
 	if ( list == NULL || idx >= list->size ) {
 		return NULL;
 	}
-	return get_rec ( list->first, idx );
+	return getRec ( list->first, idx );
 }
 
 
-static tOrderedList delete_rec ( tOrderedList list, elemType elem, tCompare cmp, int * flag )
+static tOrderedList deleteRec ( tOrderedList list, elemType elem, tCompare cmp, int * flag )
 {
 	int c;
 	if ( list == NULL || ( c = cmp ( list->head, elem ) ) > 0 ) {
@@ -116,29 +116,29 @@ static tOrderedList delete_rec ( tOrderedList list, elemType elem, tCompare cmp,
 		return NULL;
 	}
 	if ( c < 0 ) {
-		list->tail = delete_rec ( list->tail, elem, cmp, flag );
+		list->tail = deleteRec ( list->tail, elem, cmp, flag );
 		return list;
 	}
 	*flag = 1;
 	tOrderedList aux = list->tail;
-	free_memory ( list, get_kernel_mem() );
+	freeMemory ( list, getKernelMem() );
 	return aux;
 
 }
 
-int delete_ordered_list ( orderedListADT list, elemType elem )
+int deleteOrderedList ( orderedListADT list, elemType elem )
 {
 	if ( list == NULL || list->first == NULL || elem == NULL ) {
 		return -1;
 	}
 	int aux;
-	list->first = delete_rec ( list->first, elem, list->cmp, &aux );
+	list->first = deleteRec ( list->first, elem, list->cmp, &aux );
 	list->size -= aux;
 	return !aux;
 }
 
 
-void ordered_list_to_begin ( orderedListADT list )
+void orderedListToBegin ( orderedListADT list )
 {
 	list->next = list->first;
 	list->current = NULL;
@@ -146,15 +146,15 @@ void ordered_list_to_begin ( orderedListADT list )
 }
 
 
-int ordered_list_has_next ( const orderedListADT list )
+int orderedListHasNext ( const orderedListADT list )
 {
 	return list->next != NULL;
 }
 
 
-elemType ordered_list_next ( orderedListADT list )
+elemType orderedListNext ( orderedListADT list )
 {
-	if ( !ordered_list_has_next ( list ) ) {
+	if ( !orderedListHasNext ( list ) ) {
 		return NULL;
 	}
 	list->previous = list->current;
@@ -163,7 +163,7 @@ elemType ordered_list_next ( orderedListADT list )
 	return list->current->head;
 }
 
-int ordered_list_delete_current ( orderedListADT list )
+int orderedListDeleteCurrent ( orderedListADT list )
 {
 	if ( list->current == NULL ) {
 		return -1;
@@ -175,7 +175,7 @@ int ordered_list_delete_current ( orderedListADT list )
 		list->previous->tail = list->next;
 	}
 
-	free_memory ( list->current, get_kernel_mem() );
+	freeMemory ( list->current, getKernelMem() );
 	list->size--;
 
 	list->current = NULL;

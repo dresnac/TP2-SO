@@ -9,10 +9,10 @@
 
 typedef struct MemoryManagerCDT * MemoryManagerADT;
 
-MemoryManagerADT my_mm_init ( void * p );
-void * alloc_memory ( uint64_t size, struct MemoryManagerCDT * mem );
-void free_memory ( void * p, MemoryManagerADT adt );
-int64_t mem_info ( MemoryInfo * info, MemoryManagerADT adt );
+MemoryManagerADT createMM ( void * p );
+void * allocMemory ( uint64_t size, struct MemoryManagerCDT * mem );
+void freeMemory ( void * p, MemoryManagerADT adt );
+int64_t memInfo ( MemoryInfo * info, MemoryManagerADT adt );
 
 
 

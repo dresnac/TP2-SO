@@ -2,28 +2,28 @@
 #include <shared_libc.h>
 #include <module_loader.h>
 
-static void load_module ( uint8_t ** module, void * target_module_address );
-static uint32_t read_uint32 ( uint8_t ** address );
+static void loadModule ( uint8_t ** module, void * target_module_address );
+static uint32_t readUint32 ( uint8_t ** address );
 
-void load_modules ( void * payload_start, void ** target_module_address )
+void loadModules ( void * payload_start, void ** target_module_address )
 {
 	int i;
 	uint8_t * current_module = ( uint8_t * ) payload_start;
-	uint32_t module_count = read_uint32 ( &current_module );
+	uint32_t module_count = readUint32 ( &current_module );
 
 	for ( i = 0; i < module_count; i++ )
-		load_module ( &current_module, target_module_address[i] );
+		loadModule ( &current_module, target_module_address[i] );
 }
 
-static void load_module ( uint8_t ** module, void * target_module_address )
+static void loadModule ( uint8_t ** module, void * target_module_address )
 {
-	uint32_t module_size = read_uint32 ( module );
-	shared_libc_memcpy ( target_module_address, *module, module_size );
+	uint32_t module_size = readUint32 ( module );
+	sharedLibcMemcpy ( target_module_address, *module, module_size );
 	*module += module_size;
 
 }
 
-static uint32_t read_uint32 ( uint8_t ** address )
+static uint32_t readUint32 ( uint8_t ** address )
 {
 	uint32_t result = * ( uint32_t * ) ( *address );
 	*address += sizeof ( uint32_t );

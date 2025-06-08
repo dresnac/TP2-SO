@@ -6,7 +6,7 @@
 #include <memory_manager.h>
 #include <kernel.h>
 
-char * new_str_copy ( char * string );
-char ** copy_argv ( tPid pid, char ** argv, uint64_t argc );
+char * newStrCopy ( char * string );
+char ** copyArgv ( tPid pid, char ** argv, uint64_t argc );
 
 #endif

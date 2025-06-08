@@ -1,49 +1,49 @@
 #include <rtc.h>
 #include <libasm.h>
 
-static uint8_t bcd_decimal ( uint8_t bcd )
+static uint8_t bcdDecimal ( uint8_t bcd )
 {
 	return ( bcd >> 4 ) * 10 + ( bcd & 0x0f );
 }
 
-static uint8_t get_rtc ( uint8_t mode )
+static uint8_t getRTC ( uint8_t mode )
 {
-	return bcd_decimal ( rtc ( mode ) );
+	return bcdDecimal ( rtc ( mode ) );
 }
 
-uint8_t get_rtc_seconds()
+uint8_t getSecondsRTC()
 {
-	return get_rtc ( RTC_SECONDS );
+	return getRTC ( RTC_SECONDS );
 }
 
-uint8_t get_rtc_minutes()
+uint8_t getMinutesRTC()
 {
-	return get_rtc ( RTC_MINUTES );
+	return getRTC ( RTC_MINUTES );
 }
 
-uint8_t get_rtc_hours()
+uint8_t getHoursRTC()
 {
-	return get_rtc ( RTC_HOURS );
+	return getRTC ( RTC_HOURS );
 }
 
-uint8_t get_rtc_day_of_week()
+uint8_t getDayOfWeekRTC()
 {
-	return get_rtc ( RTC_DAY_OF_WEEK );
+	return getRTC ( RTC_DAY_OF_WEEK );
 }
 
-uint8_t get_rtc_day_of_month()
+uint8_t getDayOfMonthRTC()
 {
-	return get_rtc ( RTC_DAY_OF_MONTH );
+	return getRTC ( RTC_DAY_OF_MONTH );
 }
 
-uint8_t get_rtc_month()
+uint8_t getMonthRTC()
 {
-	return get_rtc ( RTC_MONTH );
+	return getRTC ( RTC_MONTH );
 }
 
-uint8_t get_rtc_year()
+uint8_t getYearRTC()
 {
-	return get_rtc ( RTC_YEAR );
+	return getRTC ( RTC_YEAR );
 }
 
 

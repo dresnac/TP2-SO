@@ -19,13 +19,13 @@ int64_t test_mm ( char * argv[],  uint64_t argc )
 	uint64_t max_memory;
 
 	if ( argc != 2 ) {
-		libc_fprintf ( STDERR, "Usage: testmm <max_memory>\n" );
+		libcfPrintf ( STDERR, "Usage: testmm <max_memory>\n" );
 		return -1;
 	}
 
 	int64_t satoi_flag;
-	if ( ( max_memory = libc_satoi ( argv[1], &satoi_flag ) ) <= 0 ) {
-		libc_fprintf ( STDERR, "Error: <max_memory> must be a positive integer.\n" );
+	if ( ( max_memory = libcSatoi ( argv[1], &satoi_flag ) ) <= 0 ) {
+		libcfPrintf ( STDERR, "Error: <max_memory> must be a positive integer.\n" );
 		return -1;
 	}
 
@@ -37,7 +37,7 @@ int64_t test_mm ( char * argv[],  uint64_t argc )
 		// Request as many blocks as we can
 		while ( rq < MAX_BLOCKS && total < max_memory ) {
 			mm_rqs[rq].size = get_uniform ( max_memory - total - 1 ) + 1;
-			mm_rqs[rq].address = libc_malloc ( mm_rqs[rq].size );
+			mm_rqs[rq].address = libcMalloc ( mm_rqs[rq].size );
 			if ( mm_rqs[rq].address ) {
 				total += mm_rqs[rq].size;
 				rq++;
@@ -48,20 +48,20 @@ int64_t test_mm ( char * argv[],  uint64_t argc )
 		uint32_t i;
 		for ( i = 0; i < rq; i++ )
 			if ( mm_rqs[i].address )
-				shared_libc_memset ( mm_rqs[i].address, i, mm_rqs[i].size );
+				sharedLibcMemset ( mm_rqs[i].address, i, mm_rqs[i].size );
 
 		// Check
 		for ( i = 0; i < rq; i++ )
 			if ( mm_rqs[i].address )
 				if ( !memcheck ( mm_rqs[i].address, i, mm_rqs[i].size ) ) {
-					libc_fprintf ( STDERR, "ERROR: memcheck is not true\n" );
+					libcfPrintf ( STDERR, "ERROR: memcheck is not true\n" );
 					return -1;
 				}
 
 		// Free
 		for ( i = 0; i < rq; i++ )
 			if ( mm_rqs[i].address )
-				libc_free ( mm_rqs[i].address );
+				libcFree ( mm_rqs[i].address );
 	}
 	return 0;
 }

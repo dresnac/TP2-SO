@@ -24,16 +24,16 @@ static void f1key ( void )
 	reg_shot_flag = 1;
 }
 
-void set_keyboard_blocked_null()
+void setKeyboardBlockedNull()
 {
 	blocked = NULL;
 }
-PCB * get_keyboard_blocked()
+PCB * getKeyboardBlocked()
 {
 	return blocked;
 }
 
-int64_t stdin_read ( uint8_t * buff, uint64_t amount )
+int64_t stdinRead ( uint8_t * buff, uint64_t amount )
 {
 	if ( blocked != NULL ) {	// a process is already waiting to get a key...
 		return -1;
@@ -41,24 +41,24 @@ int64_t stdin_read ( uint8_t * buff, uint64_t amount )
 
 	uint64_t i = 0;
 
-	if ( !buffer_has_next() ) {
-		blocked = get_running();
-		block_current();
+	if ( !bufferHasNext() ) {
+		blocked = getRunning();
+		blockCurrent();
 	}
 
-	while ( i < amount && buffer_has_next() && buffer[buffer_current] != EOF ) {
-		buff[i] = get_current();
+	while ( i < amount && bufferHasNext() && buffer[buffer_current] != EOF ) {
+		buff[i] = getCurrent();
 		i++;
 	}
 
 	if ( buffer[buffer_current] == EOF ) {
-		get_current();
+		getCurrent();
 	}
 	return i;
 }
 
 
-void set_f_key_function ( uint64_t key_number, functionKey f )
+void setFKeyFunction ( uint64_t key_number, functionKey f )
 {
 	if ( key_number == 0 || key_number > cant_function_keys ) {
 		return;
@@ -67,7 +67,7 @@ void set_f_key_function ( uint64_t key_number, functionKey f )
 	function_key_fun_array[key_number] = f;
 }
 
-static void function_key_handler ( uint64_t code )
+static void functionKeyHandler ( uint64_t code )
 {
 	int64_t i = -1;
 	switch ( code ) {
@@ -115,78 +115,78 @@ static void function_key_handler ( uint64_t code )
 }
 
 
-static uint8_t is_released ( uint8_t key )
+static uint8_t isReleased ( uint8_t key )
 {
 	return ( key & 0x80 );
 }
-static uint8_t is_pressed ( uint8_t key )
+static uint8_t isPressed ( uint8_t key )
 {
-	return !is_released ( key );
+	return !isReleased ( key );
 }
 
-static int is_special_key ( uint16_t code )
+static int isSpecialKey ( uint16_t code )
 {
 	return ( code >= FIRST_SPECIAL_KEY ) && ( code <= LAST_SPECIAL_KEY );
 }
 
-static int special_key_pressed ( uint16_t code )
+static int specialKeyPressed ( uint16_t code )
 {
-	if ( !is_special_key ( code ) ) {
+	if ( !isSpecialKey ( code ) ) {
 		return -1;
 	}
 	return special_key_pressed_map[special_key_pressed_map_idx ( code )];
 }
 
 
-static int caps_lock_pressed()
+static int capsLockPressed()
 {
-	return special_key_pressed ( CAPS_LOCK );
+	return specialKeyPressed ( CAPS_LOCK );
 }
-static int shift_pressed()
+static int shiftPressed()
 {
-	return ( special_key_pressed ( LEFT_SHIFT ) || special_key_pressed ( RIGHT_SHIFT ) ) ? 1 : 0;
+	return ( specialKeyPressed ( LEFT_SHIFT ) || specialKeyPressed ( RIGHT_SHIFT ) ) ? 1 : 0;
 }
-static int shift_caps_lock_pressed()
+static int shiftCapsLockPressed()
 {
-	return ( shift_pressed() ^caps_lock_pressed() ); //xor
+	return ( shiftPressed() ^capsLockPressed() ); //xor
 }
 
-static uint8_t released_key_to_pressed_mask ( uint8_t key )
+static uint8_t releasedKeyToPressedMask ( uint8_t key )
 {
 	return key & 0x7f;
 }
 
 
 
-uint64_t buffer_has_next()
+uint64_t bufferHasNext()
 {
 	return ( buffer_dim > 0 ) && ( buffer_current < buffer_dim );
 }
 
-uint64_t get_current()
+uint64_t getCurrent()
 {
-	if ( buffer_has_next() ) {
+	if ( bufferHasNext() ) {
 		return buffer[buffer_current++];
 	}
 	return 0;
 }
 
-void keyboard_handler()
+void keyboardHandler()
 {
 	reg_shot_flag = 0;
-	uint8_t key = get_key();
+	uint8_t key = getKey();
 
 
-	uint8_t key_is_pressed = is_pressed ( key ) ? 1 : 0;
+	uint8_t key_is_pressed = isPressed ( key ) ? 1 : 0;
 
 	if ( !key_is_pressed ) {
-		key = released_key_to_pressed_mask ( key ); //table is for pressed keys
+		key = releasedKeyToPressedMask ( key ); //table is for pressed keys
 	}
 
-	uint16_t code = pressed_key_shift_map[key][shift_caps_lock_pressed()];
+	uint16_t code = pressed_key_shift_map[key][shiftCapsLockPressed()];
 
 
-	if ( is_special_key ( code ) ) {
+	if ( isSpecialKey ( code ) ) {
 		if ( code != CAPS_LOCK && code != NUM_LOCK && code != SCROLL_LOCK ) {
 			special_key_pressed_map[special_key_pressed_map_idx ( code )] = key_is_pressed;
 		} else if ( key_is_pressed ) {
@@ -198,17 +198,17 @@ void keyboard_handler()
 		return;
 	}
 
-	function_key_handler ( code );
+	functionKeyHandler ( code );
 
-	if ( !is_special_key ( code ) && special_key_pressed ( LEFT_CONTROL ) ) {
+	if ( !isSpecialKey ( code ) && specialKeyPressed ( LEFT_CONTROL ) ) {
 		if ( code == 'D' || code == 'd' ) {
 			code = EOF;
 		} else if ( code == 'c' || code == 'C' ) {
-			ctrl_c_handler();
+			ctrlcHandler();
 			return;
 		}
 	}
-	if ( is_special_key ( code ) || code > LAST_ASCII ) {
+	if ( isSpecialKey ( code ) || code > LAST_ASCII ) {
 		return;
 	}
 
@@ -229,7 +229,7 @@ void keyboard_handler()
 
 }
 
-uint8_t should_take_reg_shot()
+uint8_t shouldTakeRegShot()
 {
 	return reg_shot_flag;
 }

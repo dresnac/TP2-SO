@@ -53,13 +53,12 @@ typedef enum {
 typedef void ( *functionKey ) ( void );
 
 void keyboard_handler();
-void set_f_key_function ( uint64_t key_number, functionKey f );
-uint64_t get_current();
-uint64_t buffer_has_next();
+void setFKeyFunction ( uint64_t key_number, functionKey f );
+uint64_t getCurrent();
+uint64_t bufferHasNext();
 
-//FOR TP2 OS:
-int64_t stdin_read ( uint8_t * buff, uint64_t amount );
-PCB * get_keyboard_blocked();
-void set_keyboard_blocked_null();
+int64_t stdinRead ( uint8_t * buff, uint64_t amount );
+PCB * getKeyboardBlocked();
+void setKeyboardBlockedNull();
 
 #endif

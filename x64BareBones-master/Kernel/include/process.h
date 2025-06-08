@@ -24,16 +24,16 @@
 
 typedef int ( *mainFunction ) ( char ** argv, uint64_t argc );
 
-int64_t new_process ( mainFunction rip, tPriority priority, uint8_t killable, char ** argv, uint64_t argc, tFd fds[] );
-PCB * get_pcb ( tPid pid );
-void list_processes();
-int64_t kill_process ( tPid pid );
-int64_t kill_process_pcb ( PCB * pcb );
+int64_t newProcess ( mainFunction rip, tPriority priority, uint8_t killable, char ** argv, uint64_t argc, tFd fds[] );
+PCB * getPcb ( tPid pid );
+void listProcesses();
+int64_t killProcess ( tPid pid );
+int64_t killProcessPcb ( PCB * pcb );
 tPid wait ( tPid pid, int64_t * ret );
 ProcessInfoList * ps();
-int8_t get_status ( tPid pid );
-void free_ps ( ProcessInfoList * ps );
-void close_fds ( PCB * pcb );
-void ctrl_c_handler();
-int64_t make_me_zombie ( int64_t retval );
+int8_t getStatus ( tPid pid );
+void freePs ( ProcessInfoList * ps );
+void closeFds ( PCB * pcb );
+void ctrlcHandler();
+int64_t makeMeZombie ( int64_t retval );
 #endif

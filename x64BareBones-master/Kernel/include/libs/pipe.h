@@ -9,14 +9,14 @@
 #define AMOUNT_OF_PIPES 100
 
 
-void pipe_init();
-int64_t pipe_open ( int64_t id, tPipeMode mode );
-int64_t pipe_read ( int64_t id, uint8_t * buffer, uint64_t amount );
-int64_t pipe_write ( int64_t id, uint8_t * buffer, uint64_t amount, tPid pid );
-int64_t pipe_close ( int64_t id, tPid pid );
-int64_t pipe_open_free ( tPipeMode mode );
-tPid pipe_get_pid ( int64_t id, tPipeMode mode );
-tPid pipe_reserve();
-int64_t pipe_open_pid ( int64_t id, tPipeMode mode, tPid pid );
+void pipeInit();
+int64_t pipeOpen ( int64_t id, tPipeMode mode );
+int64_t pipeRead ( int64_t id, uint8_t * buffer, uint64_t amount );
+int64_t pipeWrite ( int64_t id, uint8_t * buffer, uint64_t amount, tPid pid );
+int64_t pipeClose ( int64_t id, tPid pid );
+int64_t pipeOpenFree ( tPipeMode mode );
+tPid pipeGetPid ( int64_t id, tPipeMode mode );
+tPid pipeReserve();
+int64_t pipeOpenPid ( int64_t id, tPipeMode mode, tPid pid );
 
 #endif

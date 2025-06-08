@@ -51,7 +51,7 @@ static sys_function syscall_table[NUM_SYSCALLS] = {
 	( sys_function ) sys_mem_info                  // 38
 };
 
-int64_t sys_call_handler ( StackRegisters * regs )
+int64_t syscallDispatcher ( StackRegisters * regs )
 {
 	if ( regs->rax >= NUM_SYSCALLS ) {
 		return NOT_VALID_SYS_ID;
@@ -63,7 +63,7 @@ int64_t sys_call_handler ( StackRegisters * regs )
 
 int64_t sys_get_my_fds ( tFd fds[CANT_FDS] )
 {
-	PCB * pcb = get_running();
+	PCB * pcb = getRunning();
 	if ( pcb == NULL || fds == NULL ) {
 		return -1;
 	}
@@ -78,12 +78,12 @@ int64_t sys_pipe_open ( int64_t id, tPipeMode mode )
 	if ( id < 3 ) {
 		return -1;
 	}
-	return pipe_open ( id - 3, mode );
+	return pipeOpen ( id - 3, mode );
 }
 
 int64_t sys_pipe_open_free ( tPipeMode mode )
 {
-	return pipe_open_free ( mode ) + 3 ;
+	return pipeOpenFree ( mode ) + 3 ;
 }
 
 int64_t sys_pipe_read ( int64_t id, uint8_t * buffer, uint64_t amount )
@@ -91,33 +91,33 @@ int64_t sys_pipe_read ( int64_t id, uint8_t * buffer, uint64_t amount )
 	if ( id < 3 ) {
 		return -1;
 	}
-	return pipe_read ( id - 3, buffer, amount );
+	return pipeRead ( id - 3, buffer, amount );
 }
 int64_t sys_pipe_write ( int64_t id, uint8_t * buffer, uint64_t amount )
 {
 	if ( id < 3 ) {
 		return -1;
 	}
-	return pipe_write ( id - 3, buffer, amount, get_pid() );
+	return pipeWrite ( id - 3, buffer, amount, getPid() );
 }
 int64_t sys_pipe_close ( int64_t id )
 {
 	if ( id < 3 ) {
 		return -1;
 	}
-	return pipe_close ( id - 3, get_pid() );
+	return pipeClose ( id - 3, getPid() );
 }
 int64_t sys_pipe_reserve()
 {
-	return pipe_reserve() + 3;
+	return pipeReserve() + 3;
 }
 
 
 int64_t sys_read (  uint8_t * buffer, uint64_t amount )
 {
-	tFd fd = get_running()->fds[STDIN];
+	tFd fd = getRunning()->fds[STDIN];
 	if ( fd == STDIN ) {
-		return stdin_read ( buffer, amount );
+		return stdinRead ( buffer, amount );
 	}
 	return sys_pipe_read ( fd, buffer, amount );
 }
@@ -130,10 +130,10 @@ int64_t sys_write ( tFd fd,  uint8_t * buffer, uint64_t amount )
 		return -1;
 	}
 
-	tFd actual_fd = get_running()->fds[fd];
+	tFd actual_fd = getRunning()->fds[fd];
 
 	if ( actual_fd == STDOUT || actual_fd == STDERR ) {
-		return vdriver_text_write ( fd, ( char * ) buffer, amount );
+		return vdriverWrite ( fd, ( char * ) buffer, amount );
 	}
 
 	return sys_pipe_write ( actual_fd, buffer, amount );
@@ -142,7 +142,7 @@ int64_t sys_write ( tFd fd,  uint8_t * buffer, uint64_t amount )
 //modo texto:
 int64_t sys_set_font_size ( uint64_t size )
 {
-	return vdriver_text_set_font_size ( size );
+	return vdriverSetFontSize ( size );
 }
 
 int64_t sys_beep ( uint32_t freq, uint32_t time )
@@ -154,29 +154,29 @@ int64_t sys_beep ( uint32_t freq, uint32_t time )
 //modo video:
 int64_t sys_put_rectangle ( uint64_t x, uint64_t y, uint64_t width, uint64_t height, color * color )
 {
-	return vdriver_video_draw_rectangle ( x, y, width, height, *color );
+	return vdriverDrawRectangle ( x, y, width, height, *color );
 }
 
 //modo video:
 int64_t sys_draw_letter ( uint64_t x, uint64_t y, char * letter, color * color, uint64_t font_size )
 {
-	return vdriver_video_draw_font ( x, y, *letter, *color, font_size );
+	return vdriverDrawFont ( x, y, *letter, *color, font_size );
 }
 
 //modo video:
 int64_t sys_put_pixel ( uint64_t x, uint64_t y, color * color )
 {
-	return vdriver_video_draw_pixel ( x, y, *color );
+	return vdriverDrawPixel ( x, y, *color );
 }
 
 int64_t sys_get_screen_information ( ScreenInformation * screen_information )
 {
-	return vdriver_get_screen_information ( screen_information );
+	return vdriverGetScreenInformation ( screen_information );
 }
 
 int64_t sys_set_mode ( uint64_t mode )
 {
-	return vdriver_set_mode ( mode, ( color ) {
+	return vdriverSetMode ( mode, ( color ) {
 		0, 0, 0
 	} );
 }
@@ -212,37 +212,37 @@ int64_t sys_get_register_snapshot ( Snapshot * snapshot )
 
 int64_t sys_clear_screen()
 {
-	return vdriver_clear_screen ( ( color ) {
+	return vdriverClearScreen ( ( color ) {
 		0, 0, 0
 	} );
 }
 
 int64_t sys_ticks_sleep ( uint64_t ns )
 {
-	return ticks_sleep ( ns );
+	return ticksSleep ( ns );
 }
 
 
 
 int64_t sys_get_time ( LocalTime * time )
 {
-	time->seconds = get_rtc_seconds();
-	time->minutes =  get_rtc_minutes();
-	time->hour =  get_rtc_hours();
-	time->day = get_rtc_day_of_month();
-	time->month = get_rtc_month();
-	time->year = get_rtc_year();
+	time->seconds = getSecondsRTC();
+	time->minutes =  getMinutesRTC();
+	time->hour =  getHoursRTC();
+	time->day = getDayOfMonthRTC();
+	time->month = getMonthRTC();
+	time->year = getYearRTC();
 	return 0;
 }
 
 
 void * sys_malloc ( uint64_t size )
 {
-	return alloc_memory ( size, get_userland_mem() );
+	return allocMemory ( size, getUserlandMem() );
 }
 static int64_t sys_free_wrapper ( void * p )
 {
-	free_memory ( p, get_userland_mem() );
+	freeMemory ( p, getUserlandMem() );
 	return 0;
 }
 
@@ -250,12 +250,12 @@ static int64_t sys_free_wrapper ( void * p )
 
 int64_t sys_create_process ( mainFunction rip, tPriority priority, char ** argv, uint64_t argc, tFd fds[] )
 {
-	return ( int64_t ) new_process ( rip, priority, 1, argv, argc, fds );
+	return ( int64_t ) newProcess ( rip, priority, 1, argv, argc, fds );
 }
 
 int64_t sys_get_pid()
 {
-	return get_pid();
+	return getPid();
 }
 
 int64_t sys_nice ( tPid pid, uint64_t new_prio )
@@ -265,22 +265,22 @@ int64_t sys_nice ( tPid pid, uint64_t new_prio )
 
 int64_t sys_kill ( tPid pid )
 {
-	return kill_process ( pid );
+	return killProcess ( pid );
 }
 
 int64_t sys_block ( tPid pid )
 {
-	return block_arbitrary ( pid );
+	return blockArbitrary ( pid );
 }
 
 int64_t sys_unblock ( tPid pid )
 {
-	return unblock_arbitrary ( pid );
+	return unblockArbitrary ( pid );
 }
 
 int64_t sys_yield()
 {
-	scheduler_yield();
+	schedulerYield();
 	return 0;
 }
 
@@ -291,27 +291,27 @@ int64_t sys_wait ( tPid pid, int64_t * ret )
 
 int64_t sys_sem_open ( int64_t sem_id, int value )
 {
-	return my_sem_open ( sem_id, value, 0 );
+	return semOpen ( sem_id, value, 0 );
 }
 
 int64_t sys_sem_wait ( int64_t sem_id )
 {
-	return my_sem_wait ( sem_id, 0 );
+	return semWait ( sem_id, 0 );
 }
 
 int64_t sys_sem_post ( int64_t sem_id )
 {
-	return my_sem_post ( sem_id, 0 );
+	return semPost ( sem_id, 0 );
 }
 
 int64_t sys_sem_open_get_id ( int value )
 {
-	return my_sem_open_get_id ( value );
+	return semOpenGetId ( value );
 }
 
 int64_t sys_sem_close ( int64_t sem_id )
 {
-	return my_sem_close ( sem_id, 0 );
+	return semClose ( sem_id, 0 );
 }
 
 ProcessInfoList * sys_ps ()
@@ -321,13 +321,13 @@ ProcessInfoList * sys_ps ()
 
 static int64_t sys_free_ps_wrapper ( ProcessInfoList * ps )
 {
-	free_ps ( ps );
+	freePs ( ps );
 	return 0;
 }
 
 int8_t sys_get_status ( tPid pid )
 {
-	return get_status ( pid );
+	return getStatus ( pid );
 }
 
 
@@ -335,5 +335,5 @@ int8_t sys_get_status ( tPid pid )
 
 int64_t sys_mem_info ( MemoryInfo info[2] )
 {
-	return mem_info ( &info[0], get_userland_mem() ) + mem_info ( &info[1], get_kernel_mem() ) ;
+	return memInfo ( &info[0], getUserlandMem() ) + memInfo ( &info[1], getKernelMem() ) ;
 }

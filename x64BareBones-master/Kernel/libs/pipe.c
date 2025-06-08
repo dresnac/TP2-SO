@@ -15,10 +15,10 @@ typedef struct pipeCDT {
 } pipeCDT;
 
 static pipeCDT pipes_array[AMOUNT_OF_PIPES];
-static int64_t pipe_get_free();
+static int64_t pipeGetFree();
 
 
-tPid pipe_get_pid ( int64_t id, tPipeMode mode )
+tPid pipeGetPid ( int64_t id, tPipeMode mode )
 {
 	if ( ( ! ( ( mode == READER ) || ( mode == WRITER ) ) || BAD_ID ( id ) ) ) {
 		return -1;
@@ -27,7 +27,7 @@ tPid pipe_get_pid ( int64_t id, tPipeMode mode )
 }
 
 
-void pipe_init()
+void pipeInit()
 {
 	for ( int i = 0; i < AMOUNT_OF_PIPES ; i++ ) {
 		pipes_array[i].pids[WRITER] = pipes_array[i].pids[READER] = -1;
@@ -35,13 +35,13 @@ void pipe_init()
 }
 
 
-int64_t pipe_open_pid ( int64_t id, tPipeMode mode, tPid pid )
+int64_t pipeOpenPid ( int64_t id, tPipeMode mode, tPid pid )
 {
 	if ( ! ( ( mode == READER ) || ( mode == WRITER ) ) || BAD_ID ( id ) || ( pipes_array[id].pids[mode] != -1 ) ) {
 		return -1;
 	}
-	my_sem_open ( 2 * id + SEM_AMOUNT_USER, 0, 1 );
-	my_sem_open ( 2 * id + 1 + SEM_AMOUNT_USER, 0, 1 );
+	semOpen ( 2 * id + SEM_AMOUNT_USER, 0, 1 );
+	semOpen ( 2 * id + 1 + SEM_AMOUNT_USER, 0, 1 );
 
 	pipes_array[id].data_available_sem = 2 * id + SEM_AMOUNT_USER;
 	pipes_array[id].can_write_sem = 2 * id + 1 + SEM_AMOUNT_USER;
@@ -52,29 +52,29 @@ int64_t pipe_open_pid ( int64_t id, tPipeMode mode, tPid pid )
 	return 0;
 }
 
-int64_t pipe_open ( int64_t id, tPipeMode mode )
+int64_t pipeOpen ( int64_t id, tPipeMode mode )
 {
-	return pipe_open_pid ( id, mode, get_pid() );
+	return pipeOpenPid ( id, mode, getPid() );
 }
 
-int64_t pipe_open_free ( tPipeMode mode )
+int64_t pipeOpenFree ( tPipeMode mode )
 {
-	int64_t id = pipe_get_free();
-	if ( pipe_open ( id, mode ) == 0 ) {
+	int64_t id = pipeGetFree();
+	if ( pipeOpen ( id, mode ) == 0 ) {
 		return id;
 	}
 	return -1;
 }
 
 
-int64_t pipe_read ( int64_t id, uint8_t * buffer, uint64_t amount )
+int64_t pipeRead ( int64_t id, uint8_t * buffer, uint64_t amount )
 {
-	if ( BAD_ID ( id ) || pipes_array[id].pids[READER] != get_pid() ) {
+	if ( BAD_ID ( id ) || pipes_array[id].pids[READER] != getPid() ) {
 		return -1;
 	}
 
 	uint64_t i = 0;
-	if ( my_sem_wait ( pipes_array[id].data_available_sem, 1 ) == -1 ) {
+	if ( semWait ( pipes_array[id].data_available_sem, 1 ) == -1 ) {
 		return -1;
 	}
 	int max_write = pipes_array[id].current_write;
@@ -84,16 +84,16 @@ int64_t pipe_read ( int64_t id, uint8_t * buffer, uint64_t amount )
 	}
 
 	if ( pipes_array[id].current_read < max_write || ( pipes_array[id].current_read > 0 && ( pipes_array[id].buffer[pipes_array[id].current_read - 1] == EOF ) ) ) {
-		sem_post_if_value_is_zero ( pipes_array[id].data_available_sem, 1 );
+		semPostIfValueIsZero ( pipes_array[id].data_available_sem, 1 );
 	}
 	if ( pipes_array[id].current_read == PIPE_BUFFER_SIZE ) {
-		my_sem_post ( pipes_array[id].can_write_sem, 1 );
+		semPost ( pipes_array[id].can_write_sem, 1 );
 	}
 
 	return i;
 }
 
-int64_t pipe_write ( int64_t id, uint8_t * buffer, uint64_t amount, tPid pid )
+int64_t pipeWrite ( int64_t id, uint8_t * buffer, uint64_t amount, tPid pid )
 {
 	if ( BAD_ID ( id ) || pipes_array[id].pids[WRITER] != pid || pipes_array[id].was_closed_by_reader ) {
 		return -1;
@@ -102,8 +102,8 @@ int64_t pipe_write ( int64_t id, uint8_t * buffer, uint64_t amount, tPid pid )
 	for ( ; i < amount; i++ ) {
 		pipes_array[id].buffer[pipes_array[id].current_write ++] = buffer[i];
 		if ( pipes_array[id].current_write == PIPE_BUFFER_SIZE ) {
-			sem_post_if_value_is_zero ( pipes_array[id].data_available_sem, 1 );
-			my_sem_wait ( pipes_array[id].can_write_sem, 1 );
+			semPostIfValueIsZero ( pipes_array[id].data_available_sem, 1 );
+			semWait ( pipes_array[id].can_write_sem, 1 );
 			pipes_array[id].current_write = 0;
 			pipes_array[id].current_read = 0;
 			if ( pipes_array[id].was_closed_by_reader ) {
@@ -112,7 +112,7 @@ int64_t pipe_write ( int64_t id, uint8_t * buffer, uint64_t amount, tPid pid )
 		}
 	}
 	if ( pipes_array[id].current_write != 0 ) {
-		sem_post_if_value_is_zero ( pipes_array[id].data_available_sem, 1 );
+		semPostIfValueIsZero ( pipes_array[id].data_available_sem, 1 );
 	}
 
 	return i;
@@ -120,7 +120,7 @@ int64_t pipe_write ( int64_t id, uint8_t * buffer, uint64_t amount, tPid pid )
 
 
 
-int64_t pipe_close ( int64_t id, tPid pid )
+int64_t pipeClose ( int64_t id, tPid pid )
 {
 	int flag = -1;
 	if ( BAD_ID ( id ) || pid >= PCB_AMOUNT || pid < 0 ) {
@@ -130,13 +130,13 @@ int64_t pipe_close ( int64_t id, tPid pid )
 
 	if ( pipes_array[id].pids[WRITER] == pid ) {
 		uint8_t end_of_file[] = {EOF};
-		pipe_write ( id, end_of_file, 1, pid );
+		pipeWrite ( id, end_of_file, 1, pid );
 		flag = 0;
 		pipes_array[id].pids[WRITER] = -1;
 	}
 	if ( pipes_array[id].pids[READER] == pid ) {
 		pipes_array[id].pids[READER] = -1;
-		my_sem_post_no_yield ( pipes_array[id].can_write_sem );
+		semPostNoYield ( pipes_array[id].can_write_sem );
 		pipes_array[id].was_closed_by_reader = 1;
 		flag = 0;
 	}
@@ -144,13 +144,13 @@ int64_t pipe_close ( int64_t id, tPid pid )
 		pipes_array[id].current_read = pipes_array[id].current_write = pipes_array[id].was_closed_by_reader = pipes_array[id].reserved = 0 ;
 	}
 	if ( flag == 0 ) {
-		my_sem_close ( pipes_array[id].data_available_sem, 1 );
-		my_sem_close ( pipes_array[id].can_write_sem, 1 );
+		semClose ( pipes_array[id].data_available_sem, 1 );
+		semClose ( pipes_array[id].can_write_sem, 1 );
 	}
 	return flag;
 }
 
-static int64_t pipe_get_free()
+static int64_t pipeGetFree()
 {
 	for ( int i = 0; i < AMOUNT_OF_PIPES ; i++ ) {
 		if ( pipes_array[i].pids[READER] == -1 && pipes_array[i].pids[WRITER] == -1 && !pipes_array[i].reserved ) {
@@ -160,7 +160,7 @@ static int64_t pipe_get_free()
 	return -1;
 }
 
-tPid pipe_reserve()
+tPid pipeReserve()
 {
 	for ( int i = 0; i < AMOUNT_OF_PIPES ; i++ ) {
 		if ( pipes_array[i].pids[READER] == -1 && pipes_array[i].pids[WRITER] == -1 && !pipes_array[i].reserved ) {

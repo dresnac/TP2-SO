@@ -11,19 +11,19 @@ static PCB * shell_pcb;
 
 
 
-int compare_elements ( elemTypePtr e1, elemTypePtr e2 )
+int compareElements ( elemTypePtr e1, elemTypePtr e2 )
 {
 	return e1 - e2;
 }
 
 
-void initialize_scheduler ( int64_t shell_process_pid, int64_t idle_process_pid )
+void initializeScheduler ( int64_t shell_process_pid, int64_t idle_process_pid )
 {
-	tCompare cmp = compare_elements;
-	ready_list = new_list ( cmp );
-	blocked_list = new_list ( cmp );
-	idle_pcb = get_pcb ( idle_process_pid );
-	shell_pcb = get_pcb ( shell_process_pid );
+	tCompare cmp = compareElements;
+	ready_list = newList ( cmp );
+	blocked_list = newList ( cmp );
+	idle_pcb = getPcb ( idle_process_pid );
+	shell_pcb = getPcb ( shell_process_pid );
 	initialized = 1;
 	ready ( shell_pcb );
 	return;
@@ -35,34 +35,34 @@ void ready ( PCB * process )
 		return;
 	}
 	process->status = READY;
-	add_list ( ready_list, process );
-	delete_list ( blocked_list, process );
+	addList ( ready_list, process );
+	deleteList ( blocked_list, process );
 }
 
-PCB * get_idle_pcb()
+PCB * getIdlePcb()
 {
 	return idle_pcb;
 }
 
-PCB * get_shell_pcb()
+PCB * getShellPcb()
 {
 	return shell_pcb;
 }
 
-void set_running_null()
+void setRunningNull()
 {
 	running = NULL;
 }
 
-void block_current_no_yield()
+void blockCurrentNoYield()
 {
 	PCB * process = running;
 	if ( process == NULL ) {
 		return;
 	}
 	process->status = BLOCKED;
-	delete_list ( ready_list, process );
-	add_list ( blocked_list, process );
+	deleteList ( ready_list, process );
+	addList ( blocked_list, process );
 }
 
 void block ( PCB * process )
@@ -71,19 +71,19 @@ void block ( PCB * process )
 		return;
 	}
 	process->status = BLOCKED;
-	delete_list ( ready_list, process );
-	add_list ( blocked_list, process );
+	deleteList ( ready_list, process );
+	addList ( blocked_list, process );
 	if ( process == running ) {
-		scheduler_yield();
+		schedulerYield();
 	}
 }
 
-void block_current()
+void blockCurrent()
 {
 	block ( running );
 }
 
-void unblock_waiting_me()
+void unblockWaitingMe()
 {
 	PCB * pcb = running;
 	if ( pcb == NULL || pcb->waiting_me == NULL || pcb->waiting_me->status == ZOMBIE || pcb->waiting_me->status == FREE ) {
@@ -92,13 +92,13 @@ void unblock_waiting_me()
 	ready ( pcb->waiting_me );
 }
 
-void unblock_waiting_pid ( tPid pid )
+void unblockWaitingPid ( tPid pid )
 {
-	PCB * pcb = get_pcb ( pid );
-	unblock_waiting_pcb ( pcb );
+	PCB * pcb = getPcb ( pid );
+	unblockWaitingPcb ( pcb );
 }
 
-void unblock_waiting_pcb ( PCB * pcb )
+void unblockWaitingPcb ( PCB * pcb )
 {
 	if ( pcb == NULL || pcb->waiting_me == NULL || pcb->waiting_me->status == ZOMBIE || pcb->waiting_me->status == FREE ) {
 		return;
@@ -107,7 +107,7 @@ void unblock_waiting_pcb ( PCB * pcb )
 }
 
 
-PCB * get_running()
+PCB * getRunning()
 {
 	return running;
 }
@@ -115,31 +115,31 @@ PCB * get_running()
 void unschedule ( PCB * process )
 {
 	if ( process->status == READY ) {
-		delete_list ( ready_list, process );
+		deleteList ( ready_list, process );
 	} else if ( process->status == BLOCKED ) {
-		delete_list ( blocked_list, process );
+		deleteList ( blocked_list, process );
 	}
 }
 
-void scheduler_yield()
+void schedulerYield()
 {
-	if ( ! ( running == NULL || is_empty_list ( ready_list ) ) ) {
+	if ( ! ( running == NULL || isEmptyList ( ready_list ) ) ) {
 		times_ran = running->priority;
 	}
-	timer_tick();
+	timerTick();
 }
 
 
-int64_t get_pid()
+int64_t getPid()
 {
 	return running->pid;
 }
 
 
 
-uint64_t block_arbitrary ( tPid pid )
+uint64_t blockArbitrary ( tPid pid )
 {
-	PCB * process = get_pcb ( pid );
+	PCB * process = getPcb ( pid );
 	if ( process == NULL ) {
 		return -1;
 	}
@@ -147,9 +147,9 @@ uint64_t block_arbitrary ( tPid pid )
 	return 0;
 }
 
-uint64_t unblock_arbitrary ( tPid pid )
+uint64_t unblockArbitrary ( tPid pid )
 {
-	PCB * process = get_pcb ( pid );
+	PCB * process = getPcb ( pid );
 	if ( process == NULL ) {
 		return -1;
 	}
@@ -166,7 +166,7 @@ uint64_t scheduler ( uint64_t current_rsp )
 	if ( running != NULL ) {
 		running->rsp = current_rsp;
 	}
-	if ( is_empty_list ( ready_list ) ) {
+	if ( isEmptyList ( ready_list ) ) {
 		running = idle_pcb;
 		return idle_pcb->rsp;
 	}
@@ -186,7 +186,7 @@ uint64_t scheduler ( uint64_t current_rsp )
 
 int64_t nice ( tPid pid, uint64_t new_prio )
 {
-	PCB * process = get_pcb ( pid );
+	PCB * process = getPcb ( pid );
 	if ( process == NULL || process->status == FREE ) {
 		return -1;
 	}

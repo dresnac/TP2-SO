@@ -1,11 +1,11 @@
 
 GLOBAL _cli
 GLOBAL _sti
-GLOBAL pic_master_mask
-GLOBAL pic_slave_mask
+GLOBAL picMasterMask
+GLOBAL picSlaveMask
 GLOBAL haltcpu
 GLOBAL _hlt
-GLOBAL timer_tick
+GLOBAL timerTick
 
 GLOBAL _irq00Handler
 GLOBAL _irq01Handler
@@ -23,11 +23,11 @@ GLOBAL regs_shot
 GLOBAL exception_regs
 GLOBAL regs_shot_available
 
-EXTERN irq_dispatcher
-EXTERN exception_dispatcher
-EXTERN sys_call_handler
-EXTERN should_take_reg_shot
-EXTERN get_stack_base
+EXTERN irqDispatcher
+EXTERN exceptionDispatcher
+EXTERN syscallDispatcher
+EXTERN shouldTakeRegShot
+EXTERN getStackBase
 EXTERN scheduler
 
 SECTION .text
@@ -106,7 +106,7 @@ SECTION .text
 	pushState
 
 	mov rdi, %1 
-	call irq_dispatcher
+	call irqDispatcher
 
 	; signal pic EOI (End of Interrupt)
 	mov al, 20h
@@ -116,7 +116,7 @@ SECTION .text
 	iretq
 %endmacro
 
-timer_tick:
+timerTick:
     int 0x20
     ret
 
@@ -140,7 +140,7 @@ _sti:
 	sti
 	ret
 
-pic_master_mask:
+picMasterMask:
 	push rbp
     mov rbp, rsp
     mov ax, di
@@ -149,7 +149,7 @@ pic_master_mask:
     retn
 
 
-pic_slave_mask:
+picSlaveMask:
 	push    rbp
     mov     rbp, rsp
     mov     ax, di  	; ax = 16-bit mask
@@ -163,7 +163,7 @@ _irq00Handler:
 	pushState
 
 	mov rdi, 0 
-	call irq_dispatcher
+	call irqDispatcher
 
     mov rdi, rsp
     call scheduler
@@ -181,9 +181,9 @@ _irq01Handler:
     pushState
 
 	mov rdi, 1
-	call irq_dispatcher
+	call irqDispatcher
 
-	call should_take_reg_shot
+	call shouldTakeRegShot
 	cmp rax, 1
 
 	jne .keyboard_end
@@ -244,7 +244,7 @@ _irq80Handler:
 	pushState
 	mov rdi, rsp ; Pasaje de Registros
 
-	call sys_call_handler
+	call syscallDispatcher
 	
 
 
@@ -281,13 +281,13 @@ _irq80Handler:
 	mov rax, [rsp+17*8]                     ; RFLAGS
 	mov [exception_regs + 8*17], rax
 
-	mov rdi, %1                             ; Parameters for exception_dispatcher
+	mov rdi, %1                             ; Parameters for exceptionDispatcher
 	mov rsi, exception_regs
 
-	call exception_dispatcher
+	call exceptionDispatcher
 
 	popState
-    call get_stack_base
+    call getStackBase
 	mov [rsp+24], rax 						; StackBase
     mov rax, userland
     mov [rsp], rax 							; OVERWRITE the return address

@@ -9,6 +9,6 @@
 #include <interrupts.h>
 #include <keyboard_driver.h>
 
-void exception_dispatcher ( uint64_t exception );
+void exceptionDispatcher ( uint64_t exception );
 
 #endif

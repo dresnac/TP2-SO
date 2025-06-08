@@ -2,26 +2,26 @@
 
 
 
-static void int_20();
-static void int_21();
+static void int20();
+static void int21();
 
 static void ( *irq_routines[2] ) () = {
-	int_20,
-	int_21
+	int20,
+	int21
 };
 
-void irq_dispatcher ( uint64_t irq )
+void irqDispatcher ( uint64_t irq )
 {
 	irq_routines[irq]();
 	return;
 }
 
 
-void int_20()
+void int20()
 {
-	timer_handler();
+	timerHandler();
 }
-void int_21()
+void int21()
 {
-	keyboard_handler();
+	keyboardHandler();
 }

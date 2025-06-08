@@ -1,6 +1,6 @@
 #include <shared_libc.h>
 
-void * shared_libc_memset ( void * destination, int32_t c, uint64_t length )
+void * sharedLibcMemset ( void * destination, int32_t c, uint64_t length )
 {
 	uint8_t chr = ( uint8_t ) c;
 	char * dst = ( char * ) destination;
@@ -13,7 +13,7 @@ void * shared_libc_memset ( void * destination, int32_t c, uint64_t length )
 
 
 
-void * shared_libc_memcpy ( void * destination, const void * source, uint64_t length )
+void * sharedLibcMemcpy ( void * destination, const void * source, uint64_t length )
 {
 	uint64_t i;
 
@@ -38,7 +38,7 @@ void * shared_libc_memcpy ( void * destination, const void * source, uint64_t le
 
 
 
-uint64_t shared_libc_strlen ( const char * str )
+uint64_t sharedLibcStrlen ( const char * str )
 {
 	const char * s = str;
 	while ( *s )

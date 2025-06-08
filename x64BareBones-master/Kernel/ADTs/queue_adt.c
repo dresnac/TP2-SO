@@ -1,6 +1,3 @@
-// This is a personal academic project. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
-
 #include <queue_adt.h>
 
 typedef struct node {
@@ -16,9 +13,9 @@ struct queueCDT {
 	uint64_t size;
 };
 
-queueADT new_queue()
+queueADT newQueue()
 {
-	queueADT to_return = alloc_memory ( sizeof ( *to_return ), get_kernel_mem() );
+	queueADT to_return = allocMemory ( sizeof ( *to_return ), getKernelMem() );
 	if ( to_return == NULL ) {
 		return NULL;
 	}
@@ -28,7 +25,7 @@ queueADT new_queue()
 	return to_return;
 }
 
-uint64_t queue_is_empty ( queueADT queue )
+uint64_t queueIsEmpty ( queueADT queue )
 {
 	if ( queue == NULL ) {
 		return 1;
@@ -38,13 +35,13 @@ uint64_t queue_is_empty ( queueADT queue )
 
 elemTypePtr dequeue ( queueADT queue )
 {
-	if ( queue_is_empty ( queue ) ) {
+	if ( queueIsEmpty ( queue ) ) {
 		return NULL;
 	}
 	queue->size--;
 	elemTypePtr to_return = queue->first->head;
 	tQueue aux = queue->first->tail;
-	free_memory( queue->first, get_kernel_mem() );
+	freeMemory( queue->first, getKernelMem() );
 	queue->first = aux;
 	if ( aux == NULL ) {
 		queue->last = NULL;
@@ -52,9 +49,9 @@ elemTypePtr dequeue ( queueADT queue )
 	return to_return;
 }
 
-int64_t delete_from_queue ( queueADT queue, elemTypePtr head )
+int64_t deleteFromQueue ( queueADT queue, elemTypePtr head )
 {
-	if ( queue_is_empty ( queue ) ) {
+	if ( queueIsEmpty ( queue ) ) {
 		return -1;
 	}
 
@@ -80,7 +77,7 @@ int64_t delete_from_queue ( queueADT queue, elemTypePtr head )
 		queue->last = previous;
 	}
 
-	free_memory( current, get_kernel_mem() );
+	freeMemory( current, getKernelMem() );
 	queue->size--;
 
 	return 0;
@@ -94,13 +91,13 @@ int64_t enqueue ( queueADT queue, elemTypePtr head )
 	if ( queue == NULL ) {
 		return -1;
 	}
-	tQueue new_node = alloc_memory ( sizeof ( *new_node ),  get_kernel_mem() );
+	tQueue new_node = allocMemory ( sizeof ( *new_node ),  getKernelMem() );
 	if ( new_node == NULL ) {
 		return -1;
 	}
 	new_node->head = head;
 	new_node->tail = NULL;
-	if ( queue_is_empty ( queue ) ) {
+	if ( queueIsEmpty ( queue ) ) {
 		queue->first = new_node;
 		queue->last = new_node;
 		queue->size++;
@@ -112,15 +109,15 @@ int64_t enqueue ( queueADT queue, elemTypePtr head )
 	return 0;
 }
 
-void free_queue ( queueADT queue )
+void freeQueue ( queueADT queue )
 {
 	if ( queue == NULL ) {
 		return;
 	}
-	while ( !queue_is_empty ( queue ) ) {
+	while ( !queueIsEmpty ( queue ) ) {
 		dequeue ( queue );
 	}
-	free_memory ( queue, get_kernel_mem() );
+	freeMemory ( queue, getKernelMem() );
 }
 
 

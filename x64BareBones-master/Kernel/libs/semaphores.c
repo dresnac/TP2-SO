@@ -11,40 +11,40 @@ typedef struct semStructure {
 
 semStructure sem_array[SEM_AMOUNT_USER + KERNEL_SEM_ID_LIMIT] = {0};
 
-static int8_t is_valid_id ( int64_t sem_id, uint8_t is_kernel );
-static int is_value_zero ( semStructure *sem );
-static int always_true ( semStructure *sem );
-static int64_t post_if_condition ( int64_t sem_id, int ( *condition ) ( semStructure * ), uint8_t is_kernel, uint8_t yield );
-static int64_t open_id_after_acquire ( int64_t sem_id, int value, uint8_t is_kernel );
+static int8_t isValidId ( int64_t sem_id, uint8_t is_kernel );
+static int isValueZero ( semStructure *sem );
+static int alwaysTrue ( semStructure *sem );
+static int64_t postIfCondition ( int64_t sem_id, int ( *condition ) ( semStructure * ), uint8_t is_kernel, uint8_t yield );
+static int64_t openIdAfterAcquire ( int64_t sem_id, int value, uint8_t is_kernel );
 
 int cmp ( elemTypePtr e1, elemTypePtr e2 )
 {
 	return e1 - e2;
 }
 
-int64_t my_sem_post ( int64_t sem_id, uint8_t is_kernel )
+int64_t semPost ( int64_t sem_id, uint8_t is_kernel )
 {
-	return post_if_condition ( sem_id, always_true, is_kernel, 1 );
+	return postIfCondition ( sem_id, alwaysTrue, is_kernel, 1 );
 }
 
-int64_t my_sem_post_no_yield ( int sem_id )
+int64_t semPostNoYield ( int sem_id )
 {
-	return post_if_condition ( sem_id, always_true, 1, 0 );
+	return postIfCondition ( sem_id, alwaysTrue, 1, 0 );
 }
 
-int64_t sem_post_if_value_is_zero ( int64_t sem_id, uint8_t is_kernel )
+int64_t semPostIfValueIsZero ( int64_t sem_id, uint8_t is_kernel )
 {
-	return post_if_condition ( sem_id, is_value_zero, is_kernel, 1 );
+	return postIfCondition ( sem_id, isValueZero, is_kernel, 1 );
 }
 
 
-int64_t my_sem_open_get_id ( int value )
+int64_t semOpenGetId ( int value )
 {
 
 	for ( int i = 0; i < SEM_AMOUNT_USER ; i++ ) {
 		acquire ( &sem_array[i].lock );
 		if ( sem_array[i].qtty_open == 0 ) {
-			if ( open_id_after_acquire ( i, value, 0 ) == 0 ) {
+			if ( openIdAfterAcquire ( i, value, 0 ) == 0 ) {
 				return i;
 			}
 			return -1;
@@ -56,20 +56,20 @@ int64_t my_sem_open_get_id ( int value )
 
 
 
-int64_t my_sem_open ( int64_t sem_id, int value, uint8_t is_kernel )
+int64_t semOpen ( int64_t sem_id, int value, uint8_t is_kernel )
 {
-	if ( !is_valid_id ( sem_id, is_kernel ) ) {
+	if ( !isValidId ( sem_id, is_kernel ) ) {
 		return -1;
 	}
 
 	acquire ( &sem_array[sem_id].lock );
-	return open_id_after_acquire ( sem_id, value, is_kernel );
+	return openIdAfterAcquire ( sem_id, value, is_kernel );
 }
 
 
-static int64_t open_id_after_acquire ( int64_t sem_id, int value, uint8_t is_kernel )
+static int64_t openIdAfterAcquire ( int64_t sem_id, int value, uint8_t is_kernel )
 {
-	if ( !is_valid_id ( sem_id, is_kernel ) ) {
+	if ( !isValidId ( sem_id, is_kernel ) ) {
 		return -1;
 	}
 
@@ -80,7 +80,7 @@ static int64_t open_id_after_acquire ( int64_t sem_id, int value, uint8_t is_ker
 	}
 
 
-	queueADT queue = new_queue();
+	queueADT queue = newQueue();
 	if ( queue == NULL ) {
 		release ( &sem_array[sem_id].lock );
 		return -1;
@@ -93,10 +93,10 @@ static int64_t open_id_after_acquire ( int64_t sem_id, int value, uint8_t is_ker
 	return 0;
 }
 
-int64_t my_sem_wait ( int64_t sem_id, uint8_t is_kernel )
+int64_t semWait ( int64_t sem_id, uint8_t is_kernel )
 {
 
-	if ( !is_valid_id ( sem_id, is_kernel ) ) {
+	if ( !isValidId ( sem_id, is_kernel ) ) {
 		return -1;
 	}
 
@@ -113,26 +113,26 @@ int64_t my_sem_wait ( int64_t sem_id, uint8_t is_kernel )
 		return 0;
 	}
 
-	PCB * running_pcb = get_running();
+	PCB * running_pcb = getRunning();
 
 	if ( enqueue ( sem_array[sem_id].queue, running_pcb ) == -1 ) {
 		release ( &sem_array[sem_id].lock );
 		return -1;
 	}
-	block_current_no_yield();
+	blockCurrentNoYield();
 	running_pcb->blocked_by_sem = sem_id;
 
 	release ( &sem_array[sem_id].lock );
-	scheduler_yield();
+	schedulerYield();
 	running_pcb->blocked_by_sem = -1;
 	return 0;
 }
 
 
-int64_t my_sem_close ( int64_t sem_id, uint8_t is_kernel )
+int64_t semClose ( int64_t sem_id, uint8_t is_kernel )
 {
 
-	if ( !is_valid_id ( sem_id, is_kernel ) ) {
+	if ( !isValidId ( sem_id, is_kernel ) ) {
 		return -1;
 	}
 
@@ -145,11 +145,11 @@ int64_t my_sem_close ( int64_t sem_id, uint8_t is_kernel )
 
 	sem_array[sem_id].qtty_open --;
 	if ( sem_array[sem_id].qtty_open == 0 ) {
-		while ( !queue_is_empty ( sem_array[sem_id].queue ) ) {
+		while ( !queueIsEmpty ( sem_array[sem_id].queue ) ) {
 			PCB * pcb = dequeue ( sem_array[sem_id].queue );
 			ready ( pcb );
 		}
-		free_queue ( sem_array[sem_id].queue );
+		freeQueue ( sem_array[sem_id].queue );
 	}
 
 	release ( &sem_array[sem_id].lock );
@@ -160,21 +160,21 @@ int64_t my_sem_close ( int64_t sem_id, uint8_t is_kernel )
 
 
 
-int64_t sem_delete_from_blocked_queue ( PCB * pcb )
+int64_t semDeleteFromBlockedQueue ( PCB * pcb )
 {
 
 	if ( pcb == NULL ) {
 		return -1;
 	}
 	if ( pcb->blocked_by_sem != -1 ) {
-		delete_from_queue ( sem_array[pcb->blocked_by_sem ].queue, pcb );
+		deleteFromQueue ( sem_array[pcb->blocked_by_sem ].queue, pcb );
 	}
 	return 0;
 }
 
-static int64_t post_if_condition ( int64_t sem_id, int ( *condition ) ( semStructure * ), uint8_t is_kernel, uint8_t yield )
+static int64_t postIfCondition ( int64_t sem_id, int ( *condition ) ( semStructure * ), uint8_t is_kernel, uint8_t yield )
 {
-	if ( !is_valid_id ( sem_id, is_kernel ) ) {
+	if ( !isValidId ( sem_id, is_kernel ) ) {
 		return -1;
 	}
 
@@ -186,7 +186,7 @@ static int64_t post_if_condition ( int64_t sem_id, int ( *condition ) ( semStruc
 	}
 
 	if ( condition ( &sem_array[sem_id] ) ) {
-		if ( queue_is_empty ( sem_array[sem_id].queue ) ) {
+		if ( queueIsEmpty ( sem_array[sem_id].queue ) ) {
 			sem_array[sem_id].value++;
 		} else {
 			PCB *to_unblock = dequeue ( sem_array[sem_id].queue );
@@ -196,23 +196,23 @@ static int64_t post_if_condition ( int64_t sem_id, int ( *condition ) ( semStruc
 
 	release ( &sem_array[sem_id].lock );
 	if ( yield ) {
-		scheduler_yield();
+		schedulerYield();
 	}
 
 	return 0;
 }
 
-static int is_value_zero ( semStructure *sem )
+static int isValueZero ( semStructure *sem )
 {
 	return sem->value == 0;
 }
 
-static int always_true ( semStructure *sem )
+static int alwaysTrue ( semStructure *sem )
 {
 	return 1;
 }
 
-static int8_t is_valid_id ( int64_t sem_id, uint8_t is_kernel )
+static int8_t isValidId ( int64_t sem_id, uint8_t is_kernel )
 {
 	if ( is_kernel ) {
 		return sem_id >= SEM_AMOUNT_USER && sem_id < KERNEL_SEM_ID_LIMIT;

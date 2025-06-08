@@ -59,18 +59,18 @@ typedef struct vbe_mode_info_structure * vbe_info_ptr;
 
 
 
-int64_t vdriver_text_write ( tFd fd, char * buffer, int64_t amount );
-int64_t vdriver_text_set_font_size ( uint64_t size );
-void vdriver_set_font_color ( color c );
+int64_t vdriverWrite ( tFd fd, char * buffer, int64_t amount );
+int64_t vdriverSetFontSize ( uint64_t size );
+void vdriverSetFontColor ( color c );
 
-int64_t vdriver_video_draw_rectangle ( uint64_t x, uint64_t y, uint64_t width, uint64_t height, color color );
-int64_t vdriver_video_draw_font ( uint64_t x, uint64_t y, uint8_t ascii, color color, uint64_t fontSize );
-int64_t vdriver_video_draw_pixel ( uint64_t x, uint64_t y, color color );
+int64_t vdriverDrawRectangle ( uint64_t x, uint64_t y, uint64_t width, uint64_t height, color color );
+int64_t vdriverDrawFont ( uint64_t x, uint64_t y, uint8_t ascii, color color, uint64_t fontSize );
+int64_t vdriverDrawPixel ( uint64_t x, uint64_t y, color color );
 
 
-int64_t vdriver_get_screen_information ( ScreenInformation * screen_information );
-int64_t vdriver_set_mode ( uint64_t mode, color c );
-int64_t vdriver_clear_screen ( color color );
+int64_t vdriverGetScreenInformation ( ScreenInformation * screen_information );
+int64_t vdriverSetMode ( uint64_t mode, color c );
+int64_t vdriverClearScreen ( color color );
 
 
 

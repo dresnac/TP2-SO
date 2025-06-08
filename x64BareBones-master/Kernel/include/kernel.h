@@ -15,8 +15,8 @@
 #include <scheduler.h>
 #include <pipe.h>
 #include <time.h>
-MemoryManagerADT get_userland_mem();
-MemoryManagerADT get_kernel_mem();
+MemoryManagerADT getUserlandMem();
+MemoryManagerADT getKernelMem();
 int main();
 
 #endif

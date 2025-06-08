@@ -23,13 +23,13 @@ void _sti ( void );
 
 void _hlt ( void );
 
-void pic_master_mask ( uint8_t mask );
+void picMasterMask ( uint8_t mask );
 
-void pic_slave_mask ( uint8_t mask );
+void picSlaveMask ( uint8_t mask );
 
 void haltcpu ( void );
 
-void timer_tick ( void );
+void timerTick ( void );
 
 void yield ( void );
 

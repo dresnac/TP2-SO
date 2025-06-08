@@ -5,19 +5,19 @@
 int64_t loop ( char ** argv, int argc )
 {
 	if ( argc != 2 ) {
-		libc_fprintf ( STDERR, "Usage: loop <seconds>\n" );
+		libcfPrintf ( STDERR, "Usage: loop <seconds>\n" );
 		return 1;
 	}
 	int64_t satoi_flag;
-	int64_t seconds = libc_satoi ( argv[1], &satoi_flag );
+	int64_t seconds = libcSatoi ( argv[1], &satoi_flag );
 	if ( seconds < 0 || !satoi_flag ) {
-		libc_fprintf ( STDERR, "Error: Invalid amount of seconds\n" );
+		libcfPrintf ( STDERR, "Error: Invalid amount of seconds\n" );
 		return 1;
 	}
 	int64_t ans = 1;
 	while ( ans > 0 ) {
-		libc_sleep ( seconds );
-		ans = libc_printf ( "Hello! I'm a loop with pid: %d\n", libc_get_pid() );
+		libcSleep ( seconds );
+		ans = libcPrintf ( "Hello! I'm a loop with pid: %d\n", libcGetPid() );
 	}
 	return 0;
 }
@@ -25,14 +25,14 @@ int64_t loop ( char ** argv, int argc )
 int64_t wc ( char ** argv, int argc )
 {
 	if ( argc != 1 ) {
-		libc_fprintf ( STDERR, "Usage: wc\n" );
+		libcfPrintf ( STDERR, "Usage: wc\n" );
 		return 1;
 	}
 	char c;
 	char prev = 0;
 	uint64_t lines = 1;
-	while ( ( c = libc_get_char() ) != 0 ) {
-		libc_put_char ( c );
+	while ( ( c = libcGetChar() ) != 0 ) {
+		libcPutChar ( c );
 		if ( c == '\n' ) {
 			lines = lines + 1;
 		}
@@ -42,7 +42,7 @@ int64_t wc ( char ** argv, int argc )
 	if ( prev == 0 || prev == '\n' ) {
 		lines--;
 	}
-	libc_printf ( "\nLines: %d\n", lines );
+	libcPrintf ( "\nLines: %d\n", lines );
 	return 0;
 }
 
@@ -50,9 +50,9 @@ int64_t wc ( char ** argv, int argc )
 int64_t filter()
 {
 	char ans;
-	while ( ( ans = libc_get_char() ) > 0 ) {
+	while ( ( ans = libcGetChar() ) > 0 ) {
 		if ( ! ( ans == 'a' || ans == 'A' || ans == 'e' || ans == 'E' || ans == 'i' || ans == 'I' || ans == 'o' || ans == 'O' || ans == 'u' || ans == 'U' ) ) {
-			libc_printf ( "%c", ans );
+			libcPrintf ( "%c", ans );
 		}
 	}
 	return 0;
@@ -61,57 +61,57 @@ int64_t filter()
 int64_t cat()
 {
 	char ans;
-	while ( ( ans = libc_get_char() ) > 0 ) {
-		libc_printf ( "%c", ans );
+	while ( ( ans = libcGetChar() ) > 0 ) {
+		libcPrintf ( "%c", ans );
 	}
-	libc_printf ( "\n" );
+	libcPrintf ( "\n" );
 	return 0;
 }
 
 
-int64_t ps_program()
+int64_t psProgram()
 {
 
 	ProcessInfoList * process_list = sys_ps();
 	if ( process_list == NULL ) {
-		libc_fprintf ( STDERR, "Error while getting process list\n" );
+		libcfPrintf ( STDERR, "Error while getting process list\n" );
 		return 1;
 	}
-	libc_printf ( "Amount of processes: %d\n", process_list->amount_of_processes );
-	libc_printf ( "PID | Ground      | Prio  | Stack Base Ptr| Last Stack Addr |    RSP     | Status | STDOUT| STDERR| STDIN | Name       \n" );
-	libc_printf ( "----|-------------|-------|---------------|-----------------|------------|--------|-------|-------|-------|-----------\n" );
+	libcPrintf ( "Amount of processes: %d\n", process_list->amount_of_processes );
+	libcPrintf ( "PID | Ground      | Prio  | Stack Base Ptr| Last Stack Addr |    RSP     | Status | STDOUT| STDERR| STDIN | Name       \n" );
+	libcPrintf ( "----|-------------|-------|---------------|-----------------|------------|--------|-------|-------|-------|-----------\n" );
 
 	for ( int i = 0; i < process_list->amount_of_processes; i++ ) {
 
 		if ( process_list->processes[i].pid < 10 ) {
-			libc_printf ( "%d   | ", process_list->processes[i].pid );
+			libcPrintf ( "%d   | ", process_list->processes[i].pid );
 		} else {
-			libc_printf ( "%d  | ", process_list->processes[i].pid );
+			libcPrintf ( "%d  | ", process_list->processes[i].pid );
 		}
 
-		libc_printf ( "%s  | ", process_list->processes[i].is_background ? "Background" : "Foreground" );
-		libc_printf ( "%s| ", process_list->processes[i].priority == LOW ? "Low   " : ( process_list->processes[i].priority == MEDIUM ? "Medium" : "High  " ) );
-		libc_printf ( "0x%x    | ", process_list->processes[i].lowest_stack_address + STACK_SIZE );
-		libc_printf ( "0x%x      | ", process_list->processes[i].lowest_stack_address );
-		libc_printf ( "0x%x | ", process_list->processes[i].stack_pointer );
-		libc_printf ( "%s| ", process_list->processes[i].status == READY ? "Ready  " : ( process_list->processes[i].status == ZOMBIE ? "Zombie " : "Blocked" ) );
+		libcPrintf ( "%s  | ", process_list->processes[i].is_background ? "Background" : "Foreground" );
+		libcPrintf ( "%s| ", process_list->processes[i].priority == LOW ? "Low   " : ( process_list->processes[i].priority == MEDIUM ? "Medium" : "High  " ) );
+		libcPrintf ( "0x%x    | ", process_list->processes[i].lowest_stack_address + STACK_SIZE );
+		libcPrintf ( "0x%x      | ", process_list->processes[i].lowest_stack_address );
+		libcPrintf ( "0x%x | ", process_list->processes[i].stack_pointer );
+		libcPrintf ( "%s| ", process_list->processes[i].status == READY ? "Ready  " : ( process_list->processes[i].status == ZOMBIE ? "Zombie " : "Blocked" ) );
 
 		for ( int j = 0; j < CANT_FDS; j++ ) {
 			char * fds_print[] = {"STDOUT", "STDERR", "STDIN "};
 			if ( process_list->processes[i].fds[j] == -1 ) {
-				libc_printf ( "  -   | " );
+				libcPrintf ( "  -   | " );
 			} else if ( process_list->processes[i].fds[j] >= 0 && process_list->processes[i].fds[j] <= MAX_COMMON_FD ) {
-				libc_printf ( "%s| ", fds_print[process_list->processes[i].fds[j]] );
+				libcPrintf ( "%s| ", fds_print[process_list->processes[i].fds[j]] );
 			} else {
 				int to_print =  process_list->processes[i].fds[j];
 				if ( to_print < 10 ) {
-					libc_printf ( "  %d   | ", to_print );
+					libcPrintf ( "  %d   | ", to_print );
 				} else {
-					libc_printf ( "  %d  | ", to_print );
+					libcPrintf ( "  %d  | ", to_print );
 				}
 			}
 		}
-		libc_printf ( "%s\n", process_list->processes[i].name ? process_list->processes[i].name : "No name" );
+		libcPrintf ( "%s\n", process_list->processes[i].name ? process_list->processes[i].name : "No name" );
 
 	}
 	sys_free_ps ( process_list );
@@ -122,13 +122,13 @@ int64_t mem()
 {
 	MemoryInfo info[2];
 	if ( sys_mem_info ( info ) < 0 ) {
-		libc_fprintf ( STDERR, "Error while getting memory info\n" );
+		libcfPrintf ( STDERR, "Error while getting memory info\n" );
 		return 1;
 	}
-	libc_printf ( "Total memory in userland: %x\n", info[USER_MEM_INFO].total_size );
-	libc_printf ( "Free memory in userland: %x\n", info[USER_MEM_INFO].free );
+	libcPrintf ( "Total memory in userland: %x\n", info[USER_MEM_INFO].total_size );
+	libcPrintf ( "Free memory in userland: %x\n", info[USER_MEM_INFO].free );
 
-	libc_printf ( "\nTotal memory in kernel: %x\n", info[KERNEL_MEM_INFO].total_size );
-	libc_printf ( "Free memory in kernel: %x\n", info[KERNEL_MEM_INFO].free );
+	libcPrintf ( "\nTotal memory in kernel: %x\n", info[KERNEL_MEM_INFO].total_size );
+	libcPrintf ( "Free memory in kernel: %x\n", info[KERNEL_MEM_INFO].free );
 	return 0;
 }

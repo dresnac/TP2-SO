@@ -14,7 +14,7 @@ typedef struct {
 
 
 
-MemoryManagerADT my_mm_init ( void *p )
+MemoryManagerADT createMM ( void *p )
 {
 	MemoryManagerCDT * aux = ( MemoryManagerCDT * ) p;
 
@@ -25,13 +25,13 @@ MemoryManagerADT my_mm_init ( void *p )
 	aux->start = ( void * ) ( ( char * ) p );
 	aux->current = 0;
 	for ( int i = 0; i <= ( sizeof ( MemoryManagerCDT ) / BLOCK_SIZE ); i++ ) {
-		alloc_memory ( 1, ( MemoryManagerADT ) aux );														//reserves the space for the CDT
+		allocMemory ( 1, ( MemoryManagerADT ) aux );														//reserves the space for the CDT
 	}
 
 	return ( MemoryManagerADT ) aux;
 }
 
-void * alloc_memory ( uint64_t size,  MemoryManagerADT mem )
+void * allocMemory ( uint64_t size,  MemoryManagerADT mem )
 {
 	MemoryManagerCDT * aux = ( MemoryManagerCDT * ) mem;
 	if ( aux == NULL || size > BLOCK_SIZE || aux->current >= BLOCK_COUNT ) {
@@ -43,7 +43,7 @@ void * alloc_memory ( uint64_t size,  MemoryManagerADT mem )
 
 
 
-void free_memory ( void * p, MemoryManagerADT mem )
+void freeMemory ( void * p, MemoryManagerADT mem )
 {
 	MemoryManagerCDT * aux = ( MemoryManagerCDT * ) mem;
 	if ( aux == NULL ) {
@@ -53,7 +53,7 @@ void free_memory ( void * p, MemoryManagerADT mem )
 	aux->free_ptrs[aux->current] = p;
 }
 
-int64_t mem_info ( MemoryInfo * info, MemoryManagerADT mem )
+int64_t memInfo ( MemoryInfo * info, MemoryManagerADT mem )
 {
 	MemoryManagerCDT * aux = ( MemoryManagerCDT * ) mem;
 	if ( aux == NULL || info == NULL ) {

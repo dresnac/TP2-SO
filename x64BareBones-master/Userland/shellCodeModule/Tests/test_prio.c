@@ -12,44 +12,44 @@ int64_t test_prio()
 	char * argv[] = {"test_prio_aux", WAIT_STRING};
 	uint64_t i;
 
-	libc_printf ( "\n" );
+	libcPrintf ( "\n" );
 	for ( i = 0; i < TOTAL_PROCESSES; i++ ) {
 		tFd fds[] = {STDOUT, STDERR, -1};
-		pids[i] = libc_create_process ( ( mainFunction ) endless_loop_print_main, 0, argv, 2, fds );
+		pids[i] = libcCreateProcess ( ( mainFunction ) endless_loop_print_main, 0, argv, 2, fds );
 		if ( pids[i] < 0 ) {
-			libc_fprintf ( STDERR, "Error: Failed to create process number %d\n", i + 1 );
+			libcfPrintf ( STDERR, "Error: Failed to create process number %d\n", i + 1 );
 		}
 	}
 	bussy_wait ( WAIT );
-	libc_printf ( "\nCHANGING PRIORITIES ...\n" );
+	libcPrintf ( "\nCHANGING PRIORITIES ...\n" );
 
 	for ( i = 0; i < TOTAL_PROCESSES; i++ ) {
-		libc_nice ( pids[i], prio[i] );
-		libc_printf ( "Pid %d with priority %s\n", pids[i], prio[i] == 0 ? "LOW" : ( prio[i] == 1 ? "MEDIUM" : "HIGH" ) );
+		libcNice ( pids[i], prio[i] );
+		libcPrintf ( "Pid %d with priority %s\n", pids[i], prio[i] == 0 ? "LOW" : ( prio[i] == 1 ? "MEDIUM" : "HIGH" ) );
 	}
 	bussy_wait ( WAIT );
-	libc_printf ( "\nBLOCKING...\n" );
+	libcPrintf ( "\nBLOCKING...\n" );
 
 	for ( i = 0; i < TOTAL_PROCESSES; i++ ) {
-		libc_block ( pids[i] );
+		libcBlock ( pids[i] );
 	}
 
-	libc_printf ( "CHANGING PRIORITIES WHILE BLOCKED (TO MEDIUM)...\n" );
+	libcPrintf ( "CHANGING PRIORITIES WHILE BLOCKED (TO MEDIUM)...\n" );
 
 	for ( i = 0; i < TOTAL_PROCESSES; i++ ) {
-		libc_nice ( pids[i], MEDIUM );
+		libcNice ( pids[i], MEDIUM );
 	}
-	libc_printf ( "UNBLOCKING...\n" );
+	libcPrintf ( "UNBLOCKING...\n" );
 
 	for ( i = 0; i < TOTAL_PROCESSES; i++ ) {
-		libc_unblock ( pids[i] );
+		libcUnblock ( pids[i] );
 	}
 	bussy_wait ( WAIT );
-	libc_printf ( "\nKILLING...\n" );
+	libcPrintf ( "\nKILLING...\n" );
 
 	for ( i = 0; i < TOTAL_PROCESSES; i++ ) {
-		libc_kill ( pids[i] );
+		libcKill ( pids[i] );
 	}
-	libc_kill ( libc_get_pid() );
+	libcKill ( libcGetPid() );
 	return 0;
 }

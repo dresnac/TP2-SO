@@ -36,31 +36,31 @@ static uint64_t CHAR_BUFFER_COLS_zoomed = CHAR_BUFFER_COLS;
 
 
 
-static void libc_clear_screen();
-static uint64_t in_text_mode();
-static uint64_t in_video_mode();
-static void add_char_to_buffer ( uint8_t c, uint8_t fd );
-static void print_font ( char_buffer_type letter );
-static void libc_clear_screen();
-static void new_line_print();
-static void new_line_buff();
-static void new_line();
-static void back_space_buffer();
-static void back_space();
-static void back_space_print();
+static void libcClearScreen();
+static uint64_t inTextMode();
+static uint64_t inVideoMode();
+static void addCharToBuffer ( uint8_t c, uint8_t fd );
+static void printFont ( char_buffer_type letter );
+static void libcClearScreen();
+static void newLinePrint();
+static void newLineBuff();
+static void newLine();
+static void backSpaceBuffer();
+static void backSpace();
+static void backSpacePrint();
 static void tabulator();
-static void re_buffer_print();
-static void print_buffer();
+static void reBufferPrint();
+static void printBuffer();
 
 
-void vdriver_set_font_color ( color c )
+void vdriverSetFontColor ( color c )
 {
 	font_color = c;
 }
 
-int64_t vdriver_text_set_font_size ( uint64_t size )
+int64_t vdriverSetFontSize ( uint64_t size )
 {
-	if ( !in_text_mode() ) {
+	if ( !inTextMode() ) {
 		return -1;
 	}
 
@@ -73,19 +73,19 @@ int64_t vdriver_text_set_font_size ( uint64_t size )
 	font_size = size;
 	CHAR_BUFFER_ROWS_zoomed = ( SCREEN_HEIGHT / ( font_size * FONT_HEIGHT ) );
 	CHAR_BUFFER_COLS_zoomed = ( SCREEN_WIDTH / ( font_size * FONT_WIDTH ) );
-	libc_clear_screen();
+	libcClearScreen();
 	return 0;
 }
 
 
-int64_t vdriver_get_screen_information ( ScreenInformation * screen_information )
+int64_t vdriverGetScreenInformation ( ScreenInformation * screen_information )
 {
 	screen_information->width = SCREEN_WIDTH;
 	screen_information->height = SCREEN_HEIGHT;
 	return 1;
 }
 
-int64_t vdriver_clear_screen ( color color )
+int64_t vdriverClearScreen ( color color )
 {
 	if ( driver_mode == TEXT_MODE ) {
 		background_color = color;
@@ -93,14 +93,14 @@ int64_t vdriver_clear_screen ( color color )
 		buffer_index = 0;
 	}
 	override_mode = 1;
-	vdriver_video_draw_rectangle ( 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, color );
+	vdriverDrawRectangle ( 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, color );
 	override_mode = 0;
 	return 0;
 }
 
 
 
-int64_t vdriver_set_mode ( uint64_t mode, color c )
+int64_t vdriverSetMode ( uint64_t mode, color c )
 {
 	if ( ! ( mode == TEXT_MODE || mode == VIDEO_MODE ) ) {
 		return -1;
@@ -113,9 +113,9 @@ int64_t vdriver_set_mode ( uint64_t mode, color c )
 
 
 	if ( mode == TEXT_MODE ) {
-		print_buffer();
+		printBuffer();
 	} else {
-		vdriver_clear_screen ( c );
+		vdriverClearScreen ( c );
 	}
 
 	return 0;
@@ -123,9 +123,9 @@ int64_t vdriver_set_mode ( uint64_t mode, color c )
 }
 
 
-int64_t vdriver_text_write ( tFd fd,  char * buffer, int64_t amount )
+int64_t vdriverWrite ( tFd fd,  char * buffer, int64_t amount )
 {
-	if ( !in_text_mode() ) {
+	if ( !inTextMode() ) {
 		return 0;
 	}
 	if ( ! ( fd == STDOUT || fd == STDERR ) ) {
@@ -136,10 +136,10 @@ int64_t vdriver_text_write ( tFd fd,  char * buffer, int64_t amount )
 	while ( i < amount && buffer[i] != 0 ) {
 		switch ( buffer[i] ) {
 		case '\n':
-			new_line();
+			newLine();
 			break;
 		case '\b':
-			back_space();
+			backSpace();
 			break;
 		case '\t':
 			tabulator();
@@ -147,8 +147,8 @@ int64_t vdriver_text_write ( tFd fd,  char * buffer, int64_t amount )
 		default:
 			if ( buffer[i] >= FIRST_ASCII_FONT && buffer[i] <= LAST_ASCII_FONT ) {
 				char_buffer_type c = {buffer[i], fd};
-				add_char_to_buffer ( buffer[i], fd );
-				print_font ( c );
+				addCharToBuffer ( buffer[i], fd );
+				printFont ( c );
 			}
 			break;
 		}
@@ -157,34 +157,34 @@ int64_t vdriver_text_write ( tFd fd,  char * buffer, int64_t amount )
 	return i;
 }
 
-int64_t vdriver_video_draw_rectangle ( uint64_t x, uint64_t y, uint64_t width, uint64_t height, color color )
+int64_t vdriverDrawRectangle ( uint64_t x, uint64_t y, uint64_t width, uint64_t height, color color )
 {
 	if ( x + width > SCREEN_WIDTH || y + height > SCREEN_HEIGHT ) {
 		return -1;
 	}
-	if ( !in_video_mode() ) {
+	if ( !inVideoMode() ) {
 		return -1;
 	}
 	for ( uint64_t i = 0; i < width; i++ ) {
 		for ( uint64_t j = 0; j < height; j++ ) {
-			vdriver_video_draw_pixel ( x + i, y + j, color );
+			vdriverDrawPixel ( x + i, y + j, color );
 		}
 	}
 	return 0;
 }
-int64_t vdriver_video_draw_font ( uint64_t x, uint64_t y, uint8_t ascii, color color, uint64_t font_size )
+int64_t vdriverDrawFont ( uint64_t x, uint64_t y, uint8_t ascii, color color, uint64_t font_size )
 {
 	if ( ascii < FIRST_ASCII_FONT || ascii > LAST_ASCII_FONT ) {
 		return -1;
 	}
-	if ( !in_video_mode() ) {
+	if ( !inVideoMode() ) {
 		return -1;
 	}
 	int letter = ( ascii - ' ' ) * 16;
 	for ( uint64_t i = 0; i < 16; i++ ) {
 		for ( uint64_t j = 0; j < 8; j++ ) {
 			if ( ( font_bitmap[letter + i] >> ( 7 - j ) ) & 0x1 ) {
-				vdriver_video_draw_rectangle ( ( x + j * font_size ), ( y + i * font_size ), font_size, font_size, color );
+				vdriverDrawRectangle ( ( x + j * font_size ), ( y + i * font_size ), font_size, font_size, color );
 			}
 		}
 	}
@@ -195,13 +195,13 @@ int64_t vdriver_video_draw_font ( uint64_t x, uint64_t y, uint8_t ascii, color c
 
 
 
-int64_t vdriver_video_draw_pixel ( uint64_t x, uint64_t y, color color )
+int64_t vdriverDrawPixel ( uint64_t x, uint64_t y, color color )
 {
 
 	if ( x >= SCREEN_WIDTH || y >= SCREEN_HEIGHT ) {
 		return -1;
 	}
-	if ( !in_video_mode() ) {
+	if ( !inVideoMode() ) {
 		return -1;
 	}
 
@@ -215,11 +215,11 @@ int64_t vdriver_video_draw_pixel ( uint64_t x, uint64_t y, color color )
 
 
 //funciones static:
-static uint64_t in_text_mode()
+static uint64_t inTextMode()
 {
 	return ( ( driver_mode == TEXT_MODE ) || override_mode );
 }
-static uint64_t in_video_mode()
+static uint64_t inVideoMode()
 {
 	return ( ( driver_mode == VIDEO_MODE ) || override_mode );
 }
@@ -229,15 +229,15 @@ static void tabulator()
 {
 	char_buffer_type c = {' ', STDOUT};
 	for ( int i = 0; i < space_per_tab ; i++ ) {
-		add_char_to_buffer ( ' ', STDOUT );
-		print_font ( c );
+		addCharToBuffer ( ' ', STDOUT );
+		printFont ( c );
 	}
 }
 
-static void add_char_to_buffer ( uint8_t c, uint8_t fd )
+static void addCharToBuffer ( uint8_t c, uint8_t fd )
 {
 	if ( buffer_index  >= CHAR_BUFFER_ROWS_zoomed * CHAR_BUFFER_COLS_zoomed ) {
-		re_buffer_print();
+		reBufferPrint();
 	}
 	char_buffer_type aux = {c, fd};
 	char_buffer[buffer_index] = aux;
@@ -247,7 +247,7 @@ static void add_char_to_buffer ( uint8_t c, uint8_t fd )
 
 
 
-static void print_font ( char_buffer_type letter )
+static void printFont ( char_buffer_type letter )
 {
 
 	if ( current_screen_point.x + FONT_WIDTH * font_size - FONT_WIDTH >= SCREEN_WIDTH ) {
@@ -255,7 +255,7 @@ static void print_font ( char_buffer_type letter )
 		current_screen_point.x = 0;
 	}
 	if ( current_screen_point.y + FONT_HEIGHT * font_size - FONT_HEIGHT >= SCREEN_HEIGHT ) {
-		re_buffer_print();
+		reBufferPrint();
 	}
 	override_mode = 1;
 	color col;
@@ -264,41 +264,41 @@ static void print_font ( char_buffer_type letter )
 	} else {
 		col = stderr_color;
 	}
-	vdriver_video_draw_font ( current_screen_point.x, current_screen_point.y, letter.c, col, font_size );
+	vdriverDrawFont ( current_screen_point.x, current_screen_point.y, letter.c, col, font_size );
 	override_mode = 0;
 	current_screen_point.x += FONT_WIDTH * font_size;
 }
 
-static void libc_clear_screen()
+static void libcClearScreen()
 {
-	vdriver_clear_screen ( background_color );
+	vdriverClearScreen ( background_color );
 }
 
-static void new_line_print()
+static void newLinePrint()
 {
 	current_screen_point.x = 0;
 	current_screen_point.y = current_screen_point.y + FONT_HEIGHT * font_size;
 	if ( current_screen_point.y + FONT_HEIGHT * font_size - FONT_HEIGHT >= SCREEN_HEIGHT ) {
-		re_buffer_print();
+		reBufferPrint();
 	}
 }
 
-static void new_line_buff()
+static void newLineBuff()
 {
 	int remaining_on_row = CHAR_BUFFER_COLS_zoomed - ( buffer_index % CHAR_BUFFER_COLS_zoomed );
 	for ( int i = 0 ; i < remaining_on_row; i++ ) {
-		add_char_to_buffer ( ' ', STDOUT );
+		addCharToBuffer ( ' ', STDOUT );
 	}
 }
 
 
-static void new_line()
+static void newLine()
 {
-	new_line_buff();
-	new_line_print();
+	newLineBuff();
+	newLinePrint();
 }
 
-static void back_space_print()
+static void backSpacePrint()
 {
 	if ( current_screen_point.x == 0 && current_screen_point.y == 0 ) {
 		return;
@@ -311,12 +311,12 @@ static void back_space_print()
 		current_screen_point.x -= font_size * FONT_WIDTH;
 	}
 	override_mode = 1;
-	vdriver_video_draw_rectangle ( current_screen_point.x, current_screen_point.y, X_FONT_OFFSET, FONT_HEIGHT * font_size, background_color );
+	vdriverDrawRectangle ( current_screen_point.x, current_screen_point.y, X_FONT_OFFSET, FONT_HEIGHT * font_size, background_color );
 	override_mode = 0;
 }
 
 
-static void back_space_buffer()
+static void backSpaceBuffer()
 {
 	if ( buffer_index != 0 ) {
 		char_buffer[buffer_index].c = 0;
@@ -325,32 +325,32 @@ static void back_space_buffer()
 
 }
 
-static void back_space()
+static void backSpace()
 {
-	back_space_print();
-	back_space_buffer();
+	backSpacePrint();
+	backSpaceBuffer();
 }
 
 
 
 #define rows_to_rebuffer(rows_in_screen) (((rows_in_screen)/(2))+1)
-static void re_buffer_print()
+static void reBufferPrint()
 {
 	uint64_t aux = buffer_index; // con el clear screen se setea en 0
-	libc_clear_screen();
+	libcClearScreen();
 	uint64_t j = 0;
 	for ( uint64_t i = CHAR_BUFFER_COLS_zoomed * rows_to_rebuffer ( CHAR_BUFFER_ROWS_zoomed ) ; i < aux; i++, j++ ) {
 		char_buffer[j] = char_buffer[i];
-		print_font ( char_buffer[j] );
+		printFont ( char_buffer[j] );
 	}
 	buffer_index = j;
 }
 
-static void print_buffer()
+static void printBuffer()
 {
 	uint64_t aux = buffer_index; // con clear screen se borra
-	libc_clear_screen();
+	libcClearScreen();
 	for ( int i = 0 ; i < aux ; i++ ) {
-		vdriver_text_write ( char_buffer[i].fd, ( char * ) &char_buffer[i].c, 1 );
+		vdriverWrite ( char_buffer[i].fd, ( char * ) &char_buffer[i].c, 1 );
 	}
 }

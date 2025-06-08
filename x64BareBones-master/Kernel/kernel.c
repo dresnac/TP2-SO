@@ -24,10 +24,10 @@ typedef int ( *EntryPoint ) ();
 
 void clearBSS ( void * bssAddress, uint64_t bssSize )
 {
-	shared_libc_memset ( bssAddress, 0, bssSize );
+	sharedLibcMemset ( bssAddress, 0, bssSize );
 }
 
-void * get_stack_base()
+void * getStackBase()
 {
 	return ( void * ) (
 	           ( uint64_t ) &endOfKernel
@@ -42,24 +42,24 @@ void * initializeKernelBinary()
 		shell_code_module_address,
 		shell_data_module_address
 	};
-	load_modules ( &endOfKernelBinary, moduleAddresses );
+	loadModules ( &endOfKernelBinary, moduleAddresses );
 	clearBSS ( &bss, &endOfKernel - &bss );
-	return get_stack_base();
+	return getStackBase();
 }
 
 
-void idle_process()
+void idleProcess()
 {
 	while ( 1 ) {
 		_hlt();
 	}
 }
 
-MemoryManagerADT get_userland_mem()
+MemoryManagerADT getUserlandMem()
 {
 	return userland_mem;
 }
-MemoryManagerADT get_kernel_mem()
+MemoryManagerADT getKernelMem()
 {
 	return kernel_mem;
 }
@@ -67,16 +67,16 @@ MemoryManagerADT get_kernel_mem()
 
 int main()
 {
-	load_idt();
-	kernel_mem = my_mm_init ( heap );
-	userland_mem = my_mm_init ( heap + HEAP_SIZE );
+	loadIdt();
+	kernel_mem = createMM ( heap );
+	userland_mem = createMM ( heap + HEAP_SIZE );
 	char * argv_idle[] = {"idle"};
 	char * argv_shell[] = {"sh"};
 	tFd idle_fds[3] = {-1, -1, -1};
 	tFd shell_fds[3] = {STDOUT, STDERR, STDIN};
-	initialize_scheduler ( new_process ( ( mainFunction ) shell_code_module_address, HIGH, 0, argv_shell, 1, shell_fds ), new_process ( ( mainFunction ) idle_process, LOW, 0, argv_idle, 1, idle_fds ) );
-	pipe_init();
-	init_timer_handler();
-	timer_tick();
+	initializeScheduler ( newProcess ( ( mainFunction ) shell_code_module_address, HIGH, 0, argv_shell, 1, shell_fds ), newProcess ( ( mainFunction ) idleProcess, LOW, 0, argv_idle, 1, idle_fds ) );
+	pipeInit();
+	initTimerHandler();
+	timerTick();
 	return 0;
 }

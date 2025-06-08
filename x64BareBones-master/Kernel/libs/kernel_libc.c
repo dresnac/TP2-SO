@@ -1,39 +1,39 @@
 #include <kernel_libc.h>
 
 
-char * new_str_copy ( char * string )
+char * newStrCopy ( char * string )
 {
 	if ( string == NULL ) {
 		return NULL;
 	}
-	uint64_t len = shared_libc_strlen ( string ) + 1;
-	char * copy = alloc_memory ( len, get_kernel_mem() );
+	uint64_t len = sharedLibcStrlen ( string ) + 1;
+	char * copy = allocMemory ( len, getKernelMem() );
 	if ( copy == NULL ) {
 		return NULL;
 	}
-	shared_libc_memcpy ( copy, string, len );
+	sharedLibcMemcpy ( copy, string, len );
 	return copy;
 }
 
-char ** copy_argv ( tPid pid, char ** argv, uint64_t argc )
+char ** copyArgv ( tPid pid, char ** argv, uint64_t argc )
 {
 	if ( argc == 0 || argv == NULL ) {
 		return NULL;
 	}
 
-	char ** ans = alloc_memory ( sizeof ( char * ) * ( argc + 1 ), get_kernel_mem() );
+	char ** ans = allocMemory ( sizeof ( char * ) * ( argc + 1 ), getKernelMem() );
 
 	if ( ans == NULL ) {
 		return NULL;
 	}
 
 	for ( uint64_t i = 0; i < argc; i++ ) {
-		ans[i] = new_str_copy ( argv[i] );
+		ans[i] = newStrCopy ( argv[i] );
 		if ( ans[i] == NULL ) {
 			for ( uint64_t j = 0; j < i; j++ ) {
-				free_memory ( ( void * ) ans[j], get_kernel_mem() );
+				freeMemory ( ( void * ) ans[j], getKernelMem() );
 			}
-			free_memory ( ( void * ) ans, get_kernel_mem() );
+			freeMemory ( ( void * ) ans, getKernelMem() );
 			return NULL;
 		}
 	}

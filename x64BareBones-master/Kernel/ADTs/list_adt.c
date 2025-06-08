@@ -18,9 +18,9 @@ struct listCDT {
 
 
 
-listADT new_list ( tCompare cmp )
+listADT newList ( tCompare cmp )
 {
-	listADT aux = alloc_memory ( sizeof ( *aux ), get_kernel_mem() );
+	listADT aux = allocMemory ( sizeof ( *aux ), getKernelMem() );
 	if ( aux == NULL ) {
 		return NULL;
 	}
@@ -31,7 +31,7 @@ listADT new_list ( tCompare cmp )
 }
 
 
-void free_list ( listADT list )
+void freeList ( listADT list )
 {
 	if ( list == NULL ) {
 		return;
@@ -39,17 +39,17 @@ void free_list ( listADT list )
 	for ( int i = 0; i < list->size; i++ ) {
 		tList aux = list->pre_next;
 		list->pre_next = list->pre_next->tail;
-		free_memory ( aux, get_kernel_mem() );
+		freeMemory ( aux, getKernelMem() );
 	}
-	free_memory ( list, get_kernel_mem() );
+	freeMemory ( list, getKernelMem() );
 }
 
-int is_empty_list ( const listADT list )
+int isEmptyList ( const listADT list )
 {
 	return list == NULL || list->pre_next == NULL;
 }
 
-int size_list ( const listADT list )
+int sizeList ( const listADT list )
 {
 	if ( list == NULL ) {
 		return -1;
@@ -57,13 +57,13 @@ int size_list ( const listADT list )
 	return list->size;
 }
 
-int add_list ( listADT list, elemTypePtr elem )
+int addList ( listADT list, elemTypePtr elem )
 {
 	if ( list == NULL ) {
 		return -1;
 	}
 
-	tList new_node = alloc_memory ( sizeof ( *new_node ), get_kernel_mem() );
+	tList new_node = allocMemory ( sizeof ( *new_node ), getKernelMem() );
 	if ( new_node == NULL ) {
 		return -1;
 	}
@@ -90,7 +90,7 @@ int add_list ( listADT list, elemTypePtr elem )
 
 elemTypePtr next ( listADT list )
 {
-	if ( is_empty_list ( list ) ) {
+	if ( isEmptyList ( list ) ) {
 		return NULL;
 	}
 
@@ -100,16 +100,16 @@ elemTypePtr next ( listADT list )
 }
 
 
-int delete_list ( listADT list, elemTypePtr elem )
+int deleteList ( listADT list, elemTypePtr elem )
 {
-	if ( is_empty_list ( list ) ) {
+	if ( isEmptyList ( list ) ) {
 		return -1;
 	}
 	if ( list->size == 1 ) {
 		if ( list->cmp ( elem, list->pre_next->head ) != 0 ) {
 			return -1;
 		}
-		free_memory ( list->pre_next, get_kernel_mem() );
+		freeMemory ( list->pre_next, getKernelMem() );
 		list->pre_next = NULL;
 		list->size = 0;
 		return 0;
@@ -123,7 +123,7 @@ int delete_list ( listADT list, elemTypePtr elem )
 			if ( list->pre_next == current ) {
 				list->pre_next = ant;
 			}
-			free_memory ( current, get_kernel_mem() );
+			freeMemory ( current, getKernelMem() );
 			list->size -- ;
 			return 0;
 		}

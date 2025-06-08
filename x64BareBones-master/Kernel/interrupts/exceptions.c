@@ -10,7 +10,7 @@ extern uint64_t exception_regs[CANT_REGS];
 //Order: RAX, RBX, RCX, RDX, RSI, RDI, RBP, RSP, R8, R9, R10, R11, R12, R13, R14, R15, RIP, RFLAGS
 
 
-static uint8_t * num_to_string ( uint64_t num, uint64_t base )
+static uint8_t * numToString ( uint64_t num, uint64_t base )
 {
 	static uint8_t buffer[64];
 	uint8_t * ptr = &buffer[63];
@@ -22,28 +22,28 @@ static uint8_t * num_to_string ( uint64_t num, uint64_t base )
 	return ptr;
 }
 
-static void print_regs ( uint8_t * message, uint8_t cant_chars_message )
+static void printRegs ( uint8_t * message, uint8_t cant_chars_message )
 {
 	char * regs[] = {"rax", "rbx", "rcx", "rdx", "rsi", "rdi", "rbp", "rsp", "r8", "r9", "r10", "r11", "r12", "r13", "r14", "r15", "rip", "rflags"};
 	color col = {255, 255, 255};
-	vdriver_clear_screen ( col );
-	vdriver_set_mode ( TEXT_MODE, col );
-	vdriver_text_set_font_size ( 2 );
+	vdriverClearScreen ( col );
+	vdriverSetMode ( TEXT_MODE, col );
+	vdriverSetFontSize ( 2 );
 
-	vdriver_text_write ( STDERR, ( char * ) message, cant_chars_message );
+	vdriverWrite ( STDERR, ( char * ) message, cant_chars_message );
 	uint8_t newline = '\n';
 	for ( int i = 0; i < CANT_REGS; i++ ) {
-		vdriver_text_write ( STDERR, regs[i], 10 );
-		vdriver_text_write ( STDERR, ": 0x", 4 );
-		vdriver_text_write ( STDERR, ( char * ) num_to_string ( exception_regs[i], 16 ), 10 );
-		vdriver_text_write ( STDERR, "h", 1 );
-		vdriver_text_write ( STDERR, ( char * ) &newline, 1 );
+		vdriverWrite ( STDERR, regs[i], 10 );
+		vdriverWrite ( STDERR, ": 0x", 4 );
+		vdriverWrite ( STDERR, ( char * ) numToString ( exception_regs[i], 16 ), 10 );
+		vdriverWrite ( STDERR, "h", 1 );
+		vdriverWrite ( STDERR, ( char * ) &newline, 1 );
 	}
 }
 
 
 
-void exception_dispatcher ( uint64_t exception )
+void exceptionDispatcher ( uint64_t exception )
 {
 
 	uint8_t * message = ( uint8_t * ) "";
@@ -64,19 +64,19 @@ void exception_dispatcher ( uint64_t exception )
 
 
 
-	print_regs ( message, message_cant_chars );
-	vdriver_text_write ( STDERR, "\nPress any key to continue", 30 );
+	printRegs ( message, message_cant_chars );
+	vdriverWrite ( STDERR, "\nPress any key to continue", 30 );
 
-	pic_master_mask ( 0xfd );                 //only keyboard interrupts
+	picMasterMask ( 0xfd );                 //only keyboard interrupts
 	_sti();
-	while ( !buffer_has_next() ) {
+	while ( !bufferHasNext() ) {
 		_hlt();
 	}
-	get_current();
+	getCurrent();
 	_cli();
-	pic_master_mask ( DEFAULT_MASTER_MASK );  // restores to default
+	picMasterMask ( DEFAULT_MASTER_MASK );  // restores to default
 
 
 	color c = {0, 0, 0};
-	vdriver_clear_screen ( c );
+	vdriverClearScreen ( c );
 }

@@ -9,7 +9,7 @@ int64_t wc();
 
 int64_t filter();
 
-int64_t ps_program();
+int64_t psProgram();
 
 int64_t cat();
 
