@@ -5,19 +5,19 @@
 int64_t loop ( char ** argv, int argc )
 {
 	if ( argc != 2 ) {
-		libcfPrintf ( STDERR, "Usage: loop <seconds>\n" );
+		libcfPrintf ( STDERR, "Uso: loop <seconds>\n" );
 		return 1;
 	}
 	int64_t satoi_flag;
 	int64_t seconds = libcSatoi ( argv[1], &satoi_flag );
 	if ( seconds < 0 || !satoi_flag ) {
-		libcfPrintf ( STDERR, "Error: Invalid amount of seconds\n" );
+		libcfPrintf ( STDERR, "Error: Cantidad de segundos invalida\n" );
 		return 1;
 	}
 	int64_t ans = 1;
 	while ( ans > 0 ) {
 		libcSleep ( seconds );
-		ans = libcPrintf ( "Hello! I'm a loop with pid: %d\n", libcGetPid() );
+		ans = libcPrintf ( "Hola! soy un loop con pid: %d\n", libcGetPid() );
 	}
 	return 0;
 }
@@ -25,7 +25,7 @@ int64_t loop ( char ** argv, int argc )
 int64_t wc ( char ** argv, int argc )
 {
 	if ( argc != 1 ) {
-		libcfPrintf ( STDERR, "Usage: wc\n" );
+		libcfPrintf ( STDERR, "Uso: wc\n" );
 		return 1;
 	}
 	char c;
@@ -42,7 +42,7 @@ int64_t wc ( char ** argv, int argc )
 	if ( prev == 0 || prev == '\n' ) {
 		lines--;
 	}
-	libcPrintf ( "\nLines: %d\n", lines );
+	libcPrintf ( "\nLineas: %d\n", lines );
 	return 0;
 }
 
@@ -74,10 +74,10 @@ int64_t psProgram()
 
 	ProcessInfoList * process_list = sys_ps();
 	if ( process_list == NULL ) {
-		libcfPrintf ( STDERR, "Error while getting process list\n" );
+		libcfPrintf ( STDERR, "Error al obtener lista de procesos\n" );
 		return 1;
 	}
-	libcPrintf ( "Amount of processes: %d\n", process_list->amount_of_processes );
+	libcPrintf ( "Cantidad de procesos: %d\n", process_list->amount_of_processes );
 	libcPrintf ( "PID | Ground      | Prio  | Stack Base Ptr| Last Stack Addr |    RSP     | Status | STDOUT| STDERR| STDIN | Name       \n" );
 	libcPrintf ( "----|-------------|-------|---------------|-----------------|------------|--------|-------|-------|-------|-----------\n" );
 
