@@ -1,6 +1,3 @@
-// This is a personal academic project. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
-
 #include <shell.h>
 
 typedef struct {
@@ -78,17 +75,17 @@ static module modules[] = {
 	{"kill", " <PID>: ", "Hace \"kill\" de un proceso dado su PID ", kill_pid, BUILT_IN},
 	{"block", " <PID>: ", "Cambia el estado de un proceso de READY a BLOCKED segun su PID ", shell_block, BUILT_IN},
 	{"wait", " <PID>: ", "Espera a un proceso segun su PID", shell_wait_pid, BUILT_IN},
-	{"nice", " <PID> <new_priority>: ", "Cambia la prioridad de un proceso segun su PID y nueva prioridad", shell_nice, BUILT_IN},
+	{"nice", " <PID> <nueva_prioridad>: ", "Cambia la prioridad de un proceso segun su PID y nueva prioridad", shell_nice, BUILT_IN},
 	{"ps", "", "Presenta la informacion de los procesos", ( void ( * ) ( char **, uint64_t ) ) ps_program, !BUILT_IN},
 	{"phylo", "", "Problema de los filosofos hambirentos", ( void ( * ) ( char **, uint64_t ) ) phylo, !BUILT_IN},
 	{"cat", "", "Imprime el STDIN exactamente como es recibido", ( void ( * ) ( char **, uint64_t ) ) cat, !BUILT_IN},
-	{"loop", " <seconds>: ", "Loop que saluda con su PID segun tiempo dado (segundos)", ( void ( * ) ( char **, uint64_t ) ) loop, !BUILT_IN},
+	{"loop", " <segundos>: ", "Loop que saluda con su PID segun tiempo dado", ( void ( * ) ( char **, uint64_t ) ) loop, !BUILT_IN},
 	{"filter", "", "Elimina vocales del texto ingresado", ( void ( * ) ( char **, uint64_t ) ) filter, !BUILT_IN},
 	{"wc", "", "Cuenta cantidad de lineas ingresadas", ( void ( * ) ( char **, uint64_t ) ) wc, !BUILT_IN},
 	{"mem", "", "Presenta el estado de memoria", ( void ( * ) ( char **, uint64_t ) ) mem, !BUILT_IN},
-	{"testproc", " <max_processes>: ", "Test para creacion de proceso", ( void ( * ) ( char **, uint64_t ) ) test_processes, !BUILT_IN},
-	{"testsync", " <n> <use_sem (0 for false, other integer for true)>: ", "Test para sincronizacion de procesos", ( void ( * ) ( char **, uint64_t ) ) test_sync, !BUILT_IN},
-	{"testmm", " <max_memory>: ", "Test para el uso de malloc y free", ( void ( * ) ( char **, uint64_t ) ) test_mm, !BUILT_IN},
+	{"testproc", " <procesos_max>: ", "Test para creacion de proceso", ( void ( * ) ( char **, uint64_t ) ) test_processes, !BUILT_IN},
+	{"testsync", " <n> <uso_sem (0 para false, otro int para true)>: ", "Test para sincronizacion de procesos", ( void ( * ) ( char **, uint64_t ) ) test_sync, !BUILT_IN},
+	{"testmm", " <maxima_mem>: ", "Test para el uso de malloc y free", ( void ( * ) ( char **, uint64_t ) ) test_mm, !BUILT_IN},
 	{"testprio", "", "Test para las prioridades del scheduler", ( void ( * ) ( char **, uint64_t ) ) test_prio, !BUILT_IN},
 };
 
