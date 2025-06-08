@@ -3,10 +3,8 @@
 
 char libcGetChar()
 {
-	int64_t ans = 0;
 	uint8_t c = 0;
-	ans = sys_read ( &c, 1 );
-	return ans <= 0 ? 0 : ( char ) c;
+	return sys_read(&c, 1) > 0 ? (char)c : 0;
 }
 
 void libcPutChar ( char c )

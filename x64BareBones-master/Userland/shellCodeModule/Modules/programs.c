@@ -122,13 +122,13 @@ int64_t mem()
 {
 	MemoryInfo info[2];
 	if ( sys_mem_info ( info ) < 0 ) {
-		libcfPrintf ( STDERR, "Error while getting memory info\n" );
+		libcfPrintf ( STDERR, "Error al obtener mem info\n" );
 		return 1;
 	}
-	libcPrintf ( "Total memory in userland: %x\n", info[USER_MEM_INFO].total_size );
-	libcPrintf ( "Free memory in userland: %x\n", info[USER_MEM_INFO].free );
+	libcPrintf ( "Memoria total en userland: %x\n", info[USER_MEM_INFO].total_size );
+	libcPrintf ( "Memoria libre en userland: %x\n", info[USER_MEM_INFO].free );
 
-	libcPrintf ( "\nTotal memory in kernel: %x\n", info[KERNEL_MEM_INFO].total_size );
-	libcPrintf ( "Free memory in kernel: %x\n", info[KERNEL_MEM_INFO].free );
+	libcPrintf ( "\nMemoria total en kernel: %x\n", info[KERNEL_MEM_INFO].total_size );
+	libcPrintf ( "Memoria libre en kernel: %x\n", info[KERNEL_MEM_INFO].free );
 	return 0;
 }
