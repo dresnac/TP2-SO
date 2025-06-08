@@ -20,6 +20,7 @@ int64_t libc_fputc ( char c, uint64_t fd );
 int64_t libc_fprintf ( uint64_t fd,  char * fmt, ... );
 int64_t libc_printf (  char * fmt, ... );
 char * libc_gets ( char * buffer, int n );
+int64_t libc_strlen(char *str);
 int64_t libc_strcmp (  char * str1,  char * str2 );
 int64_t libc_strnocasecmp ( char *str1,  char *str2 );
 void libc_print_register_snapshot();

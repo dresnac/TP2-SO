@@ -68,6 +68,14 @@ int64_t libc_fputc ( char c, uint64_t fd )
 
 #define BUFF_SIZE 64
 
+int64_t libc_strlen(char *str){
+	int64_t i=0;
+	while(str[i]!='\0'){
+		i++;
+	}
+	return i;
+}
+
 static int64_t libc_vfprintf ( uint64_t fd, char *fmt, va_list argv )
 {
 	uint64_t flag = 0;
