@@ -17,7 +17,7 @@ int compareElements ( elemTypePtr e1, elemTypePtr e2 )
 }
 
 
-void initializeScheduler ( int64_t shell_process_pid, int64_t idle_process_pid )
+void initializeScheduler ( tPid shell_process_pid, tPid idle_process_pid )
 {
 	tCompare cmp = compareElements;
 	ready_list = newList ( cmp );

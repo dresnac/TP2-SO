@@ -99,7 +99,7 @@ int main()
 	libcPuts ( WELCOME );
 	libcPuts("\n");
 	for(int i=0; i<36; i++){
-		libcPuts(colidio_ascii[i]);
+		libcPuts((char*)colidio_ascii[i]);
 	}
 	libcSleep(3);
 	libcClearScreen();

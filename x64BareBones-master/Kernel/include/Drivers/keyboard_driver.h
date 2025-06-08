@@ -52,7 +52,7 @@ typedef enum {
 
 typedef void ( *functionKey ) ( void );
 
-void keyboard_handler();
+void keyboardHandler();
 void setFKeyFunction ( uint64_t key_number, functionKey f );
 uint64_t getCurrent();
 uint64_t bufferHasNext();
