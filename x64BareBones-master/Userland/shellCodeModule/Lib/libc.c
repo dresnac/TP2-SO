@@ -68,13 +68,6 @@ int64_t libcfPutc ( char c, uint64_t fd )
 
 #define BUFF_SIZE 64
 
-int64_t libcStrlen(char *str){
-	int64_t i=0;
-	while(str[i]!='\0'){
-		i++;
-	}
-	return i;
-}
 
 static int64_t libcvfPrintf ( uint64_t fd, char *fmt, va_list argv )
 {

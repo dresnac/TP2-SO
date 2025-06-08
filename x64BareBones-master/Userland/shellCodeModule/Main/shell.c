@@ -391,12 +391,12 @@ static void help()
 	libcPrintf ("  Comando    Argumentos                             Descripcion\n");
 	libcPrintf ("  -------    -------------                          -----------------------------\n");
 	for ( int i = 0; i < MAX_MODULES; i++ ) {
-		int len_name = libcStrlen(modules[i].name);
+		int len_name = sharedLibcStrlen(modules[i].name);
 		libcPrintf("  %s", modules[i].name);
 		for (int s = len_name; s < 10; s++)
 			libcPrintf(" ");
 
-		int len_args = libcStrlen(modules[i].args);
+		int len_args = sharedLibcStrlen(modules[i].args);
 		libcPrintf("%s", modules[i].args);
 		for (int s = len_args; s < 40; s++)
 			libcPrintf(" ");

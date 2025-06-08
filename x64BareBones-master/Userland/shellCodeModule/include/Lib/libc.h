@@ -20,7 +20,6 @@ int64_t libcfPutc ( char c, uint64_t fd );
 int64_t libcfPrintf ( uint64_t fd,  char * fmt, ... );
 int64_t libcPrintf (  char * fmt, ... );
 char * libcGets ( char * buffer, int n );
-int64_t libcStrlen(char *str);
 int64_t libcStrcmp (  char * str1,  char * str2 );
 int64_t libcStrnocasecmp ( char *str1,  char *str2 );
 void libcPrintRegisterSnapshot();
