@@ -15,7 +15,7 @@ static int next_power_of_2 ( int n );
 static int get_index_level ( int index );
 static int get_size_level ( int size );
 static int get_block_from_index ( int index );
-static void my_free_idx ( int index, int * flag, int n, memoryManagerADT mem );
+static void my_free_idx ( int index, int * flag, int n, MemoryManagerADT mem );
 static void *my_alloc ( int index, int level, MemoryManagerADT mem );
 
 
@@ -54,7 +54,7 @@ MemoryManagerADT my_mm_init ( void *p )
 
 
 
-void * alloc_memory ( uint64_t size,  memoryManagerADT mem )
+void * alloc_memory ( uint64_t size,  MemoryManagerADT mem )
 {
 	MemoryManagerCDT * aux = ( MemoryManagerCDT * ) mem;
 	if( aux == NULL ){
@@ -90,7 +90,7 @@ void free_memory ( void * p, MemoryManagerADT mem )
 
 static void *my_alloc ( int index, int level, MemoryManagerADT mem )
 {
-	MemoryManagerCDT * aux = ( memoryManagerCDT * ) mem;
+	MemoryManagerCDT * aux = ( MemoryManagerCDT * ) mem;
 	if ( aux == NULL ) {
 		return NULL;
 	}
