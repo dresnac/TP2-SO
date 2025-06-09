@@ -1,7 +1,7 @@
 
 
-#ifndef TPE_ARQUI_EXCEPTIONS_H
-#define TPE_ARQUI_EXCEPTIONS_H
+#ifndef TP_SO_EXCEPTIONS_H
+#define TP_SO_EXCEPTIONS_H
 
 #include <video_driver.h>
 #include <idt_loader.h>

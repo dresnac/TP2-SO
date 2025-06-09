@@ -2,9 +2,6 @@
 #define REGISTER_SAVER_H
 #include <stdint.h>
 
-/**
- * Structure representing all the registers
- */
 typedef struct registers {
 	uint64_t rax;
 	uint64_t rbx;

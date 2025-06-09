@@ -25,7 +25,7 @@ MemoryManagerADT createMM ( void *p )
 	aux->start = ( void * ) ( ( char * ) p );
 	aux->current = 0;
 	for ( int i = 0; i <= ( sizeof ( MemoryManagerCDT ) / BLOCK_SIZE ); i++ ) {
-		allocMemory ( 1, ( MemoryManagerADT ) aux );														//reserves the space for the CDT
+		allocMemory ( 1, ( MemoryManagerADT ) aux );														
 	}
 
 	return ( MemoryManagerADT ) aux;

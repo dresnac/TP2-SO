@@ -104,7 +104,6 @@ static void *alloc ( int index, int level, MemoryManagerADT mem )
 	if ( aux->tree_bitmap[index] && !aux->tree_bitmap[2 * index + 1] && !aux->tree_bitmap[index * 2 + 2] ) {
 		return NULL;
 	}
-	// This is because if the block is occupied, but its children are free, it means the block is not divided but rather fully occupied
 
 	void *ptr = alloc ( index * 2 + 1, level - 1, mem );
 	if ( ptr == NULL ) {

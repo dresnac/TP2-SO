@@ -1,6 +1,3 @@
-
-
-
 #ifndef _SYSCALLS_KERNEL_H
 #define _SYSCALLS_KERNEL_H
 

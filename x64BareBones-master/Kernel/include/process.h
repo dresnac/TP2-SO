@@ -26,7 +26,7 @@ typedef int ( *mainFunction ) ( char ** argv, uint64_t argc );
 
 int64_t newProcess ( mainFunction rip, tPriority priority, uint8_t killable, char ** argv, uint64_t argc, tFd fds[] );
 PCB * getPcb ( tPid pid );
-void listProcesses();
+//void listProcesses();
 int64_t killProcess ( tPid pid );
 int64_t killProcessPcb ( PCB * pcb );
 tPid wait ( tPid pid, int64_t * ret );

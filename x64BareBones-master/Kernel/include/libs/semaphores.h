@@ -2,7 +2,7 @@
 #define _SEMAPHORES_H
 
 #define SEM_AMOUNT_USER 100
-#define KERNEL_SEM_ID_LIMIT 350 //Kernel sems goes from ID SEM_AMOUNT_USER to KERNEL_SEM_AMOUT-1
+#define KERNEL_SEM_ID_LIMIT 350 
 
 #include <queue_adt.h>
 #include <shared_defs.h>

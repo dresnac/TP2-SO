@@ -1,5 +1,5 @@
-#ifndef TPE_ARQUI_LIBC_H
-#define TPE_ARQUI_LIBC_H
+#ifndef TP_SO_LIBC_H
+#define TP_SO_LIBC_H
 
 #include <stdint.h>
 #include <stdarg.h>
