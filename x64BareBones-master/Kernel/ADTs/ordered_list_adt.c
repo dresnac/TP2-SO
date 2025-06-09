@@ -85,10 +85,7 @@ int addOrderedList ( orderedListADT list, elemType elem )
 	int flag = 0;
 	list->first = addOrderedListRec ( list->first, elem, list->cmp, &flag );
 	list->size += flag;
-	if ( flag == 0 ) {
-		return -1;
-	}
-	return 0;
+	return flag == 0 ? -1:0;
 }
 
 static elemType getRec ( tOrderedList l, size_t idx )

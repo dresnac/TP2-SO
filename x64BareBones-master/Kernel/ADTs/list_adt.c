@@ -1,8 +1,5 @@
 #include <list_adt.h>
 
-
-
-
 typedef struct node {
 	elemTypePtr head;
 	struct node * tail;
@@ -51,10 +48,7 @@ int isEmptyList ( const listADT list )
 
 int sizeList ( const listADT list )
 {
-	if ( list == NULL ) {
-		return -1;
-	}
-	return list->size;
+	return list ? (int)list->size : -1;
 }
 
 int addList ( listADT list, elemTypePtr elem )
