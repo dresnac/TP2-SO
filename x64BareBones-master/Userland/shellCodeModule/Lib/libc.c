@@ -1,5 +1,11 @@
 #include <libc.h>
 
+#define C5  523
+#define E5  659
+#define G5  784
+#define B5  987
+#define C6  1046
+#define REST 0
 
 char libcGetChar()
 {
@@ -10,6 +16,22 @@ char libcGetChar()
 void libcPutChar ( char c )
 {
 	sys_write ( STDOUT, ( uint8_t * ) &c, 1 );
+}
+
+
+
+void libcPlaySimpleMelody() {
+    libcBeep(C5, 5);   
+    libcBeep(E5, 5);
+    libcBeep(G5, 5);
+    libcBeep(B5, 5);
+    libcBeep(C6, 6);   
+
+    libcBeep(B5, 4);
+    libcBeep(G5, 4);
+    libcBeep(E5, 4);
+    libcBeep(G5, 4);
+    libcBeep(C6, 4);
 }
 
 int64_t libcBeep ( uint64_t frequency, uint64_t duration )

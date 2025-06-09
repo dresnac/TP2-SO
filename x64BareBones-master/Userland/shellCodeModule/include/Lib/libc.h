@@ -55,5 +55,6 @@ int64_t libcPipeClose ( int64_t id );
 int64_t libcPipeReserve();
 int64_t libcSatoi ( char * str, int64_t * flag );
 int64_t libcGetMyFds ( tFd fds[CANT_FDS] );
+void libcPlaySimpleMelody();
 
 #endif

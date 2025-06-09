@@ -102,7 +102,8 @@ int main()
 	for(int i=0; i<36; i++){
 		libcPuts((char*)colidio_ascii[i]);
 	}
-	libcSleep(3);
+	libcPlaySimpleMelody();
+	//libcSleep(3);
 	libcClearScreen();
 	help();
 	while ( 1 ) {
