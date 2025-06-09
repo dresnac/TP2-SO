@@ -38,7 +38,7 @@ static void freeOrderedListRec ( tOrderedList list )
 	freeMemory ( list, getKernelMem() );
 }
 
-void free_ordered_list ( orderedListADT list )
+void freeOrderedList ( orderedListADT list )
 {
 	freeOrderedListRec ( list->first );
 	freeMemory ( list, getKernelMem() );

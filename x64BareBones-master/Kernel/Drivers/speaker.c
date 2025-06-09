@@ -20,7 +20,6 @@ static void playSound ( uint32_t n_frequence )
 	}
 }
 
-//make it shut up
 static void noSound()
 {
 	uint8_t tmp = inb ( 0x61 ) & 0xfc;
@@ -28,7 +27,6 @@ static void noSound()
 	outb ( 0x61, tmp );
 }
 
-//make a beep
 void beep ( uint32_t freq, int time )
 {
 	playSound ( freq );

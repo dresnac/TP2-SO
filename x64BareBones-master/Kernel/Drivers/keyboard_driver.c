@@ -35,7 +35,7 @@ PCB * getKeyboardBlocked()
 
 int64_t stdinRead ( uint8_t * buff, uint64_t amount )
 {
-	if ( blocked != NULL ) {	// a process is already waiting to get a key...
+	if ( blocked != NULL ) {	
 		return -1;
 	}
 
@@ -148,7 +148,7 @@ static int shiftPressed()
 }
 static int shiftCapsLockPressed()
 {
-	return ( shiftPressed() ^capsLockPressed() ); //xor
+	return ( shiftPressed() ^capsLockPressed() ); 
 }
 
 static uint8_t releasedKeyToPressedMask ( uint8_t key )
@@ -180,7 +180,7 @@ void keyboardHandler()
 	uint8_t key_is_pressed = isPressed ( key ) ? 1 : 0;
 
 	if ( !key_is_pressed ) {
-		key = releasedKeyToPressedMask ( key ); //table is for pressed keys
+		key = releasedKeyToPressedMask ( key ); 
 	}
 
 	uint16_t code = pressed_key_shift_map[key][shiftCapsLockPressed()];

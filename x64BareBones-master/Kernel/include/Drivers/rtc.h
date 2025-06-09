@@ -1,8 +1,8 @@
 
 #include <stdint.h>
 
-#ifndef TP_SO_RTC_H//TPE_ARQUI_RTC_H
-#define TP_SO_RTC_H//TPE_ARQUI_RTC_H
+#ifndef TP_SO_RTC_H
+#define TP_SO_RTC_H
 
 
 

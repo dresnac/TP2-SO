@@ -26,13 +26,10 @@ int isEmptyOrderedList ( const orderedListADT list );
 
 elemType get ( const orderedListADT list, size_t idx );
 
-//le avisamos que vamos a recorrer la lista desde el primero
 void orderedListToBegin ( orderedListADT list );
 
-//retorna true si hay pendientes que recorrer
 int orderedListHasNext ( const orderedListADT list );
 
-//me devuelve el siguiente. precondicion, has_next debe devolver true
 elemType orderedListNext ( orderedListADT list );
 int orderedListDeleteCurrent ( orderedListADT list );
 
