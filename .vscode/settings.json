@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "syscalls.h": "c",
-        "syscalls_kernel.h": "c"
+        "syscalls_kernel.h": "c",
+        "test_util.h": "c"
     }
 }
