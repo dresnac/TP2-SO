@@ -13,7 +13,7 @@
 #define MAX_COMMAND_SIZE 100
 #define MAX_ZOOM 3
 #define MIN_ZOOM 1
-#define MAX_MODULES 19
+#define MAX_MODULES 20
 #define NUM_TESTS 4
 #define NUM_BUILT_INS 8
 #define MAX_ARGS 10

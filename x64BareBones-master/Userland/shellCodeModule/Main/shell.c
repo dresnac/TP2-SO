@@ -62,6 +62,7 @@ static void getRegs();
 static void shellWaitPid ( char ** args, uint64_t argc );
 static void shellNice ( char **argv, uint64_t argc );
 static void shellBlock ( char **argv, uint64_t argc );
+static void sharedMemTest();
 
 
 static uint64_t font_size = 1;
@@ -89,6 +90,7 @@ static module modules[] = {
 	{"testsync", " <n> <uso_sem (0 false, int true)> ", "Test para sincronizacion de procesos", ( void ( * ) ( char **, uint64_t ) ) test_sync, !BUILT_IN},
 	{"testmm", " <maxima_mem> ", "Test para el uso de malloc y free", ( void ( * ) ( char **, uint64_t ) ) test_mm, !BUILT_IN},
 	{"testprio", "", "Test para las prioridades del scheduler", ( void ( * ) ( char **, uint64_t ) ) test_prio, !BUILT_IN},
+	{"testshared", "", "Test para la memoria compartida entre procesos", sharedMemTest, BUILT_IN},
 };
 
 
@@ -514,4 +516,30 @@ static void shellBlock ( char **argv, uint64_t argc )
 	} else {
 		libcBlock ( pid );
 	}
+}
+
+void writeSharedMem(){
+	int * p = (int *) sys_shared_mem(1);
+	libcfPrintf(STDOUT, "Escribiendo...\n");
+	*p = 5;
+	while(1);
+}
+
+void readSharedMem(){
+	int * p = (int *) sys_shared_mem(1);
+	libcfPrintf(STDOUT, "Copiado.\n");
+	libcfPrintf(STDOUT, "%d\n", *p);
+	while(1);
+}
+
+void sharedMemTest(){
+
+	tFd fds[] = {STDOUT, STDERR, STDIN};
+	
+
+	tPid pid1 = libcCreateProcess((mainFunction) writeSharedMem, HIGH, NULL, 0, fds);
+	libcfPrintf(STDOUT, "Huevo\n");
+	tPid pid2 = libcCreateProcess((mainFunction) readSharedMem, HIGH, NULL, 0, fds);
+	
+
 }

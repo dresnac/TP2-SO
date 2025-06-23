@@ -37,6 +37,7 @@ GLOBAL sys_pipe_reserve
 GLOBAL sys_sem_open_get_id
 GLOBAL sys_get_my_fds
 GLOBAL sys_mem_info
+GLOBAL sys_shared_mem
 
 section .text
 
@@ -242,3 +243,6 @@ sys_get_my_fds:
 
 sys_mem_info:
     simple_sys_handler 38
+
+sys_shared_mem:
+    simple_sys_handler 39

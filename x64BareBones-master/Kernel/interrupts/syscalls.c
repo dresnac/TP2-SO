@@ -48,7 +48,8 @@ static sys_function syscall_table[NUM_SYSCALLS] = {
 	( sys_function ) sys_pipe_reserve,             // 35
 	( sys_function ) sys_sem_open_get_id,          // 36
 	( sys_function ) sys_get_my_fds,               // 37
-	( sys_function ) sys_mem_info                  // 38
+	( sys_function ) sys_mem_info,                  // 38
+	( sys_function ) sys_shared_mem                //39
 };
 
 int64_t syscallDispatcher ( StackRegisters * regs )
@@ -336,4 +337,15 @@ int8_t sys_get_status ( tPid pid )
 int64_t sys_mem_info ( MemoryInfo info[2] )
 {
 	return memInfo ( &info[0], getUserlandMem() ) + memInfo ( &info[1], getKernelMem() ) ;
+}
+
+void * array[100] = {0};
+
+int64_t sys_shared_mem( int64_t id ){
+	
+	if(!array[id]){
+		array[id] = allocMemory(BLOCK_SIZE, getKernelMem());
+	}
+	
+	return array[id];
 }

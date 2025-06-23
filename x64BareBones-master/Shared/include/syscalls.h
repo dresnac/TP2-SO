@@ -50,6 +50,7 @@ int64_t sys_pipe_close ( int64_t id );
 int64_t sys_pipe_reserve();
 int64_t sys_get_my_fds ( tFd fds[CANT_FDS] );
 int64_t sys_mem_info ( MemoryInfo info[2] );
+int64_t sys_shared_mem ( int64_t id );
 
 #endif
 
