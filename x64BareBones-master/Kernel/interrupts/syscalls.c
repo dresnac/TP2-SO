@@ -339,12 +339,12 @@ int64_t sys_mem_info ( MemoryInfo info[2] )
 	return memInfo ( &info[0], getUserlandMem() ) + memInfo ( &info[1], getKernelMem() ) ;
 }
 
-void * array[100] = {0};
+void * array[10] = {0};
 
 int64_t sys_shared_mem( int64_t id ){
 	
 	if(!array[id]){
-		array[id] = allocMemory(BLOCK_SIZE, getKernelMem());
+		array[id] = allocMemory(BLOCK_SIZE, getUserlandMem());
 	}
 	
 	return array[id];

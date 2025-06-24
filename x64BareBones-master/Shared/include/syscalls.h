@@ -6,7 +6,7 @@
 #include <drivers_information.h>
 
 #define NOT_VALID_SYS_ID -1
-#define NUM_SYSCALLS 39
+#define NUM_SYSCALLS 40
 
 #define KERNEL_MEM_INFO 1
 #define USER_MEM_INFO 0

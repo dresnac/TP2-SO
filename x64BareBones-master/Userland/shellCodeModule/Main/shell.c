@@ -520,26 +520,31 @@ static void shellBlock ( char **argv, uint64_t argc )
 
 void writeSharedMem(){
 	int * p = (int *) sys_shared_mem(1);
-	libcfPrintf(STDOUT, "Escribiendo...\n");
+	if(p == NULL){
+		libcPrintf("Error al obtener memoria compartida");
+	}
 	*p = 5;
-	while(1);
+	libcPrintf("Se escribio en la mem compartida\n");
+	// libcYield();
+	// while(1);
 }
 
 void readSharedMem(){
 	int * p = (int *) sys_shared_mem(1);
-	libcfPrintf(STDOUT, "Copiado.\n");
-	libcfPrintf(STDOUT, "%d\n", *p);
-	while(1);
+	if(p == NULL){
+		libcPrintf("Error al obtener memoria compartida");
+	}
+	libcPrintf("Se leyo de la memoria compartida: %d\n", *p);
+	// libcYield();
+	// while(1);
 }
 
 void sharedMemTest(){
 
 	tFd fds[] = {STDOUT, STDERR, STDIN};
-	
-
-	tPid pid1 = libcCreateProcess((mainFunction) writeSharedMem, HIGH, NULL, 0, fds);
-	libcfPrintf(STDOUT, "Huevo\n");
-	tPid pid2 = libcCreateProcess((mainFunction) readSharedMem, HIGH, NULL, 0, fds);
-	
-
+	int64_t ret;
+	tPid pid1 = libcCreateProcess((mainFunction) writeSharedMem, LOW, NULL, 0, fds);
+	tPid pid2 = libcCreateProcess((mainFunction) readSharedMem, LOW, NULL, 0, fds);
+	libcWait(pid1, &ret);
+	libcWait(pid2, &ret);
 }
